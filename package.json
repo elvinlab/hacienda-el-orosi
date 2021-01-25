@@ -1,0 +1,26 @@
+{
+  "name": "hacienda-el-orosi-api",
+  "version": "1.0.0",
+  "description": "Backend del Proyecto Hacienda El Orosí",
+  "main": "index.js",
+  "scripts": {
+    "star":"node start",
+    "dev": "node start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JosestebanPorrasV/hacienda-el-orosi-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JosestebanPorrasV/hacienda-el-orosi-api/issues"
+  },
+  "homepage": "https://github.com/JosestebanPorrasV/hacienda-el-orosi-api#readme",
+  "dependencies": {
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
+  }
+}
