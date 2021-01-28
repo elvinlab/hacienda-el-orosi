@@ -1,4 +1,4 @@
-const Colaborador = require( '../models/Colaborador.js' );
+const Collaborator = require( '../models/Collaborator.js' );
 
 const { response } = require ( 'express' );
 const { request } = require('../Express_server.js');
@@ -13,22 +13,22 @@ const register = (req, res = response ) => {
            msg: 'Por favor contacte con el Administrador para mas información',
        });
     }*/
-    const { cedula, nacionalidad, nombre, apellido, direccion, telefono, celular,
-            fecha_ingreso, fecha_despacho} = req.body;
+    const { id, nationality, name, lastname, direction, tel, cel,
+        date_admission, dispatch_date} = req.body;
 
     try {
-        let colaborador = new Colaborador();
-        colaborador.cedula = cedula;
-        colaborador.nacionalidad = nacionalidad;
-        colaborador.nombre = nombre;
-        colaborador.apellido = apellido;
-        colaborador.direccion = direccion;
-        colaborador.telefono = telefono;
-        colaborador.celular = celular;
-       // colaborador.fecha_ingreso = fecha_ingreso;
-        //colaborador.fecha_despacho = fecha_despacho;
+        let Collaborator = new Collaborator();
+        Collaborator.id = id;
+        Collaborator.nationality = nationality;
+        Collaborator. name =  name;
+        Collaborator. lastname =  lastname;
+        Collaborator.direction = direction;
+        Collaborator.tel = tel;
+        Collaborator.cel = cel;
+       //Collaborator.date_admission = date_admission;
+        //Collaborator.dispatch_date = dispatch_date;
         
-        colaborador.save();
+        Collaborator.save();
 
         return res.status( 200 ).json({
             status: 'success',
@@ -43,6 +43,9 @@ const register = (req, res = response ) => {
     }
 };
 
+const update = (req, res =response)=>{
+
+};
 module.exports = {
     register,
  };

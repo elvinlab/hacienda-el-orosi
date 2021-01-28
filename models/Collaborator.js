@@ -4,45 +4,45 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 
 moment.locale( 'es' );
 
-const ColaboradorSchema = Schema ({ 
-    cedula: { 
+const CollaboratorSchema = Schema ({ 
+    id: { 
         type: String,
         required: true,
     },
-    administrador: { type: Schema.ObjectId, ref: 'Administrador', },
-    actividad: { type: Schema.ObjectId, ref: 'Actividad', },
-    nacionalidad: {
+    administrator: { type: Schema.ObjectId, ref: 'Administrator', },
+    activity: { type: Schema.ObjectId, ref: 'Acivity', },
+    nationality: {
         type: String,
         required: true,
     },
-    nombre: {
+    name: {
         type: String,
         required: true,
     },
-    apellido: {
+    lastname: {
         type: String,
         required: true,
     },
-    direccion: {
+    direction: {
         type: String,
        },
-    telefono: {
+    tel: {
         type: String,
         required: true,
     },
-    celular: {
+    cel: {
         type: String,
     },
-    fecha_ingreso: {
+    date_admission: {
         type: String,
         default: () => moment().format("DD, MM  YYYY, HH:MM:SS"),
        // require: true,
     },
-    fecha_despacho: {
+    dispatch_date: {
         type: String,
         default: () => moment().format("DD, MM  YYYY, HH:MM:SS"),
        // require: true,
     },
 }); 
 
-module.exports = model( 'Colaborador', ColaboradorSchema );
+module.exports = model( 'Collaborator', CollaboratorSchema );
