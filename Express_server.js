@@ -7,10 +7,11 @@ const cors = require('cors');
 
 const app = express();
 
+dbConnection();
+
 app.use( express.static('public'));
 app.use( express.json());
-
-dbConnection();
+app.use( '/api/recursos-humanos', require('./routes/Colaborador.js') );
 
 app.listen( process.env.PORT, () => {
     console.log(`Servidor correindo en el puerto: ${ process.env.PORT }` )
