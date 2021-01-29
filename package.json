@@ -1,0 +1,35 @@
+{
+  "name": "hacienda-el-orosi-api",
+  "version": "1.0.0",
+  "description": "Backend del proyecto Hacienda El Orosi",
+  "main": "Express_server.js",
+  "scripts": {
+    "start": "nodemon Express_server.js",
+    "dev": "nodemon Express_server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JosestebanPorrasV/hacienda-el-orosi-api.git"
+  },
+  "author": "Proyecto realizado por: elvinlab,JosestebanPorrasV, advargar, JankisJ",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JosestebanPorrasV/hacienda-el-orosi-api/issues"
+  },
+  "homepage": "https://github.com/JosestebanPorrasV/hacienda-el-orosi-api#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.9.2",
+    "jwt-simple": "^0.5.6",
+    "moment": "^2.29.1",
+    "mongoose": "^5.11.13",
+    "mongoose-paginate-v2": "^1.3.14",
+    "mongoose-sequence": "^5.3.1",
+    "nodemon": "^2.0.7",
+    "speakeasy": "^2.0.0",
+    "validator": "^13.5.2"
+  }
+}
