@@ -10,7 +10,7 @@ const CollaboratorSchema = Schema ({
         required: true,
     },
     administrator: { type: Schema.ObjectId, ref: 'Administrator', },
-    activity: { type: Schema.ObjectId, ref: 'Acivity', },
+    job: { type: Schema.ObjectId, ref: 'Job', },
     nationality: {
         type: String,
         required: true,
@@ -19,7 +19,7 @@ const CollaboratorSchema = Schema ({
         type: String,
         required: true,
     },
-    lastname: {
+    last_name: {
         type: String,
         required: true,
     },
