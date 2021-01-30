@@ -5,7 +5,7 @@ const { validate_fields } = require( '../middelewares/Validate-fields' );
 const router = Router();
 
 const { 
-    register,
+    save,
     } = require( '../controllers/Job.js');
 
     router.post( 
@@ -19,7 +19,7 @@ const {
            
             validate_fields,
         ], 
-        register
+        save
     );
     
     module.exports = router;
