@@ -171,7 +171,7 @@ const login = async (req, res = response) => {
             id: findUser._id,
             document_id: findUser.document_id,
             email: findUser.email,
-            name: findUser.given_name,
+            name: findUser.name,
             surname: findUser.surname,
             role: findUser.role,
         },
