@@ -29,12 +29,18 @@ const UserSchema = Schema({
   },
   recovery_key: {
     type: Number,
-    unique: true,
   },
   role: {
     type: String,
     required: true,
   },
 });
+
+UserSchema.methods.toJSON = function(){
+	let obj = this.toObject();
+	delete obj.password;
+
+	return obj;
+}
 
 module.exports = model("User", UserSchema);

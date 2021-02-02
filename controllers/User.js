@@ -12,40 +12,49 @@ require("dotenv").config();
 const register = async (req, res = response) => {
     if ( req.user.role === 'GENERAL_ROLE' ) {
 
-        const { document_id, password } = req.body;
+        const { document_id, password, email, name, surname, role } = req.body;
 
         try {
-            let findUser = await User.findOne({ document_id });
-            
-            if (findUser) {
+            let findUserByDocumentId = await User.findOne({ document_id });
+            let findUserByEmail = await User.findOne({ email });
+
+            if (findUserByDocumentId || findUserByEmail) {
             return res.status(400).json({
                 status: "error",
                 msg: "El administrador ya existe",
             });
             }
-        
-            user = new User(req.body);
-        
+
+            let user = new User();
+
             const salt = bcrypt.genSaltSync();
+
+            user.document_id = document_id;
             user.password = bcrypt.hashSync(password, salt);
+            user.email = email;
+            user.name = name;
+            user.surname = surname;
+            user.role = role;
+
+            console.log(user);
         
             await user.save();
         
-            return res.status(201).send({
-            status: "success",
-            msg: "Administrador registrado con exito",
-            user: {
-                document_id: user.document_id,
-                email: user.email,
-                name: user.given_name,
-                surname: user.surname,
-                role: user.role,
-            },
+            res.status(201).send({
+                status: "success",
+                msg: "Administrador registrado con exito",
+                user: {
+                    document_id: user.document_id,
+                    email: user.email,
+                    name: user.given_name,
+                    surname: user.surname,
+                    role: user.role,
+                },
             });
         } catch (error) {
-            return res.status(400).json({
-            status: "error",
-            msg: "Por favor hable con el administrador",
+            res.status(400).json({
+                status: "error",
+                msg: "Puede que estos valores ya se encuentren registrados",
             });
         }
 
@@ -62,9 +71,10 @@ const updateRole = async (req, res = response) => {
     if ( req.user.role ==='GENERAL_ROLE' ) {
         
         const { role } = req.body;
+        const userId = req.params.id
 
         await User.findByIdAndUpdate(
-            { _id: get_user._id },
+            { _id: userId },
             { role: role },
             ( err ) => {
                 if (err) {
@@ -92,32 +102,32 @@ const updateRole = async (req, res = response) => {
 
 const removeAdmin = async (req, res = response) => {
     if (req.user.role === "GENERAL_ROLE") {
-        let userId = req.body.id;
-    
+        let userId = req.params.id;
+
         User.findOneAndDelete({ _id: userId }, (err, user) => {
-          if (err) {
-            return res.status(500).send({
-              status: "error",
-              msg: "Error al solicitar la peticion",
-            });
-          }
-          if (!user) {
-            return res.status(404).send({
-              status: "error",
-              msg: "No se ha eliminado el administrador",
-            });
-          }
-          return res.status(200).json({
-            status: "success",
-            msg: "Removido de forma exitosa",
-          });
+            if (err) {
+                return res.status(500).send({
+                    status: "error",
+                    msg: "Error al solicitar la peticion",
+                });
+            }
+            if (!user) {
+                return res.status(404).send({
+                    status: "error",
+                    msg: "No se ha eliminado el administrador",
+                });
+            }
+                return res.status(200).json({
+                    status: "success",
+                    msg: "Removido de forma exitosa",
+                });
         });
-      } else {
-        return res.status(400).send({
-          status: "error",
-          msg: "No tienes permisos en la plataforma",
-        });
-      }
+        } else {
+            return res.status(400).send({
+                status: "error",
+                msg: "No tienes permisos en la plataforma",
+            });
+        }
 
 }
 
@@ -295,8 +305,9 @@ const verify_recovery_key = async (req, res = response) => {
 };
 
 const change_password = async (req, res = response) => {
-
-    const { email, password } = req.body;
+    
+    const email = req.params.email
+    const { password } = req.body;
 
     User.findOne({ email: email }, (err, user) => {
         if (err) {
@@ -337,6 +348,33 @@ const change_password = async (req, res = response) => {
     });
 };
 
+const list_admins = async ( req, res = response ) => {
+
+    if (req.user.role === "GENERAL_ROLE") {
+
+        User.find().exec( (err, admins) => {
+            if (err || !admins) {
+                return res.status(404).send({
+                status: "error",
+                msg: "Error inesperado",
+                });
+            }
+
+            return res.status(200).json({
+                status: "success",
+                admins: admins,
+            });
+        });
+
+    } else {
+        return res.status(400).send({
+            status: "error",
+            msg: "No tienes permisos en la plataforma",
+        });
+    }
+
+}
+
 module.exports = {
     login,
     register,
@@ -345,5 +383,6 @@ module.exports = {
     verify_recovery_key,
     change_password,
     updateRole,
-    removeAdmin
+    removeAdmin,
+    list_admins
 };
