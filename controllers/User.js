@@ -291,13 +291,14 @@ const verify_recovery_key = async (req, res = response) => {
             if (user.recovery_key == code) {
                 res.status(200).send({ 
                     status: 'success',
+                    msg: 'Por favor prosiga a cambiar la contraseña',
                     token: true 
                 });
                 
             } else {
-                res.status(200).send({ 
-                    status: 'success',
-                    token: false 
+                res.status(400).send({ 
+                    status: 'error',
+                    msg: 'El codigo no es igual al enviado previamente'
                 });
             }
         }
