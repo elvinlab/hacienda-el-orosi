@@ -1,7 +1,8 @@
 const Collaborator = require( '../models/Collaborator.js' );
 
 const { response } = require ( 'express' );
-const { request } = require('../Express_server.js');
+
+
 const app = require('../Express_server.js');
 
 const register = (req, res = response ) => { 
@@ -13,7 +14,7 @@ const register = (req, res = response ) => {
            msg: 'Por favor contacte con el Administrador para mas información',
        });
     }*/
-    const { id, nationality, name, lastname, direction, tel, cel,
+    const { id, nationality, name, last_name, direction, tel, cel,
         date_admission, dispatch_date} = req.body;
 
     try {
@@ -21,7 +22,7 @@ const register = (req, res = response ) => {
         Collaborator.id = id;
         Collaborator.nationality = nationality;
         Collaborator. name =  name;
-        Collaborator. lastname =  lastname;
+        Collaborator. lastname =  last_name;
         Collaborator.direction = direction;
         Collaborator.tel = tel;
         Collaborator.cel = cel;

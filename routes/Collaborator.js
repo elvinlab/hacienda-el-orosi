@@ -14,7 +14,7 @@ router.post(
         check("id", "Cédula requerida").not().isEmpty(),
         check("nationality", "Nacionalidad requerida").not().isEmpty(),
         check("name", "Nombre requerido").not().isEmpty(),
-        check("lastname", "apellido requerido").not().isEmpty(),
+        check("last_name", "apellido requerido").not().isEmpty(),
         check("direction", "Dirección requerida").not().isEmpty(),
         check("tel", "Telefono requerido").not().isEmpty(),
         check("cel", "Celular requerido").not().isEmpty(),
