@@ -14,22 +14,22 @@ const register = (req, res = response ) => {
            msg: 'Por favor contacte con el Administrador para mas información',
        });
     }*/
-    const { id, nationality, name, last_name, direction, tel, cel,
+    const { id, nationality, name, surname, direction, tel, cel,
         date_admission, dispatch_date} = req.body;
 
     try {
-        let Collaborator = new Collaborator();
-        Collaborator.id = id;
-        Collaborator.nationality = nationality;
-        Collaborator. name =  name;
-        Collaborator. lastname =  last_name;
-        Collaborator.direction = direction;
-        Collaborator.tel = tel;
-        Collaborator.cel = cel;
+        let collaborator = new Collaborator();
+        collaborator.id = id;
+        collaborator.nationality = nationality;
+        collaborator.name =  name;
+        collaborator.surname =  surname;
+        collaborator.direction = direction;
+        collaborator.tel = tel;
+        collaborator.cel = cel;
        //Collaborator.date_admission = date_admission;
         //Collaborator.dispatch_date = dispatch_date;
         
-        Collaborator.save();
+        collaborator.save();
 
         return res.status( 200 ).json({
             status: 'success',
