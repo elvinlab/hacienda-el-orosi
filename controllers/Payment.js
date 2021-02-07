@@ -37,8 +37,7 @@ const registerSalaryCollaboratior = (req, res = response) => {
 
 const registerSalaryAdministrator = (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE") {
-
-     try {
+    try {
       let payment = new Payment();
       payment.administrator = req.user.id; //seteo al modelo.
       payment.net_salary = net_salary;
@@ -55,8 +54,10 @@ const registerSalaryAdministrator = (req, res = response) => {
         status: "Error",
         msg: "Porfavor contacte con el Administrador para mas información",
       });
-  } 
+    }
+  }
 };
+
 const paymentsByCollaborator = (req, res = response) => {
   const collaboratorId = req.params.id;
 
