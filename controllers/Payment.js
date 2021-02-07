@@ -2,7 +2,7 @@ const Payment = require("../models/Payment.js");
 const { response } = require("express");
 const { ObjectId } = require("mongodb");
 
-const register = (req, res = response) => {
+const registerSalaryCollaboratior = (req, res = response) => {
   const { net_salary, salary, details } = req.body;
 
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
@@ -35,6 +35,28 @@ const register = (req, res = response) => {
   }
 };
 
+const registerSalaryAdministrator = (req, res = response) => {
+  if (req.user.role === "GENERAL_ROLE") {
+
+     try {
+      let payment = new Payment();
+      payment.administrator = req.user.id; //seteo al modelo.
+      payment.net_salary = net_salary;
+      payment.final_salary = salary;
+      payment.details = details;
+
+      payment.save();
+      return res.status(200).json({
+        status: "succes",
+        msg: "Pago realizado con exito",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: "Error",
+        msg: "Porfavor contacte con el Administrador para mas información",
+      });
+  } 
+};
 const paymentsByCollaborator = (req, res = response) => {
   const collaboratorId = req.params.id;
 
@@ -101,13 +123,11 @@ const paymentsByAdministrator = (req, res = response) => {
     });
   }
 };
-const getPayments = (req, res = response) => {
-
-  
-};
+const getPayments = (req, res = response) => {};
 
 module.exports = {
-  register,
+  registerSalaryCollaboratior,
+  registerSalaryAdministrator,
   paymentsByCollaborator,
   paymentsByAdministrator,
   getPayments,
