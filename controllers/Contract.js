@@ -48,6 +48,62 @@ const save = (req, res = response) => {
   }
 };
 
+const getContracts = (req, res = response) => {
+  const status = req.params.status;
+
+
+  Contract.find({ status: status })
+    .sort([["date_contract", "ascending"]])
+    .exec((err, contracts) => {
+      if (err) {
+        res.status(500).send({
+          status: "error",
+          msg: "Error en la peticion",
+        });
+      }
+
+      if (!contracts) {
+        res.status(404).send({
+          status: "error",
+          msg: "No hay pagos por mostrar",
+        });
+      }
+      res.status(200).send({
+        status: "success",
+        contracts,
+      });
+    });
+};
+
+const getContractsByContracted = (req, res = response) => {
+  const status = req.params.status;
+  const document_id = req.params.id;
+
+  Contract.find({ status: status, document_id: document_id })
+    .sort([["date_contract", "ascending"]])
+    .exec((err, contracts) => {
+      if (err) {
+        res.status(500).send({
+          status: "error",
+          msg: "Error en la peticion",
+        });
+      }
+
+      if (!contracts) {
+        res.status(404).send({
+          status: "error",
+          msg: "No hay pagos por mostrar",
+        });
+      }
+      res.status(200).send({
+        status: "success",
+        contracts,
+      });
+    });
+};
+
 module.exports = {
   save,
+  getContracts,
+  getContractsByContracted
 };

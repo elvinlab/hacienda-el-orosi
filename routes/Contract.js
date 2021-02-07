@@ -7,6 +7,7 @@ const router = Router();
 
 const { 
     save,
+    getContracts,
 } = require ( '../controllers/Contract.js');
 
 router.post(
@@ -25,5 +26,8 @@ router.post(
     md_auth.authenticated,
     save
  );
+
+ router.get("/ver-contratos/:status",  md_auth.authenticated,  getContracts );
+ router.get("/ver-contratos/:status/:id",  md_auth.authenticated,  getContracts );
 
 module.exports = router;

@@ -18,7 +18,7 @@ app.use("/api", require("./routes/User.js"));
 app.use("/api/recursos-humanos", require("./routes/Collaborator.js"));
 app.use("/api/recursos-humanos", require("./routes/Job.js"));
 app.use("/api/recursos-humanos", require("./routes/Lend.js"));
-app.use("/api/recursos-humanos", require("./routes/Payment.js"));
+//app.use("/api/recursos-humanos", require("./routes/Payment.js"));
 app.use("/api/recursos-humanos", require("./routes/Contract.js"));
 
 app.listen(process.env.PORT, () => {
