@@ -7,9 +7,6 @@ const router = Router();
 
 const { 
     save,
-    getContracts,
-    getContractsByContracted,
-    changeStatus,
 } = require ( '../controllers/Contract.js');
 
 router.post(
@@ -28,15 +25,5 @@ router.post(
     md_auth.authenticated,
     save
  );
-
- router.put(
-    "/contrato/cambiar-estado/:id",
-    [check("status", "Estado no recibido").not().isEmpty(), validate_fields],
-    md_auth.authenticated,
-    changeStatus
-  );
-
- router.get("/ver-contratos/:status",  md_auth.authenticated,  getContracts );
- router.get("/ver-contratos/especificos/:status/:id",  md_auth.authenticated,  getContractsByContracted );
 
 module.exports = router;
