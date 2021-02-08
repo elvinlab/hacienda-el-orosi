@@ -22,7 +22,7 @@ app.use("/api/recursos-humanos", require("./routes/Lend.js"));
 app.use("/api/recursos-humanos", require("./routes/Contract.js"));
 
 app.listen(process.env.PORT, () => {
-  console.log(`Servidor correindo en el puerto: ${process.env.PORT}`);
+  console.log(`Servidor corriendo en el puerto: ${process.env.PORT}`);
 });
 
 module.exports = app;
