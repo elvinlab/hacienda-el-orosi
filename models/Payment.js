@@ -1,9 +1,10 @@
 const { model, Schema } = require("mongoose");
 const moment = require("moment");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 moment.locale("es");
 
-const PaymentShema = Schema({
+const PaymentSchema = Schema({
   administrator: { type: Schema.ObjectId, ref: "Administrator" },
   collaborator: { type: Schema.ObjectId, ref: "Collaborator" },
   pay_day: {
@@ -25,4 +26,6 @@ const PaymentShema = Schema({
   }
 });
 
-module.exports = model("Payment", PaymentShema);
+PaymentSchema.plugin(mongoosePaginate);
+
+module.exports = model("Payment", PaymentSchema);
