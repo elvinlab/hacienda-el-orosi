@@ -187,7 +187,8 @@ const login = async (req, res = response) => {
 const getUser = async (req, res = response) => {
     let userId = req.user.id;
 
-    await User.findById(userId).exec((err, get_user) => {
+    await User.findById(userId)
+    .exec((err, get_user) => {
         if (err || !get_user) {
             return res.status(404).send({
             status: "error",
