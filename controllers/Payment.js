@@ -1,151 +1,151 @@
-const Payment - require(".. /modelos/Pago.js");
-const - respuesta -  requiere ("express");
-const - ObjectId -  requiere("mongodb");
+const Payment = require("../models/Payment.js");
+const { response } = require("express");
+const { ObjectId } = require("mongodb");
 
-registro constSalaryCollaboratior   (req, res - response) => {
-  si (req. usuario. rol " GENERAL_ROLE" || req. usuario. rol "RESOURCES_ROLE" ) {
-    const á net_salary, final_salary, detalles  . cuerpo;
+const registerSalaryCollaboratior = (req, res = response) => {
+  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+    const { net_salary, final_salary, details } = req.body;
 
-    valido el roll
-    Tratar {
-      dejar el pago - nuevo pago();
+    //valido el roll
+    try {
+      let payment = new Payment();
 
-      pago. administrador .  usuario. id; //seteo al modelo.
-      pago. colaborador . req . params. id;
-      pago. net_salary á net_salary;
-      pago. final_salary á final_salary;
-      pago. detalles - detalles;
+      payment.administrator = req.user.id; //seteo al modelo.
+      payment.collaborator = req.params.id;
+      payment.net_salary = net_salary;
+      payment.final_salary = final_salary;
+      payment.details = details;
 
-      pago. guardar();
-      volver res. estado(200). json({
-        estado: "succes",
-        msg: "Pago con realizado exito",
+      payment.save();
+      return res.status(200).json({
+        status: "succes",
+        msg: "Pago realizado con exito",
       });
     } catch (error) {
-      volver res. estado(500). json({
-        estado: "Error",
+      return res.status(500).json({
+        status: "Error",
         msg: "Porfavor contacte con el Administrador para mas información",
       });
     }
-  } Más {
-    res. estado(500). json({
-      estado: "Error",
+  } else {
+    res.status(500).json({
+      status: "Error",
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
-const paymentsByCollaborator ( req, res - response) => {
-  si (req. usuario. rol " GENERAL_ROLE" || req. usuario. rol "RESOURCES_ROLE" ) {
-    let page - undefined;
-    const collaboratorId á req. params. id;
-    Si (
- ! req. params. página ||
-      req. params. página 0  ||
-      req. params. página : "0" ||
-      req. params. página:  || nulo
-      req. params. página:  indefinido
+const paymentsByCollaborator = (req, res = response) => {
+  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+    let page = undefined;
+    const collaboratorId = req.params.id;
+    if (
+      !req.params.page ||
+      req.params.page == 0 ||
+      req.params.page == "0" ||
+      req.params.page == null ||
+      req.params.page == undefined
     ) {
-      Página 1 ;
-    } Más {
-      page - parseInt(req. params. página);
+      page = 1;
+    } else {
+      page = parseInt(req.params.page);
     }
-    opciones de const  = {
-      ordenar: pay_day : "ascendente" ,,
-      límite: 5,
-      página: página,
+    const options = {
+      sort: { pay_day: "ascending" },
+      limit: 5,
+      page: page,
     };
 
-    Pago. paginate(
-      { colaborador: ObjectId(collaboratorId) ,
-      opciones,
-      (err, pagos) => {
-        si (err) {
-          volver res. estado(500). enviar({
-            estado: "error",
+    Payment.paginate(
+      { collaborator: ObjectId(collaboratorId) },
+      options,
+      (err, payments) => {
+        if (err) {
+          return res.status(500).send({
+            status: "error",
             msg: "Error al hacer la consulta",
           });
         }
 
-        si (! pagos) {
-          volver res. estado(404). enviar({
-            estado: "error",
+        if (!payments) {
+          return res.status(404).send({
+            status: "error",
             msg: "Sin pagos registrados",
           });
         }
 
-        volver res. estado(200). json({
-          estado: "éxito",
-          pagos: {
-            pagos: pagos. docs,
-            recuento: pagos. totalDocs,
-            totalPages: pagos. totalPages,
+        return res.status(200).json({
+          status: "success",
+          payments: {
+            payments: payments.docs,
+            count: payments.totalDocs,
+            totalPages: payments.totalPages,
           },
         });
       }
     );
-  } Más {
-    res. estado(500). json({
-      estado: "Error",
+  } else {
+    res.status(500).json({
+      status: "Error",
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
-const getPayments ( req, res - response) => {
-  si (req. usuario. rol " GENERAL_ROLE" || req. usuario. rol "RESOURCES_ROLE" ) {
-    let page - undefined;
+const getPayments = (req, res = response) => {
+  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+    let page = undefined;
 
-    Si (
- ! req. params. página ||
-      req. params. página 0  ||
-      req. params. página : "0" ||
-      req. params. página:  || nulo
-      req. params. página:  indefinido
+    if (
+      !req.params.page ||
+      req.params.page == 0 ||
+      req.params.page == "0" ||
+      req.params.page == null ||
+      req.params.page == undefined
     ) {
-      Página 1 ;
-    } Más {
-      page - parseInt(req. params. página);
+      page = 1;
+    } else {
+      page = parseInt(req.params.page);
     }
-    opciones de const  = {
-      ordenar: pay_day : "ascendente" ,,
-      límite: 5,
-      página: página,
+    const options = {
+      sort: { pay_day: "ascending" },
+      limit: 5,
+      page: page,
     };
 
-    Pago. paginate(,  opciones, , err, pagos ) => {
-      si (err) {
-        volver res. estado(500). enviar({
-          estado: "error",
+    Payment.paginate({}, options, (err, payments) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
           msg: "Error al hacer la consulta",
         });
       }
 
-      si (! pagos) {
-        volver res. estado(404). enviar({
-          estado: "error",
+      if (!payments) {
+        return res.status(404).send({
+          status: "error",
           msg: "Sin pagos registrados",
         });
       }
 
-      volver res. estado(200). json({
-        estado: "éxito",
-        pagos: {
-          pagos: pagos. docs,
-          recuento: pagos. totalDocs,
-          totalPages: pagos. totalPages,
+      return res.status(200).json({
+        status: "success",
+        payments: {
+          payments: payments.docs,
+          count: payments.totalDocs,
+          totalPages: payments.totalPages,
         },
       });
     });
-  } Más {
-    res. estado(500). json({
-      estado: "Error",
+  } else {
+    res.status(500).json({
+      status: "Error",
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
-módulo. exportaciones = {
+module.exports = {
   registerSalaryCollaboratior,
   paymentsByCollaborator,
   getPayments,
