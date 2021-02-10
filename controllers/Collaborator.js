@@ -6,14 +6,7 @@ const { response } = require ( 'express' );
 const app = require('../Express_server.js');
 
 const register = (req, res = response ) => { 
-  /*  if ( ( req.user.role === 'planilla' ) || ( req.user.role ==='general' ) ) {
-        console.log('soy el administrador');
-    } else {
-       return res.status( 500 ).json({
-           status: 'Error',
-           msg: 'Por favor contacte con el Administrador para mas información',
-       });
-    }*/
+
     const { id, nationality, name, surname, direction, tel, cel,
         date_admission, dispatch_date} = req.body;
 

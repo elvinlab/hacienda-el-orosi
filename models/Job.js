@@ -8,6 +8,7 @@ const JobSchema = Schema({
   name_job: {
     type: String,
     required: true,
+    unique: true,
   },
   collaborator: { type: Schema.ObjectId, ref: "Collaborator" },
   description: {
