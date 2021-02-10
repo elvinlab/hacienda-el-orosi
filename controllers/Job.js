@@ -1,4 +1,3 @@
-  
 const Job = require("../models/Job.js");
 
 const { response } = require("express");

@@ -2,15 +2,14 @@ const Payment = require("../models/Payment.js");
 const { response } = require("express");
 const { ObjectId } = require("mongodb");
 
-const registerSalaryCollaboratior = (req, res = response) => {
+const registerSalaryCollaborator = (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
     const { net_salary, final_salary, details } = req.body;
 
-    //valido el roll
     try {
       let payment = new Payment();
 
-      payment.administrator = req.user.id; //seteo al modelo.
+      payment.administrator = req.user.id;
       payment.collaborator = req.params.id;
       payment.net_salary = net_salary;
       payment.final_salary = final_salary;
@@ -146,7 +145,7 @@ const getPayments = (req, res = response) => {
 };
 
 module.exports = {
-  registerSalaryCollaboratior,
+  registerSalaryCollaborator,
   paymentsByCollaborator,
   getPayments,
 };

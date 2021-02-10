@@ -1,7 +1,7 @@
 const Lend = require("../models/Lend.js");
 const Fee = require("../models/Fee.js");
-const { ObjectId } = require("mongodb");
 
+const { ObjectId } = require("mongodb");
 const { response } = require("express");
 
 const make = (req, res = response) => {
@@ -46,20 +46,17 @@ const registerFee = async (req, res = response) => {
       fee.fee_week = fee_week;
 
       let findLend = await Lend.findById(ObjectId(lend));
-      let newAmount = (findLend.amount - fee_week);
+      let newAmount = findLend.amount - fee_week;
       let newStatus = findLend.status;
 
-      if( newAmount <= 0 ){
+      if (newAmount <= 0) {
         newStatus = "cancel";
         newAmount = 0;
       }
 
-
       await Lend.findByIdAndUpdate(
         { _id: lend },
-        { amount: newAmount,
-          status: newStatus
-        },
+        { amount: newAmount, status: newStatus },
         (err) => {
           if (err) {
             res.status(400).json({
