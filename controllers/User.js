@@ -34,8 +34,6 @@ const register = async (req, res = response) => {
       user.surname = surname;
       user.role = role;
 
-      console.log(user);
-
       await user.save();
 
       res.status(201).send({

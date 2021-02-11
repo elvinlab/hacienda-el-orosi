@@ -14,16 +14,15 @@ const register = async (req, res = response) => {
       direction,
       tel,
       cel,
-      date_admission,
     } = req.body;
 
     try {
       let findCollaboratorByDocumentId = await Collaborator.findOne({
-        document_id,
+        document_id
       });
 
       if (findCollaboratorByDocumentId) {
-        res.status(400).json({
+        return res.status(400).json({
           status: "error",
           msg: "El colaborador ya existe",
         });
@@ -38,22 +37,21 @@ const register = async (req, res = response) => {
       collaborator.direction = direction;
       collaborator.tel = tel;
       collaborator.cel = cel;
-      Collaborator.date_admission = date_admission;
 
       await collaborator.save();
 
-      res.status(200).json({
+     return res.status(200).json({
         status: "success",
         msg: "Colaborador registrado con exito",
       });
     } catch (error) {
-      res.status(500).json({
+     return  res.status(500).json({
         status: "Error",
         msg: "Por favor contacte con el Administrador para mas información",
       });
     }
   } else {
-    res.status(500).json({
+    return res.status(500).json({
       status: "Error",
       msg: "No tienes permisos en la plataforma",
     });
@@ -136,7 +134,7 @@ const getCollaborators = (req, res = response) => {
       page = parseInt(req.params.page);
     }
     const options = {
-      sort: { date_admission: "ascending" },
+      sort: { date_admission: -1 },
       limit: 5,
       page: page,
     };

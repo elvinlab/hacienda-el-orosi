@@ -7,6 +7,7 @@ moment.locale("es");
 const CollaboratorSchema = Schema({
   document_id: {
     type: String,
+    unique: true,
     required: true,
   },
   administrator: { type: Schema.ObjectId, ref: "Administrator" },
