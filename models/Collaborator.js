@@ -12,40 +12,32 @@ const CollaboratorSchema = Schema({
   administrator: { type: Schema.ObjectId, ref: "Administrator" },
   nationality: {
     type: String,
-    required: true,
   },
   name: {
     type: String,
-    required: true,
   },
   surname: {
     type: String,
-    required: true,
   },
   direction: {
     type: String,
   },
   tel: {
     type: String,
-    required: true,
   },
   cel: {
     type: String,
   },
-  cel: {
+  status: {
     type: String,
     default: "active",
-    required: true,
   },
   date_admission: {
     type: String,
     default: () => moment().format("DD-MM-YYYY"),
-    require: true,
   },
   dispatch_date: {
     type: String,
-    default: () => moment().format("DD-MM-YYYY"),
-    require: true,
   },
 });
 

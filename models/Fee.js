@@ -31,4 +31,4 @@ const FeeSchema = Schema({
 
 FeeSchema.plugin(mongoosePaginate);
 
-module.exports = modeFeeSchemal( 'Fee', FeeSchema );
+module.exports = model( 'Fee', FeeSchema );
