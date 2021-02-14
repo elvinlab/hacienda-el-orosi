@@ -87,6 +87,108 @@ const registerFee = async (req, res = response) => {
   }
 };
 
+const getFeesByCollaborator = async (req, res = response) => {
+  let collaboratorId = req.params.id;
+  
+  await Fee.find({collaborator: collaboratorId}).exec((err, fees) => {
+    if (err) {
+      return res.status(500).send({
+        status: "error",
+        msg: "Error al hacer la consulta",
+      });
+    }
+
+    if (!fees) {
+      return res.status(404).send({
+        status: "error",
+        msg: "No existe cuota del colaborador.",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      fee: {
+        fees: fees,
+        count: fees.totalDocs,
+        totalPages: fees.totalPages,
+      },
+  });
+  });
+
+  }
+
+
+const getLendsByStatus = (req, res = response) => {
+  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+
+    Lend.find({status: "active"}).exec((err, lends) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          msg: "Error al hacer la consulta",
+        });
+      }
+
+      if (!lends) {
+        return res.status(404).send({
+          status: "error",
+          msg: "No hay prestamos registrados",
+        });
+      }
+
+      return res.status(200).json({
+        status: "success",
+        lends: {
+          lends: lends,
+          count: lends.totalDocs,
+          totalPages: lends.totalPages,
+        },
+      });
+    });
+  } else {
+    res.status(500).json({
+      status: "Error",
+      msg: "No tienes permisos en la plataforma",
+    });
+  }
+}
+
+const getRecords = (req, res = response) => {
+  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+    
+    Lend.find({ status: "cancel" }).exec((err, lends) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          msg: "Error al hacer la consulta",
+        });
+      }
+
+      if (!lends) {
+        return res.status(404).send({
+          status: "error",
+          msg: "No hay prestamos registrados",
+        });
+      }
+
+      return res.status(200).json({
+        status: "success",
+        lends: {
+          lends: lends,
+          count: lends.totalDocs,
+          totalPages: lends.totalPages,
+        },
+      });
+    });
+  } else {
+    res.status(500).json({
+      status: "Error",
+      msg: "No tienes permisos en la plataforma",
+    });
+  }
+}
+
+
 const deleteLend = async (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
     const lendId = req.params.id;
@@ -128,5 +230,8 @@ const deleteLend = async (req, res = response) => {
 module.exports = {
   make,
   registerFee,
+  getFeesByCollaborator,
+  getLendsByStatus,
+  getRecords,
   deleteLend,
 };
