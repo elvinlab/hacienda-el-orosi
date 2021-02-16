@@ -130,7 +130,7 @@ const getPayments = (req, res = response) => {
       return res.status(200).json({
         status: "success",
         payments: {
-          payments: payments.docs,
+          payments: payments,
           count: payments.totalDocs,
           totalPages: payments.totalPages,
         },
