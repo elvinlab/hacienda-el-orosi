@@ -48,6 +48,92 @@ const save = (req, res = response) => {
   }
 };
 
+const getContracts = (req, res = response) => {
+  const status = req.params.status;
+
+  Contract.find({ status: status })
+    .sort([["date_contract", "ascending"]])
+    .exec((err, contracts) => {
+      if (err) {
+        res.status(500).send({
+          status: "error",
+          msg: "Error en la peticion",
+        });
+      }
+
+      if (!contracts) {
+        res.status(404).send({
+          status: "error",
+          msg: "No hay pagos por mostrar",
+        });
+      }
+      res.status(200).send({
+        status: "success",
+        contracts,
+      });
+    });
+};
+
+const getContractsByContracted = (req, res = response) => {
+  const status = req.params.status;
+  const document_id = req.params.id;
+
+  Contract.find({ status: status, document_id: document_id })
+    .sort([["date_contract", "ascending"]])
+    .exec((err, contracts) => {
+      if (err) {
+        res.status(500).send({
+          status: "error",
+          msg: "Error en la peticion",
+        });
+      }
+
+      if (!contracts) {
+        res.status(404).send({
+          status: "error",
+          msg: "No hay pagos por mostrar",
+        });
+      }
+      res.status(200).send({
+        status: "success",
+        contracts,
+      });
+    });
+};
+
+const changeStatus = async (req, res = response) => {
+  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+    const { status } = req.body;
+    const contractId = req.params.id;
+
+    await Contract.findByIdAndUpdate(
+      { _id: contractId },
+      { status: status },
+      (err) => {
+        if (err) {
+          res.status(400).json({
+            status: "error",
+            msg: "Por favor hable con el administrador",
+          });
+        } else {
+          res.status(200).send({
+            status: "success",
+            msg: "Estado actualizado para este contrato",
+          });
+        }
+      }
+    );
+  } else {
+    res.status(500).json({
+      status: "Error",
+      msg: "No tienes permisos en la plataforma",
+    });
+  }
+};
+
 module.exports = {
   save,
+  getContracts,
+  getContractsByContracted,
+  changeStatus,
 };
