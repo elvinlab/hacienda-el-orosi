@@ -323,19 +323,27 @@ const change_password = async (req, res = response) => {
   });
 };
 
-const list_admins = async (req, res = response) => {
+const list_admins = (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE") {
     User.find().exec((err, admins) => {
-      if (err || !admins) {
+      if (err ) {
         return res.status(404).send({
           status: "error",
-          msg: "Error inesperado",
+          msg: "Error al hacer la consulta",
+        });
+      }
+      if (!admins) {
+        return res.status(404).send({
+          status: "error",
+          msg: "No existe ningun administrador.",
         });
       }
 
       return res.status(200).json({
         status: "success",
-        admins: admins,
+        admins: {
+          admins: admins,
+        },
       });
     });
   } else {
