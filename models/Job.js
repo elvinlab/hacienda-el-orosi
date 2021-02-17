@@ -1,13 +1,10 @@
 const { model, Schema } = require("mongoose");
-const moment = require("moment");
-const mongoosePaginate = require("mongoose-paginate-v2");
-
-moment.locale("es");
 
 const JobSchema = Schema({
   name_job: {
     type: String,
     required: true,
+    unique: true,
   },
   collaborator: { type: Schema.ObjectId, ref: "Collaborator" },
   description: {

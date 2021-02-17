@@ -1,5 +1,6 @@
 const { model, Schema } = require( 'mongoose' );
 const moment =  require('moment');
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 moment.locale( 'es' );
 
@@ -18,7 +19,7 @@ const FeeSchema = Schema({
 
     date_fee: {
         type: String,
-        default: () => moment().format("DD, MM  YYYY, HH:MM:SS"),
+        default: () => moment().format("DD-MM-YYYY"),
         required: true,
     },
 
@@ -27,5 +28,7 @@ const FeeSchema = Schema({
         required: true,
     }
 });
+
+FeeSchema.plugin(mongoosePaginate);
 
 module.exports = model( 'Fee', FeeSchema );

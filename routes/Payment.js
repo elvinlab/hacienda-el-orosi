@@ -6,7 +6,7 @@ const md_auth = require("../middelewares/Authenticated");
 const router = Router();
 
 const {
-  registerSalaryCollaboratior,
+  registerSalaryCollaborator,
   paymentsByCollaborator,
   getPayments,
 } = require("../controllers/Payment.js");
@@ -19,7 +19,7 @@ router.post(
     validate_fields,
   ],
   md_auth.authenticated,
-  registerSalaryCollaboratior
+  registerSalaryCollaborator
 );
 router.get(
   "/pagos/colaborador/:id/:page?",

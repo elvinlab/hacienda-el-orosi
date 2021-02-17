@@ -1,6 +1,5 @@
 const { model, Schema } = require( 'mongoose' );
 const moment =  require('moment');
-const mongoosePaginate = require('mongoose-paginate-v2');
 
 moment.locale( 'es' );
 
@@ -13,7 +12,7 @@ const LendSchema = Schema({
 
     date_issued: {
         type: String,
-        default: () => moment().format("DD, MM  YYYY, HH:MM:SS"),
+        default: () => moment().format("DD-MM-YYYY"),
         required: true,
     },
 

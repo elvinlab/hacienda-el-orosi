@@ -1,5 +1,6 @@
 const { model, Schema } = require("mongoose");
 const moment = require("moment");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 moment.locale("es");
 
@@ -56,5 +57,7 @@ const ContractSchema = Schema({
     required: true,
   },
 });
+
+ContractSchema.plugin(mongoosePaginate);
 
 module.exports = model("Contract", ContractSchema);

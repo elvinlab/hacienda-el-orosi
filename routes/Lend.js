@@ -8,6 +8,9 @@ const router = Router();
 const { 
     make,
     registerFee,
+    getFeesByCollaborator,
+    getLendsByStatus,
+    getRecords,
     deleteLend,
 } = require ( '../controllers/Lend.js');
 
@@ -34,10 +37,27 @@ router.post(
      registerFee
  );
 
+ router.get(
+    "/historial-cuotas/:id",
+    [
+       md_auth.authenticated,
+       getFeesByCollaborator
+    ],
+    );
+
+ router.get(
+     "/prestamo-activos",
+     [
+        md_auth.authenticated,
+        getLendsByStatus
+     ],
+     );
+
  router.delete(
      "/eliminar-prestamo/:id",
      md_auth.authenticated,
      deleteLend
  );
-
+ 
+ router.get("/historial/:page?", md_auth.authenticated, getRecords);
 module.exports = router;
