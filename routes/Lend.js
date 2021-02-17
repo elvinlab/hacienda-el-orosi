@@ -46,7 +46,7 @@ router.post(
     );
 
  router.get(
-     "/prestamo-activos",
+     "/prestamos-activos",
      [
         md_auth.authenticated,
         getLendsByStatus
