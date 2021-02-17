@@ -125,30 +125,28 @@ const getFeesByCollaborator = async (req, res = response) => {
 
 const getLendsByStatus = (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
-    Lend.find({ status: "active" }).exec((err, lends) => {
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          msg: "Error al hacer la consulta",
-        });
-      }
+    Lend.find({ status: "active" })
+      .populate("collaborator")
+      .exec((err, lends) => {
+        if (err) {
+          return res.status(500).send({
+            status: "error",
+            msg: "Error al hacer la consulta",
+          });
+        }
 
-      if (!lends) {
-        return res.status(404).send({
-          status: "error",
-          msg: "No hay prestamos registrados",
-        });
-      }
+        if (!lends) {
+          return res.status(404).send({
+            status: "error",
+            msg: "No hay prestamos registrados",
+          });
+        }
 
-      return res.status(200).json({
-        status: "success",
-        lends: {
+        return res.status(200).json({
+          status: "success",
           lends: lends,
-          count: lends.totalDocs,
-          totalPages: lends.totalPages,
-        },
+        });
       });
-    });
   } else {
     res.status(500).json({
       status: "Error",
