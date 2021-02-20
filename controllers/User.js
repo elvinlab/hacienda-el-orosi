@@ -326,7 +326,7 @@ const change_password = async (req, res = response) => {
 const list_admins = (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE") {
     User.find().exec((err, admins) => {
-      if (err ) {
+      if (err) {
         return res.status(404).send({
           status: "error",
           msg: "Error al hacer la consulta",
@@ -341,9 +341,7 @@ const list_admins = (req, res = response) => {
 
       return res.status(200).json({
         status: "success",
-        admins: {
-          admins: admins,
-        },
+        administrators: admins,
       });
     });
   } else {
