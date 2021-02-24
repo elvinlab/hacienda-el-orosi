@@ -1,32 +1,44 @@
-const { model, Schema } = require( 'mongoose' );
-const moment =  require('moment');
+const { model, Schema } = require("mongoose");
+const moment = require("moment");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
-moment.locale( 'es' );
+moment.locale("es");
 
 const LendSchema = Schema({
-    collaborator: { 
-        type: Schema.ObjectId, 
-        ref: 'Collaborator',
-        required: true,
-    },
+  collaborator: {
+    type: Schema.ObjectId,
+    ref: "Collaborator",
+    required: true,
+  },
 
-    date_issued: {
-        type: String,
-        default: () => moment().format("DD-MM-YYYY"),
-        required: true,
-    },
+  date_issued: {
+    type: String,
+    default: () => moment().format("DD-MM-YYYY"),
+    required: true,
+  },
 
-    status: {
-        type: String,
-        default: "active",
-        required: true,
-    },
+  status: {
+    type: String,
+    default: "active",
+    required: true,
+  },
 
-    amount:{
-        type: Number,
-        required: true,
-    } 
+  initial_amount: {
+    type: Number,
+    required: true,
+  },
+
+  amount: {
+    type: Number,
+    required: true,
+  },
+
+  fee: {
+    type: Number,
+    required: true,
+  }
 });
 
+LendSchema.plugin(mongoosePaginate);
 
-module.exports = model( 'Lend', LendSchema );
+module.exports = model("Lend", LendSchema);

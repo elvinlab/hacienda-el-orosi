@@ -23,10 +23,6 @@ const FeeSchema = Schema({
         required: true,
     },
 
-    fee_week: {
-        type: Number,
-        required: true,
-    }
 });
 
 FeeSchema.plugin(mongoosePaginate);
