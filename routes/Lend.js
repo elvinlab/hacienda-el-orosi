@@ -10,7 +10,6 @@ const {
     registerFee,
     getFeesByCollaborator,
     getLendsByStatus,
-    getRecords,
     deleteLend,
 } = require ( '../controllers/Lend.js');
 
@@ -18,7 +17,8 @@ router.post(
     '/realizar-prestamo',
     [
         check("collaborator_id","El colaborador es requerido").not().isEmpty(),
-        check("amount", "El monto es requerido").not().isEmpty(),
+        check("initial_amount", "El monto inicial es requerido").not().isEmpty(),
+        check("fee", "La cuota es requerida").not().isEmpty(),
         validate_fields,
     ],
     md_auth.authenticated,
@@ -29,8 +29,7 @@ router.post(
      "/registrar-cuota",
      [
         check("collaborator_id","El colaborador es requerido").not().isEmpty(),
-        check("lend","El prestamo es requerido").not().isEmpty(),
-        check("fee_week", "La cuota semanal es requerida").not().isEmpty(),
+        check("lend_id","El prestamo es requerido").not().isEmpty(),
         validate_fields,
      ],
      md_auth.authenticated,
@@ -45,19 +44,11 @@ router.post(
     ],
     );
 
- router.get(
-     "/prestamos-activos",
-     [
-        md_auth.authenticated,
-        getLendsByStatus
-     ],
-     );
-
  router.delete(
      "/eliminar-prestamo/:id",
      md_auth.authenticated,
      deleteLend
  );
  
- router.get("/historial/:page?", md_auth.authenticated, getRecords);
+ router.get("/prestamos/:status/:page?", md_auth.authenticated,   getLendsByStatus );
 module.exports = router;
