@@ -155,6 +155,7 @@ const getLendsByStatus = (req, res = response) => {
     sort: { date_issued: -1 },
     limit: 5,
     page: page,
+    populate: "collaborator",
   };
 
   Lend.paginate({status: status}, options, (err, lends) => {
@@ -162,13 +163,6 @@ const getLendsByStatus = (req, res = response) => {
       return res.status(500).send({
         status: "error",
         msg: "Error al hacer la consulta",
-      });
-    }
-
-    if (!lends) {
-      return res.status(404).send({
-        status: "error",
-        msg: "Sin prestamos registrados",
       });
     }
 
