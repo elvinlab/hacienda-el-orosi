@@ -188,6 +188,7 @@ const getCollaboratorsActives = (req, res = response) => {
     }
     const options = {
       sort: { date_admission: "ascending" },
+      //populate: ("herramienta"),
       limit: 5,
       page: page,
     };
