@@ -42,6 +42,32 @@ const make = async (req, res = response) => {
   }
 };
 
+const changeAmountFee = async (req, res = response) => {
+  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+    const { newFee } = req.body;
+    const lendId = req.params.id;
+
+    await Lend.findByIdAndUpdate({ _id: lendId }, { fee: newFee }, (err) => {
+      if (err) {
+        res.status(400).json({
+          status: "error",
+          msg: "Por favor hable con el administrador",
+        });
+      } else {
+        res.status(200).send({
+          status: "success",
+          msg: "Se actualizo la cuota semanal",
+        });
+      }
+    });
+  } else {
+    res.status(500).json({
+      status: "Error",
+      msg: "No tienes permisos en la plataforma",
+    });
+  }
+};
+
 const registerFee = async (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
     const { collaborator_id, lend_id } = req.body;
@@ -205,14 +231,14 @@ const getLendsByCollaborator = async (req, res = response) => {
     document_id: collaborator_document_id,
   });
 
-  if(!findCollaboratorByDocumentId){
+  if (!findCollaboratorByDocumentId) {
     return res.status(400).json({
       status: "Error",
       msg: "Ningun colalorador con esta cedula.",
     });
   }
   await Lend.paginate(
-    { collaborator: ObjectId(findCollaboratorByDocumentId._id ) },
+    { collaborator: ObjectId(findCollaboratorByDocumentId._id) },
     options,
     (err, lends) => {
       if (err) {
@@ -222,13 +248,12 @@ const getLendsByCollaborator = async (req, res = response) => {
         });
       }
 
-      
-  if(lends.docs.length === 0){
-    return res.status(400).json({
-      status: "Error",
-      msg: "Este colaborador no tiene prestamos registrados.",
-    });
-  }
+      if (lends.docs.length === 0) {
+        return res.status(400).json({
+          status: "Error",
+          msg: "Este colaborador no tiene prestamos registrados.",
+        });
+      }
 
       return res.status(200).json({
         status: "success",
@@ -245,7 +270,8 @@ const deleteLend = async (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
     const lendId = req.params.id;
 
-    let findLend = await Fee.findById(ObjectId(lendId));
+    let findLend = await Fee.findOne({ lend: ObjectId(lendId) });
+
     if (findLend) {
       return res.status(500).json({
         status: "Error",
@@ -253,7 +279,7 @@ const deleteLend = async (req, res = response) => {
       });
     }
 
-    Lend.findOneAndDelete({ _id: lendId }, (err, lend) => {
+    await Lend.findOneAndDelete({ _id: lendId }, (err, lend) => {
       if (err) {
         return res.status(500).send({
           status: "error",
@@ -263,7 +289,7 @@ const deleteLend = async (req, res = response) => {
       if (!lend) {
         return res.status(404).send({
           status: "error",
-          msg: "No se ha eliminado el prestamo",
+          msg: "Prestamo no existe en la base de datos",
         });
       }
       return res.status(200).json({
@@ -282,6 +308,7 @@ const deleteLend = async (req, res = response) => {
 module.exports = {
   make,
   registerFee,
+  changeAmountFee,
   getFeesByCollaborator,
   getLendsByCollaborator,
   getLendsByStatus,
