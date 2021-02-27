@@ -9,6 +9,7 @@ const {
     make,
     registerFee,
     getFeesByCollaborator,
+    getLendsByCollaborator,
     getLendsByStatus,
     deleteLend,
 } = require ( '../controllers/Lend.js');
@@ -51,4 +52,5 @@ router.post(
  );
  
  router.get("/prestamos/:status/:page?", md_auth.authenticated,   getLendsByStatus );
+ router.get("/colaborador/prestamos/:id/:page?", md_auth.authenticated,   getLendsByCollaborator );
 module.exports = router;

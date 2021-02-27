@@ -1,4 +1,6 @@
 const Tool = require("../models/Tool.js");
+const Active = require("../models/Active.js");
+
 const { response } = require("express");
 
 const registrerTool = async (req, res = response) => {
@@ -21,6 +23,41 @@ const registrerTool = async (req, res = response) => {
     return res.status(500).json({
       status: "Error",
       msg: "Porfavor contacte con un administrador para mas informacion",
+    });
+  }
+};
+
+const registerActive = async (req, res = response) => {
+  const { collaborator_id, tool_id } = req.body;
+  try {
+    let active = new Active();
+
+    active.collaborator = collaborator_id;
+    active.tool = tool_id;
+
+    await Tool.findByIdAndUpdate(
+      { _id: tool_id },
+      { status: "active" },
+      (err) => {
+        if (err) {
+          res.status(400).json({
+            status: "error",
+            msg: "Por favor hable con el administrador",
+          });
+        }
+      }
+    );
+
+    await tool.save();
+
+    return res.status(200).json({
+      status: "success",
+      msg: "Herramienta asignada exitosamente al colaborador",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      msg: "Por favor hable con el administrador encargado",
     });
   }
 };
@@ -78,23 +115,22 @@ const getTools = (req, res = response) => {
 };
 
 const changeStatus = async (req, res = response) => {
-    const { status } = req.body;
-    const toolId = req.params.id;
+  const { status } = req.body;
+  const toolId = req.params.id;
 
-    await Tool.findByIdAndUpdate({ _id: toolId }, { status: status }, (err) => {
-      if (err) {
-        res.status(400).json({
-          status: "error",
-          msg: "por favor hable con el administrador para mas informacion",
-        });
-      } else {
-        res.status(200).send({
-          status: "success",
-          msg: "Estado actualizado del Activo",
-        });
-      }
-    });
-
+  await Tool.findByIdAndUpdate({ _id: toolId }, { status: status }, (err) => {
+    if (err) {
+      res.status(400).json({
+        status: "error",
+        msg: "por favor hable con el administrador para mas informacion",
+      });
+    } else {
+      res.status(200).send({
+        status: "success",
+        msg: "Estado actualizado del Activo",
+      });
+    }
+  });
 };
 
 const getToolsByStatus = (req, res = response) => {
@@ -138,6 +174,7 @@ const getToolsByStatus = (req, res = response) => {
 };
 module.exports = {
   registrerTool,
+  registerActive,
   getTools,
   changeStatus,
   getToolsByStatus,

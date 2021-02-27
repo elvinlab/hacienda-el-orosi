@@ -7,6 +7,7 @@ const router = Router();
 
 const {
   registrerTool,
+  registerActive,
   getTools,
   changeStatus,
   getToolsByStatus,
@@ -21,6 +22,18 @@ router.post(
   md_auth.authenticated,
   registrerTool
 );
+
+router.post(
+  "/registrar-activo",
+  [
+     check("collaborator_id","El colaborador es requerido").not().isEmpty(),
+     check("tool_id","La herramienta es requerida").not().isEmpty(),
+     validate_fields,
+  ],
+  md_auth.authenticated,
+  registerActive
+);
+
 router.put(
   "/cambiar-estado/:id",
   [check("status", "estado no recibido").not().isEmpty(), validate_fields],
