@@ -47,19 +47,26 @@ const changeAmountFee = async (req, res = response) => {
     const { newFee } = req.body;
     const lendId = req.params.id;
 
-    await Lend.findByIdAndUpdate({ _id: lendId }, { fee: newFee }, (err) => {
-      if (err) {
-        res.status(400).json({
-          status: "error",
-          msg: "Por favor hable con el administrador",
-        });
-      } else {
-        res.status(200).send({
-          status: "success",
-          msg: "Se actualizo la cuota semanal",
-        });
+    await Lend.findByIdAndUpdate(
+      { _id: lendId },
+      { fee: newFee },
+      { new: true },
+      (err, lend) => {
+        if (err) {
+          res.status(400).json({
+            status: "error",
+            msg: "Por favor hable con el administrador",
+          });
+        } else {
+          console.log(lend);
+          res.status(200).send({
+            status: "success",
+            msg: "Se actualizo la cuota semanal",
+            lend: lend,
+          });
+        }
       }
-    });
+    ).populate('collaborator');
   } else {
     res.status(500).json({
       status: "Error",
@@ -273,7 +280,7 @@ const deleteLend = async (req, res = response) => {
     let findLend = await Fee.findOne({ lend: ObjectId(lendId) });
 
     if (findLend) {
-      return res.status(500).json({
+      return res.status(400).json({
         status: "Error",
         msg: "Este prestamo se encuentra en continuidad.",
       });
