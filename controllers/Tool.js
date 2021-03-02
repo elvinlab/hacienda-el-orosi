@@ -9,8 +9,8 @@ const registrerTool = async (req, res = response) => {
   try {
     let tool = new Tool();
     tool.administrator = req.user.id;
-    (tool.active_num = Math.floor(Math.random() * (999999 - 100000) + 100000)),
-      (tool.name = name);
+    tool.active_num = Math.floor(Math.random() * (999999 - 100000) + 100000),
+    tool.name = name;
     tool.liters = liters;
 
     await tool.save();
@@ -35,6 +35,7 @@ const registerActive = async (req, res = response) => {
     active.collaborator = collaborator_id;
     active.tool = tool_id;
 
+    
     await Tool.findByIdAndUpdate(
       { _id: tool_id },
       { status: "active" },
@@ -48,7 +49,7 @@ const registerActive = async (req, res = response) => {
       }
     );
 
-    await tool.save();
+    await active.save();
 
     return res.status(200).json({
       status: "success",
@@ -62,8 +63,51 @@ const registerActive = async (req, res = response) => {
   }
 };
 
+const getActives = async (req, res = response) => {
+  let page = undefined;
+
+  if (
+    !req.params.page ||
+    req.params.page == 0 ||
+    req.params.page == "0" ||
+    req.params.page == null ||
+    req.params.page == undefined
+  ) {
+    page = 1;
+  } else {
+    page = parseInt(req.params.page);
+  }
+  const options = {
+    sort: { date_active: -1 },
+    limit: 5,
+    page: page,
+  };
+  Active.paginate({}, options, (err, actives) => {
+    if (err) {
+      return res.status(500).send({
+        status: "error",
+        msg: "Error al hacer la consulta",
+      });
+    }
+
+    if (!actives) {
+      return res.status(404).send({
+        status: "error",
+        msg: "No se encuentran herramientas activas en la aplicacion",
+      });
+    }
+    return res.status(200).json({
+      status: "success",
+      actives: {
+        actives: actives.docs,
+        count: actives.totalDocs,
+        totalPages: actives.totalPages,
+      },
+    });
+  });
+}
+
 const getTools = (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
     let page = undefined;
 
     if (
@@ -105,13 +149,6 @@ const getTools = (req, res = response) => {
         },
       });
     });
-  } else {
-    res.status(500).json({
-      status: "Error",
-      msg:
-        "No se posee los permisos necesarios en la plataforma para esta funcion",
-    });
-  }
 };
 
 const changeStatus = async (req, res = response) => {
@@ -172,10 +209,51 @@ const getToolsByStatus = (req, res = response) => {
     });
   });
 };
+
+const deleteActiveTool = async (req, res = response) => {
+  let tool_id = req.params.id;
+
+  Active.findOneAndDelete({ tool: tool_id }, (err, active) => {
+    if (err) {
+      return res.status(500).send({
+        status: "error",
+        msg: "Error al solicitar la peticion",
+      });
+    }
+    if (!active) {
+      return res.status(404).send({
+        status: "error",
+        msg: "No se ha borrado el activo",
+      });
+    }
+    
+  });
+  await Tool.findByIdAndUpdate(
+    { _id: tool_id },
+    { status: "stock" },
+    (err) => {
+      if (err) {
+      return  res.status(400).json({
+          status: "error",
+          msg: "Por favor hable con el administrador",
+        });
+      }
+    }
+  );
+
+  return res.status(200).json({
+    status: "success",
+    msg: "Herramienta regresada exitosamente ",
+
+  })
+}
+
 module.exports = {
   registrerTool,
   registerActive,
+  getActives,
   getTools,
   changeStatus,
   getToolsByStatus,
+  deleteActiveTool,
 };
