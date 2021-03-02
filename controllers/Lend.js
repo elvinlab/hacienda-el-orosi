@@ -66,7 +66,7 @@ const changeAmountFee = async (req, res = response) => {
           });
         }
       }
-    ).populate('collaborator');
+    ).populate("collaborator");
   } else {
     res.status(500).json({
       status: "Error",
@@ -127,8 +127,8 @@ const registerFee = async (req, res = response) => {
   }
 };
 
-const getFeesByCollaborator = async (req, res = response) => {
-  let collaboratorId = req.params.id;
+const getFeesByLend = async (req, res = response) => {
+  let lend_id = req.params.id;
   let page = undefined;
 
   if (
@@ -149,7 +149,7 @@ const getFeesByCollaborator = async (req, res = response) => {
   };
 
   Fee.paginate(
-    { collaborator: ObjectId(collaboratorId) },
+    { lend: ObjectId(lend_id) },
     options,
     (err, fees) => {
       if (err) {
@@ -164,7 +164,6 @@ const getFeesByCollaborator = async (req, res = response) => {
         fees: {
           fees: fees.docs,
           count: fees.totalDocs,
-          totalPages: fees.totalPages,
         },
       });
     }
@@ -316,7 +315,7 @@ module.exports = {
   make,
   registerFee,
   changeAmountFee,
-  getFeesByCollaborator,
+  getFeesByLend,
   getLendsByCollaborator,
   getLendsByStatus,
   deleteLend,
