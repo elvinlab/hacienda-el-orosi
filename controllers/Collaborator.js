@@ -18,7 +18,7 @@ const register = async (req, res = response) => {
 
     try {
       let findCollaboratorByDocumentId = await Collaborator.findOne({
-        document_id
+        document_id,
       });
 
       if (findCollaboratorByDocumentId) {
@@ -40,12 +40,12 @@ const register = async (req, res = response) => {
 
       await collaborator.save();
 
-     return res.status(200).json({
+      return res.status(200).json({
         status: "success",
         msg: "Colaborador registrado con exito",
       });
     } catch (error) {
-     return  res.status(500).json({
+      return res.status(500).json({
         status: "Error",
         msg: "Por favor contacte con el Administrador para mas información",
       });
@@ -322,13 +322,13 @@ const listActivitiesByCollaborator = async (req, res = response) => {
 };
 
 const getCollaborator = async (req, res = response) => {
-  let collaboratorId = req.params.id;
+  let document_id = req.params.id;
 
-  await Collaborator.findById(collaboratorId).exec((err, collaborator) => {
+  await Collaborator.findOne({ document_id }).exec((err, collaborator) => {
     if (err || !collaborator) {
       return res.status(404).send({
         status: "error",
-        msg: "Problemas al obtener los datos del colaborador",
+        msg: "Colaborador no existe",
       });
     }
 

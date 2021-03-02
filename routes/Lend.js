@@ -8,7 +8,7 @@ const router = Router();
 const {
   make,
   registerFee,
-  getFeesByCollaborator,
+  getFeesByLend,
   getLendsByCollaborator,
   getLendsByStatus,
   deleteLend,
@@ -40,7 +40,7 @@ router.post(
 
 router.get("/historial-cuotas/:id", [
   md_auth.authenticated,
-  getFeesByCollaborator,
+  getFeesByLend,
 ]);
 
 router.put(

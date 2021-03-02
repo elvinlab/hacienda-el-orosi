@@ -15,6 +15,7 @@ const make = async (req, res = response) => {
           msg: "La cuota no puede ser mayor al prestamo inicial o menor a 5000",
         });
       }
+
       let lend = new Lend();
 
       lend.collaborator = collaborator_id;
@@ -27,6 +28,7 @@ const make = async (req, res = response) => {
       return res.status(200).json({
         status: "success",
         msg: "Prestamo realizado exitosamente",
+        lend: lend,
       });
     } catch (error) {
       return res.status(500).json({
@@ -66,7 +68,7 @@ const changeAmountFee = async (req, res = response) => {
           });
         }
       }
-    ).populate('collaborator');
+    ).populate("collaborator");
   } else {
     res.status(500).json({
       status: "Error",
@@ -127,48 +129,21 @@ const registerFee = async (req, res = response) => {
   }
 };
 
-const getFeesByCollaborator = async (req, res = response) => {
-  let collaboratorId = req.params.id;
-  let page = undefined;
-
-  if (
-    !req.params.page ||
-    req.params.page == 0 ||
-    req.params.page == "0" ||
-    req.params.page == null ||
-    req.params.page == undefined
-  ) {
-    page = 1;
-  } else {
-    page = parseInt(req.params.page);
-  }
-  const options = {
-    sort: { date_fee: -1 },
-    limit: 5,
-    page: page,
-  };
-
-  Fee.paginate(
-    { collaborator: ObjectId(collaboratorId) },
-    options,
-    (err, fees) => {
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          msg: "Error al hacer la consulta",
-        });
-      }
-
-      return res.status(200).json({
-        status: "success",
-        fees: {
-          fees: fees.docs,
-          count: fees.totalDocs,
-          totalPages: fees.totalPages,
-        },
+const getFeesByLend = async (req, res = response) => {
+  let lend_id = req.params.id;
+  Fee.find({ lend: lend_id }).exec((err, fees) => {
+    if (err) {
+      return res.status(404).send({
+        status: "error",
+        msg: "Error al hacer la consulta",
       });
     }
-  );
+
+    return res.status(200).json({
+      status: "success",
+      fees: fees,
+    });
+  });
 };
 
 const getLendsByStatus = (req, res = response) => {
@@ -316,7 +291,7 @@ module.exports = {
   make,
   registerFee,
   changeAmountFee,
-  getFeesByCollaborator,
+  getFeesByLend,
   getLendsByCollaborator,
   getLendsByStatus,
   deleteLend,
