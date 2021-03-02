@@ -8,9 +8,11 @@ const router = Router();
 const {
   registrerTool,
   registerActive,
+  getActives,
   getTools,
   changeStatus,
   getToolsByStatus,
+  deleteActiveTool,
 } = require("../controllers/Tool.js");
 
 router.post(
@@ -40,11 +42,14 @@ router.put(
   md_auth.authenticated,
   changeStatus
 );
+router.get("/activas/:page?", md_auth.authenticated, getActives);
 router.get("/registradas/:page?", md_auth.authenticated, getTools);
 router.get(
   "/ver/:status",
   md_auth.authenticated,
   getToolsByStatus
 );
+
+router.delete("/eliminar-activo/:id", md_auth.authenticated,deleteActiveTool);
 
 module.exports = router;

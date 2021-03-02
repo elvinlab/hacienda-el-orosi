@@ -1,5 +1,6 @@
 const { model, Schema } = require( 'mongoose' );
 const moment =  require('moment');
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 moment.locale( 'es' );
 
@@ -23,5 +24,7 @@ const ActiveSchema = Schema({
     },
 
 });
+
+ActiveSchema.plugin(mongoosePaginate);
 
 module.exports = model( 'Active', ActiveSchema );
