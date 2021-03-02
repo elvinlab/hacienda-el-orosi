@@ -62,28 +62,33 @@ router.put(
 );
 
 router.get(
-    "/todos-los-colaboradores/:page?",
-    md_auth.authenticated,
-    getCollaborators
-  );
+  "/todos-los-colaboradores/:page?",
+  md_auth.authenticated,
+  getCollaborators
+);
 
-  
+router.get("/ver-colaborador/:id", md_auth.authenticated, getCollaborator);
+
 router.get(
-    "/colaboradores-activos/:page?",
-    md_auth.authenticated,
-    getCollaboratorsActives
-  );
+  "/colaboradores-activos/:page?",
+  md_auth.authenticated,
+  getCollaboratorsActives
+);
 
-  router.post(
-    "/asignar-actividad",
-    [
-      check("documentId", "Cédula requerida").not().isEmpty(),
-      check("jobId", "Cédula requerida").not().isEmpty(),
-      validate_fields,
-    ],
-    assignWork
-  );
+router.post(
+  "/asignar-actividad",
+  [
+    check("documentId", "Cédula requerida").not().isEmpty(),
+    check("jobId", "Cédula requerida").not().isEmpty(),
+    validate_fields,
+  ],
+  assignWork
+);
 
-  router.delete("/remover-actividad/:id", md_auth.authenticated, removeAssignWork);
+router.delete(
+  "/remover-actividad/:id",
+  md_auth.authenticated,
+  removeAssignWork
+);
 
 module.exports = router;

@@ -38,7 +38,7 @@ router.post(
   registerFee
 );
 
-router.get("/historial-cuotas/:id/:page?", [
+router.get("/historial-cuotas/:id", [
   md_auth.authenticated,
   getFeesByLend,
 ]);
