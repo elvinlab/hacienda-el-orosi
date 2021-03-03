@@ -1,5 +1,6 @@
 const Tool = require("../models/Tool.js");
 const Active = require("../models/Active.js");
+const { ObjectId } = require("mongodb");
 
 const { response } = require("express");
 
@@ -9,8 +10,8 @@ const registrerTool = async (req, res = response) => {
   try {
     let tool = new Tool();
     tool.administrator = req.user.id;
-    tool.active_num = Math.floor(Math.random() * (999999 - 100000) + 100000),
-    tool.name = name;
+    (tool.active_num = Math.floor(Math.random() * (999999 - 100000) + 100000)),
+      (tool.name = name);
     tool.liters = liters;
 
     await tool.save();
@@ -27,40 +28,35 @@ const registrerTool = async (req, res = response) => {
   }
 };
 
-const registerActive = async (req, res = response) => {
-  const { collaborator_id, tool_id } = req.body;
-  try {
-    let active = new Active();
+const registerActives = async (req, res = response) => {
+  const { tools } = req.body;
 
-    active.collaborator = collaborator_id;
-    active.tool = tool_id;
+  tools.forEach(async function (element) {
+    active = new Active();
 
-    
-    await Tool.findByIdAndUpdate(
-      { _id: tool_id },
+    active.collaborator = element.collaborator_id;
+    active.tool = element.tool_id;
+
+    await active.save();
+
+    await Tool.findOneAndUpdate(
+      { _id: element.tool_id },
       { status: "active" },
       (err) => {
         if (err) {
-          res.status(400).json({
+          return res.status(500).send({
             status: "error",
-            msg: "Por favor hable con el administrador",
+            msg: "Error en la operacion",
           });
         }
       }
     );
+  });
 
-    await active.save();
-
-    return res.status(200).json({
-      status: "success",
-      msg: "Herramienta asignada exitosamente al colaborador",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: "error",
-      msg: "Por favor hable con el administrador encargado",
-    });
-  }
+  return res.status(200).json({
+    status: "success",
+    msg: "Herramientas asignadas con exito",
+  });
 };
 
 const getActives = async (req, res = response) => {
@@ -105,50 +101,50 @@ const getActives = async (req, res = response) => {
       },
     });
   });
-}
+};
 
 const getTools = (req, res = response) => {
-    let page = undefined;
+  let page = undefined;
 
-    if (
-      !req.params.page ||
-      req.params.page == 0 ||
-      req.params.page == "0" ||
-      req.params.page == null ||
-      req.params.page == undefined
-    ) {
-      page = 1;
-    } else {
-      page = parseInt(req.params.page);
-    }
-    const options = {
-      sort: { date: -1 },
-      limit: 5,
-      page: page,
-    };
-    Tool.paginate({}, options, (err, tools) => {
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          msg: "Error al hacer la consulta",
-        });
-      }
-
-      if (!tools) {
-        return res.status(404).send({
-          status: "error",
-          msg: "no se encuentran herramientas registradas en la aplicacion",
-        });
-      }
-      return res.status(200).json({
-        status: "success",
-        tools: {
-          tools: tools.docs,
-          count: tools.totalDocs,
-          totalPages: tools.totalPages,
-        },
+  if (
+    !req.params.page ||
+    req.params.page == 0 ||
+    req.params.page == "0" ||
+    req.params.page == null ||
+    req.params.page == undefined
+  ) {
+    page = 1;
+  } else {
+    page = parseInt(req.params.page);
+  }
+  const options = {
+    sort: { date: -1 },
+    limit: 5,
+    page: page,
+  };
+  Tool.paginate({}, options, (err, tools) => {
+    if (err) {
+      return res.status(500).send({
+        status: "error",
+        msg: "Error al hacer la consulta",
       });
+    }
+
+    if (!tools) {
+      return res.status(404).send({
+        status: "error",
+        msg: "no se encuentran herramientas registradas en la aplicacion",
+      });
+    }
+    return res.status(200).json({
+      status: "success",
+      tools: {
+        tools: tools.docs,
+        count: tools.totalDocs,
+        totalPages: tools.totalPages,
+      },
     });
+  });
 };
 
 const changeStatus = async (req, res = response) => {
@@ -210,50 +206,42 @@ const getToolsByStatus = (req, res = response) => {
   });
 };
 
-const deleteActiveTool = async (req, res = response) => {
-  let tool_id = req.params.id;
+const deleteActivesTool = async (req, res = response) => {
+  const { tools } = req.body;
+  let collaboratorId = req.params.id;
 
-  Active.findOneAndDelete({ tool: tool_id }, (err, active) => {
+ await Active.deleteMany({ collaborator: ObjectId(collaboratorId) }, (err) => {
     if (err) {
       return res.status(500).send({
         status: "error",
         msg: "Error al solicitar la peticion",
       });
     }
-    if (!active) {
-      return res.status(404).send({
+  });
+
+  tools.forEach(async function (element) {
+  await Tool.findByIdAndUpdate({ _id: element.tool_id }, { status: "stock" }, (err) => {
+    if (err) {
+      return res.status(400).json({
         status: "error",
-        msg: "No se ha borrado el activo",
+        msg: "Por favor hable con el administrador",
       });
     }
-    
   });
-  await Tool.findByIdAndUpdate(
-    { _id: tool_id },
-    { status: "stock" },
-    (err) => {
-      if (err) {
-      return  res.status(400).json({
-          status: "error",
-          msg: "Por favor hable con el administrador",
-        });
-      }
-    }
-  );
+});
 
   return res.status(200).json({
     status: "success",
     msg: "Herramienta regresada exitosamente ",
-
-  })
-}
+  });
+};
 
 module.exports = {
   registrerTool,
-  registerActive,
+  registerActives,
   getActives,
   getTools,
   changeStatus,
   getToolsByStatus,
-  deleteActiveTool,
+  deleteActivesTool,
 };
