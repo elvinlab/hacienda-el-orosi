@@ -7,12 +7,12 @@ const router = Router();
 
 const {
   registrerTool,
-  registerActive,
+  registerActives,
   getActives,
   getTools,
   changeStatus,
   getToolsByStatus,
-  deleteActiveTool,
+  deleteActivesTool,
 } = require("../controllers/Tool.js");
 
 router.post(
@@ -26,14 +26,13 @@ router.post(
 );
 
 router.post(
-  "/registrar-activo",
+  "/registrar-activos",
   [
-     check("collaborator_id","El colaborador es requerido").not().isEmpty(),
-     check("tool_id","La herramienta es requerida").not().isEmpty(),
+     check("tools","Se requieren datos").not().isEmpty(),
      validate_fields,
   ],
   md_auth.authenticated,
-  registerActive
+  registerActives
 );
 
 router.put(
@@ -50,6 +49,12 @@ router.get(
   getToolsByStatus
 );
 
-router.delete("/eliminar-activo/:id", md_auth.authenticated,deleteActiveTool);
+router.delete("/eliminar-activos/:id",
+[
+  check("tools", "Se necesitan dados para eliminar en masa").not().isEmpty(),
+  validate_fields,
+],
+ md_auth.authenticated,
+ deleteActivesTool);
 
 module.exports = router;
