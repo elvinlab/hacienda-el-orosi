@@ -11,7 +11,7 @@ const registrerTool = async (req, res = response) => {
     let tool = new Tool();
     tool.administrator = req.user.id;
     (tool.active_num = Math.floor(Math.random() * (999999 - 100000) + 100000)),
-      (tool.name = name);
+    tool.name = name;
     tool.liters = liters;
 
     await tool.save();
@@ -19,6 +19,7 @@ const registrerTool = async (req, res = response) => {
     return res.status(200).json({
       status: "success",
       msg: "Herramienta registrada con exito",
+      tool: tool,
     });
   } catch (error) {
     return res.status(500).json({
@@ -77,6 +78,7 @@ const getActives = async (req, res = response) => {
     sort: { date_active: -1 },
     limit: 5,
     page: page,
+    populate: "collaborator tool",
   };
   Active.paginate({}, options, (err, actives) => {
     if (err) {
@@ -167,7 +169,7 @@ const changeStatus = async (req, res = response) => {
 };
 
 const getToolsByStatus = (req, res = response) => {
-  const status = req.params.status;
+  let status = req.params.status;
   let page = undefined;
 
   if (
@@ -198,9 +200,9 @@ const getToolsByStatus = (req, res = response) => {
     return res.status(200).json({
       status: "success",
       tools: {
+        toolsState: status,
         tools: tools.docs,
         count: tools.totalDocs,
-        totalPages: tools.totalPages,
       },
     });
   });
