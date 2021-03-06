@@ -189,26 +189,19 @@ const removeAssignWork = async (req, res = response) => {
 };
 
 const listActivities = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE") {
-    Activity.find().exec((err, activities) => {
-      if (err || !activities) {
-        return res.status(404).send({
-          status: "error",
-          msg: "Error inesperado",
-        });
-      }
-
-      return res.status(200).json({
-        status: "success",
-        activities: activities,
+  Activity.find().exec((err, activities) => {
+    if (err || !activities) {
+      return res.status(404).send({
+        status: "error",
+        msg: "Error inesperado",
       });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      activities: activities,
     });
-  } else {
-    return res.status(400).send({
-      status: "error",
-      msg: "No tienes permisos en la plataforma",
-    });
-  }
+  });
 };
 
 const listActivitiesByCollaborator = async (req, res = response) => {
