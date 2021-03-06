@@ -44,14 +44,14 @@ router.put(
 router.get("/activas/:page?", md_auth.authenticated, getActives);
 router.get("/registradas/:page?", md_auth.authenticated, getTools);
 router.get(
-  "/ver/:status",
+  "/ver/:status/:page?",
   md_auth.authenticated,
   getToolsByStatus
 );
 
 router.delete("/eliminar-activos/:id",
 [
-  check("tools", "Se necesitan dados para eliminar en masa").not().isEmpty(),
+  check("tools", "Se necesitan datos para eliminar en masa").not().isEmpty(),
   validate_fields,
 ],
  md_auth.authenticated,
