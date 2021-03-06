@@ -9,8 +9,7 @@ const {
   register,
   update,
   changeStatus,
-  getCollaborators,
-  getCollaboratorsActives,
+  getCollaboratorsByStatus,
   assignWork,
   removeAssignWork,
   listActivities,
@@ -61,18 +60,12 @@ router.put(
   changeStatus
 );
 
-router.get(
-  "/todos-los-colaboradores/:page?",
-  md_auth.authenticated,
-  getCollaborators
-);
-
 router.get("/ver-colaborador/:id", md_auth.authenticated, getCollaborator);
 
 router.get(
-  "/colaboradores-activos/:page?",
+  "/colaboradores/:status/:page?",
   md_auth.authenticated,
-  getCollaboratorsActives
+  getCollaboratorsByStatus
 );
 
 router.post(

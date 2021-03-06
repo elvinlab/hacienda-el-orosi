@@ -118,115 +118,26 @@ const changeStatus = async (req, res = response) => {
   }
 };
 
-const getCollaborators = (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
-    let page = undefined;
+const getCollaboratorsByStatus = (req, res = response) => {
+  const status = req.params.status;
 
-    if (
-      !req.params.page ||
-      req.params.page == 0 ||
-      req.params.page == "0" ||
-      req.params.page == null ||
-      req.params.page == undefined
-    ) {
-      page = 1;
-    } else {
-      page = parseInt(req.params.page);
-    }
-    const options = {
-      sort: { date_admission: -1 },
-      limit: 5,
-      page: page,
-    };
-
-    Collaborator.paginate({}, options, (err, collaborators) => {
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          msg: "Error al hacer la consulta",
-        });
-      }
-
-      if (!collaborators) {
-        return res.status(404).send({
-          status: "error",
-          msg: "Sin colaboradores registrados",
-        });
-      }
-
-      return res.status(200).json({
-        status: "success",
-        collaborators: {
-          collaborators: collaborators.docs,
-          count: collaborators.totalDocs,
-          totalPages: collaborators.totalPages,
-        },
+  Collaborator.find({ status }).exec((err, collaborators) => {
+    if (err) {
+      return res.status(404).send({
+        status: "error",
+        msg: "Error al hacer la consulta",
       });
-    });
-  } else {
-    res.status(500).json({
-      status: "Error",
-      msg: "No tienes permisos en la plataforma",
-    });
-  }
-};
-
-const getCollaboratorsActives = (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
-    let page = undefined;
-
-    if (
-      !req.params.page ||
-      req.params.page == 0 ||
-      req.params.page == "0" ||
-      req.params.page == null ||
-      req.params.page == undefined
-    ) {
-      page = 1;
-    } else {
-      page = parseInt(req.params.page);
     }
-    const options = {
-      sort: { date_admission: "ascending" },
-      //populate: ("herramienta"),
-      limit: 5,
-      page: page,
-    };
 
-    Collaborator.paginate(
-      { status: "active" },
-      options,
-      (err, collaborators) => {
-        if (err) {
-          return res.status(500).send({
-            status: "error",
-            msg: "Error al hacer la consulta",
-          });
-        }
-
-        if (!collaborators) {
-          return res.status(404).send({
-            status: "error",
-            msg: "Sin colaboradores registrados",
-          });
-        }
-
-        return res.status(200).json({
-          status: "success",
-          collaborators: {
-            collaborators: collaborators.docs,
-            count: collaborators.totalDocs,
-            totalPages: collaborators.totalPages,
-          },
-        });
-      }
-    );
-  } else {
-    res.status(500).json({
-      status: "Error",
-      msg: "No tienes permisos en la plataforma",
+    return res.status(200).json({
+      status: "success",
+      collaborators: {
+        collaboratorsState: status,
+        collaborators: collaborators,
+        count: collaborators.length,
+      },
     });
-  }
+  });
 };
 
 const assignWork = async (req, res = response) => {
@@ -343,8 +254,7 @@ module.exports = {
   register,
   update,
   changeStatus,
-  getCollaborators,
-  getCollaboratorsActives,
+  getCollaboratorsByStatus,
   assignWork,
   removeAssignWork,
   listActivities,
