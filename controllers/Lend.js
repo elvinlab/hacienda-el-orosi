@@ -6,13 +6,13 @@ const { response } = require("express");
 
 const make = async (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
-    const { collaborator_id, initial_amount, fee } = req.body;
+    const { collaborator_id, initial_amount, fee_amount } = req.body;
 
     try {
-      if (fee >= initial_amount || fee < 5000) {
+      if (fee_amount >= initial_amount || fee_amount < 5000) {
         return res.status(400).json({
           status: "error",
-          msg: "La cuota no puede ser mayor al prestamo inicial o menor a 5000",
+          msg: "La cuota no puede ser mayor al prestamo inicial o menor a 5,000",
         });
       }
 
@@ -21,7 +21,7 @@ const make = async (req, res = response) => {
       lend.collaborator = collaborator_id;
       lend.initial_amount = initial_amount;
       lend.amount = initial_amount;
-      lend.fee = fee;
+      lend.fee = fee_amount;
 
       await lend.save();
 

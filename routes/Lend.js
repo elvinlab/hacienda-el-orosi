@@ -20,7 +20,7 @@ router.post(
   [
     check("collaborator_id", "El colaborador es requerido").not().isEmpty(),
     check("initial_amount", "El monto inicial es requerido").not().isEmpty(),
-    check("fee", "La cuota es requerida").not().isEmpty(),
+    check("fee_amount", "La cuota es requerida").not().isEmpty(),
     validate_fields,
   ],
   md_auth.authenticated,
