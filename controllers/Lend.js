@@ -60,7 +60,6 @@ const changeAmountFee = async (req, res = response) => {
             msg: "Por favor hable con el administrador",
           });
         } else {
-          console.log(lend);
           res.status(200).send({
             status: "success",
             msg: "Se actualizo la cuota semanal",
