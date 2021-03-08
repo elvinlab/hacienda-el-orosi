@@ -6,12 +6,11 @@ const md_auth = require("../middelewares/Authenticated");
 const router = Router();
 
 const {
-  registrerTool,
+  registerTool,
   registerActives,
-  getActives,
-  getTools,
   changeStatus,
   getToolsByStatus,
+  getActivesByCollaborator,
   deleteActivesTool,
 } = require("../controllers/Tool.js");
 
@@ -22,15 +21,12 @@ router.post(
     validate_fields,
   ],
   md_auth.authenticated,
-  registrerTool
+  registerTool
 );
 
 router.post(
   "/registrar-activos",
-  [
-     check("tools","Se requieren datos").not().isEmpty(),
-     validate_fields,
-  ],
+  [check("tools", "Se requieren datos").not().isEmpty(), validate_fields],
   md_auth.authenticated,
   registerActives
 );
@@ -41,20 +37,22 @@ router.put(
   md_auth.authenticated,
   changeStatus
 );
-router.get("/activas/:page?", md_auth.authenticated, getActives);
-router.get("/registradas/:page?", md_auth.authenticated, getTools);
+router.get("/ver/:status/:page?", md_auth.authenticated, getToolsByStatus);
+
 router.get(
-  "/ver/:status/:page?",
+  "/activas/colaborador/:id",
   md_auth.authenticated,
-  getToolsByStatus
+  getActivesByCollaborator
 );
 
-router.delete("/eliminar-activos/:id",
-[
-  check("tools", "Se necesitan datos para eliminar en masa").not().isEmpty(),
-  validate_fields,
-],
- md_auth.authenticated,
- deleteActivesTool);
+router.delete(
+  "/eliminar-activos/:id",
+  [
+    check("tools", "Se necesitan datos para eliminar en masa").not().isEmpty(),
+    validate_fields,
+  ],
+  md_auth.authenticated,
+  deleteActivesTool
+);
 
 module.exports = router;
