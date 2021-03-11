@@ -71,35 +71,37 @@ const update = async (req, res = response) => {
       cel,
     } = req.body;
 
-    Collaborator.forEach(async function (element){
-      await Collaborator.find({ _id: ObjectId(element.collaboratorId) })
-    })
-  
-    if (findCollaboratorByDocumentId.document_id === document_id) {
+    const findCollaboratorByDocumentId = await Collaborator.findOne({
+      document_id,
+    });
+
+    if (
+      findCollaboratorByDocumentId &&
+      (findCollaboratorByDocumentId._id != collaboratorId)
+    ) {
       return res.status(400).json({
         status: "Error",
         msg: "Existe un colaborador con esta cedula.",
       });
-    } else {
-        Collaborator.findByIdAndUpdate(
-          { _id: collaboratorId },
-          { document_id, nationality, name, surname, direction, tel, cel },
-          (err) => {
-            if (err) {
-              res.status(400).json({
-                status: "error",
-                msg: "Por favor hable con el administrador",
-              });
-            } else {
-              res.status(200).send({
-                status: "success",
-                msg: "Datos del colaborador actualizados con exito",
-              });
-            }
-          }
-        );
+    }
+
+    Collaborator.findByIdAndUpdate(
+      { _id: collaboratorId },
+      { document_id, nationality, name, surname, direction, tel, cel },
+      (err) => {
+        if (err) {
+          res.status(400).json({
+            status: "error",
+            msg: "Por favor hable con el administrador",
+          });
+        } else {
+          res.status(200).send({
+            status: "success",
+            msg: "Datos del colaborador actualizados con exito",
+          });
+        }
       }
-    
+    );
   } else {
     res.status(500).json({
       status: "Error",
