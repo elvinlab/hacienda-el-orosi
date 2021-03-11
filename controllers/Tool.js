@@ -4,14 +4,14 @@ const { ObjectId } = require("mongodb");
 
 const { response } = require("express");
 
-const registrerTool = async (req, res = response) => {
+const registerTool = async (req, res = response) => {
   const { name, liters } = req.body;
 
   try {
     let tool = new Tool();
     tool.administrator = req.user.id;
     (tool.active_num = Math.floor(Math.random() * (999999 - 100000) + 100000)),
-    tool.name = name;
+      (tool.name = name);
     tool.liters = liters;
 
     await tool.save();
@@ -60,95 +60,6 @@ const registerActives = async (req, res = response) => {
   });
 };
 
-const getActives = async (req, res = response) => {
-  let page = undefined;
-
-  if (
-    !req.params.page ||
-    req.params.page == 0 ||
-    req.params.page == "0" ||
-    req.params.page == null ||
-    req.params.page == undefined
-  ) {
-    page = 1;
-  } else {
-    page = parseInt(req.params.page);
-  }
-  const options = {
-    sort: { date_active: -1 },
-    limit: 5,
-    page: page,
-    populate: "collaborator tool",
-  };
-  Active.paginate({}, options, (err, actives) => {
-    if (err) {
-      return res.status(500).send({
-        status: "error",
-        msg: "Error al hacer la consulta",
-      });
-    }
-
-    if (!actives) {
-      return res.status(404).send({
-        status: "error",
-        msg: "No se encuentran herramientas activas en la aplicacion",
-      });
-    }
-    return res.status(200).json({
-      status: "success",
-      actives: {
-        actives: actives.docs,
-        count: actives.totalDocs,
-        totalPages: actives.totalPages,
-      },
-    });
-  });
-};
-
-const getTools = (req, res = response) => {
-  let page = undefined;
-
-  if (
-    !req.params.page ||
-    req.params.page == 0 ||
-    req.params.page == "0" ||
-    req.params.page == null ||
-    req.params.page == undefined
-  ) {
-    page = 1;
-  } else {
-    page = parseInt(req.params.page);
-  }
-  const options = {
-    sort: { date: -1 },
-    limit: 5,
-    page: page,
-  };
-  Tool.paginate({}, options, (err, tools) => {
-    if (err) {
-      return res.status(500).send({
-        status: "error",
-        msg: "Error al hacer la consulta",
-      });
-    }
-
-    if (!tools) {
-      return res.status(404).send({
-        status: "error",
-        msg: "no se encuentran herramientas registradas en la aplicacion",
-      });
-    }
-    return res.status(200).json({
-      status: "success",
-      tools: {
-        tools: tools.docs,
-        count: tools.totalDocs,
-        totalPages: tools.totalPages,
-      },
-    });
-  });
-};
-
 const changeStatus = async (req, res = response) => {
   const { status } = req.body;
   const toolId = req.params.id;
@@ -169,29 +80,12 @@ const changeStatus = async (req, res = response) => {
 };
 
 const getToolsByStatus = (req, res = response) => {
-  let status = req.params.status;
-  let page = undefined;
+  
+  const status = req.params.status;
 
-  if (
-    !req.params.page ||
-    req.params.page == 0 ||
-    req.params.page == "0" ||
-    req.params.page == null ||
-    req.params.page == undefined
-  ) {
-    page = 1;
-  } else {
-    page = parseInt(req.params.page);
-  }
-  const options = {
-    sort: { date: -1 },
-    limit: 5,
-    page: page,
-  };
-
-  Tool.paginate({ status: status }, options, (err, tools) => {
+  Tool.find({ status }).sort({name: 1}).exec((err, tools) => {
     if (err) {
-      return res.status(500).send({
+      return res.status(404).send({
         status: "error",
         msg: "Error al hacer la consulta",
       });
@@ -201,8 +95,31 @@ const getToolsByStatus = (req, res = response) => {
       status: "success",
       tools: {
         toolsState: status,
-        tools: tools.docs,
-        count: tools.totalDocs,
+        tools: tools,
+        count: tools.length,
+      },
+    });
+  });
+};
+
+
+const getActivesByCollaborator = (req, res = response) => {
+  
+  const collaborator_id = req.params.id;
+
+  Active.find({ collaborator: ObjectId(collaborator_id) }).populate("tool").sort({name: 1}).exec((err, actives) => {
+    if (err) {
+      return res.status(500).send({
+        status: "error",
+        msg: "Error al hacer la consulta",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      actives: {
+        actives: actives,
+        count: actives.length,
       },
     });
   });
@@ -212,7 +129,7 @@ const deleteActivesTool = async (req, res = response) => {
   const { tools } = req.body;
   let collaboratorId = req.params.id;
 
- await Active.deleteMany({ collaborator: ObjectId(collaboratorId) }, (err) => {
+  await Active.deleteMany({ collaborator: ObjectId(collaboratorId) }, (err) => {
     if (err) {
       return res.status(500).send({
         status: "error",
@@ -222,15 +139,19 @@ const deleteActivesTool = async (req, res = response) => {
   });
 
   tools.forEach(async function (element) {
-  await Tool.findByIdAndUpdate({ _id: element.tool_id }, { status: "stock" }, (err) => {
-    if (err) {
-      return res.status(400).json({
-        status: "error",
-        msg: "Por favor hable con el administrador",
-      });
-    }
+    await Tool.findByIdAndUpdate(
+      { _id: element.tool_id },
+      { status: "stock" },
+      (err) => {
+        if (err) {
+          return res.status(400).json({
+            status: "error",
+            msg: "Por favor hable con el administrador",
+          });
+        }
+      }
+    );
   });
-});
 
   return res.status(200).json({
     status: "success",
@@ -239,11 +160,10 @@ const deleteActivesTool = async (req, res = response) => {
 };
 
 module.exports = {
-  registrerTool,
+  registerTool,
   registerActives,
-  getActives,
-  getTools,
   changeStatus,
   getToolsByStatus,
+  getActivesByCollaborator,
   deleteActivesTool,
 };

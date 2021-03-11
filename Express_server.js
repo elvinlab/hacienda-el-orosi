@@ -25,7 +25,7 @@ app.use("/api/recursos-humanos", require("./routes/Contract.js"));
 app.use("/api/herramientas", require("./routes/Tool.js"));
 
 app.listen(process.env.PORT, () => {
-  console.log(`Servidor correindo en el puerto: ${process.env.PORT}`);
+  console.log(`Servidor corriendo en el puerto: ${process.env.PORT}`);
 });
 
 module.exports = app;
