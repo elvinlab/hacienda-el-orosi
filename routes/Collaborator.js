@@ -36,6 +36,7 @@ router.post(
 router.put(
   "/actualizar-colaborador/:id",
   [
+    check("document_id", "Cédula requerida").not().isEmpty(),
     check("nationality", "Nacionalidad requerida").not().isEmpty(),
     check("name", "Nombre requerido").not().isEmpty(),
     check("surname", "apellido requerido").not().isEmpty(),

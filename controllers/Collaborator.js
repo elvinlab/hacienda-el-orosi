@@ -61,11 +61,33 @@ const register = async (req, res = response) => {
 const update = async (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
     const collaboratorId = req.params.id;
-    const { nationality, name, surname, direction, tel, cel } = req.body;
+    const {
+      document_id,
+      nationality,
+      name,
+      surname,
+      direction,
+      tel,
+      cel,
+    } = req.body;
 
-    await Collaborator.findByIdAndUpdate(
+    const findCollaboratorByDocumentId = await Collaborator.findOne({
+      document_id,
+    });
+
+    if (
+      findCollaboratorByDocumentId &&
+      (findCollaboratorByDocumentId._id != collaboratorId)
+    ) {
+      return res.status(400).json({
+        status: "Error",
+        msg: "Existe un colaborador con esta cedula.",
+      });
+    }
+
+    Collaborator.findByIdAndUpdate(
       { _id: collaboratorId },
-      { nationality, name, surname, direction, tel, cel },
+      { document_id, nationality, name, surname, direction, tel, cel },
       (err) => {
         if (err) {
           res.status(400).json({
