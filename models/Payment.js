@@ -1,15 +1,14 @@
 const { model, Schema } = require("mongoose");
-const moment = require("moment");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
-moment.locale("es");
+let dateTime = new Date();
 
 const PaymentSchema = Schema({
   administrator: { type: Schema.ObjectId, ref: "Administrator" },
   collaborator: { type: Schema.ObjectId, ref: "Collaborator" },
   pay_day: {
     type: String,
-    default: () => moment().format("DD-MM-YYYY"),
+    default: () => dateTime.toISOString().slice(0, 10),
     require: true,
   },
 
