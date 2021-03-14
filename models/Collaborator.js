@@ -1,8 +1,7 @@
 const { model, Schema } = require("mongoose");
-const moment = require("moment");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
-moment.locale("es");
+let dateTime = new Date();
 
 const CollaboratorSchema = Schema({
   document_id: {
@@ -35,7 +34,7 @@ const CollaboratorSchema = Schema({
   },
   date_admission: {
     type: String,
-    default: () => moment().format("DD-MM-YYYY"),
+    default: () => dateTime.toISOString().slice(0, 10),
   },
   dispatch_date: {
     type: String,

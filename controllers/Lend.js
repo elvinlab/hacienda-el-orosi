@@ -12,7 +12,8 @@ const make = async (req, res = response) => {
       if (fee_amount >= initial_amount || fee_amount < 5000) {
         return res.status(400).json({
           status: "error",
-          msg: "La cuota no puede ser mayor al prestamo inicial o menor a 5,000",
+          msg:
+            "La cuota no puede ser mayor al prestamo inicial o menor a 5,000",
         });
       }
 
@@ -249,7 +250,7 @@ const getLendsByCollaborator = async (req, res = response) => {
 
 const deleteLend = async (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
-    const lendId = req.params.id;
+    const { lendId } = req.body;
 
     let findLend = await Fee.findOne({ lend: ObjectId(lendId) });
 
@@ -260,23 +261,17 @@ const deleteLend = async (req, res = response) => {
       });
     }
 
-    await Lend.findOneAndDelete({ _id: lendId }, (err, lend) => {
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          msg: "Error al solicitar la peticion",
-        });
-      }
-      if (!lend) {
-        return res.status(404).send({
-          status: "error",
-          msg: "Prestamo no existe en la base de datos",
-        });
-      }
-      return res.status(200).json({
-        status: "success",
-        msg: "Removido de forma exitosa",
+    let lendRemoved = await Lend.findOneAndDelete({ _id: ObjectId(lendId) });
+
+    if (!lendRemoved) {
+      return res.status(404).send({
+        status: "error",
+        msg: "Prestamo no existe en la base de datos",
       });
+    }
+    return res.status(200).json({
+      status: "success",
+      msg: "Removido de forma exitosa",
     });
   } else {
     res.status(500).json({

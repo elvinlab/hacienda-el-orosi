@@ -50,7 +50,7 @@ router.put(
   changeAmountFee
 );
 
-router.delete("/eliminar-prestamo/:id", md_auth.authenticated, deleteLend);
+router.delete("/eliminar-prestamo/",   [check("lendId", "falta el identificador del prestamo").not().isEmpty(), validate_fields], md_auth.authenticated, deleteLend);
 
 router.get(
   "/prestamos/:status/:page?",
