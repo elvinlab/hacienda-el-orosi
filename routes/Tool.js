@@ -10,6 +10,7 @@ const {
   registerActives,
   changeStatus,
   getToolsByStatus,
+  getActives,
   getActivesByCollaborator,
   deleteActivesTool,
 } = require("../controllers/Tool.js");
@@ -38,7 +39,7 @@ router.put(
   changeStatus
 );
 router.get("/ver/:status/:page?", md_auth.authenticated, getToolsByStatus);
-
+router.get("/activas", md_auth.authenticated, getActives);
 router.get(
   "/activas/colaborador/:id",
   md_auth.authenticated,
@@ -46,7 +47,7 @@ router.get(
 );
 
 router.delete(
-  "/eliminar-activos/:id",
+  "/eliminar-activos",
   [
     check("tools", "Se necesitan datos para eliminar en masa").not().isEmpty(),
     validate_fields,
