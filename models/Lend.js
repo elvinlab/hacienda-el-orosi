@@ -1,8 +1,7 @@
 const { model, Schema } = require("mongoose");
-const moment = require("moment");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
-moment.locale("es");
+let dateTime = new Date();
 
 const LendSchema = Schema({
   collaborator: {
@@ -13,7 +12,7 @@ const LendSchema = Schema({
 
   date_issued: {
     type: String,
-    default: () => moment().format("DD-MM-YYYY"),
+    default: () => dateTime.toISOString().slice(0, 10),
     required: true,
   },
 
@@ -36,7 +35,7 @@ const LendSchema = Schema({
   fee: {
     type: Number,
     required: true,
-  }
+  },
 });
 
 LendSchema.plugin(mongoosePaginate);

@@ -1,6 +1,7 @@
 const { model, Schema } = require("mongoose");
-const moment = require("moment");
 const mongoosePaginate = require("mongoose-paginate-v2");
+
+let dateTime = new Date();
 
 const ToolSchema = Schema({
   active_num: {
@@ -20,7 +21,7 @@ const ToolSchema = Schema({
   },
   date: {
     type: String,
-    default: () => moment().format("DD-MM-YYYY"),
+    default: () => dateTime.toISOString().slice(0, 10),
     required: true,
   },
   liters: {

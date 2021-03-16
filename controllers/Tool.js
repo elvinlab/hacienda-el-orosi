@@ -102,6 +102,18 @@ const getToolsByStatus = (req, res = response) => {
   });
 };
 
+  const getActives = async (req, res = response) => {
+   
+    const actives = await Active.find().populate("collaborator tool");
+    return res.status(200).json({
+      status: "success",
+      actives: {
+        actives: actives,
+        count: actives.length,
+      },
+    });
+  };
+
 
 const getActivesByCollaborator = (req, res = response) => {
   
@@ -127,16 +139,6 @@ const getActivesByCollaborator = (req, res = response) => {
 
 const deleteActivesTool = async (req, res = response) => {
   const { tools } = req.body;
-  let collaboratorId = req.params.id;
-
-  await Active.deleteMany({ collaborator: ObjectId(collaboratorId) }, (err) => {
-    if (err) {
-      return res.status(500).send({
-        status: "error",
-        msg: "Error al solicitar la peticion",
-      });
-    }
-  });
 
   tools.forEach(async function (element) {
     await Tool.findByIdAndUpdate(
@@ -151,7 +153,18 @@ const deleteActivesTool = async (req, res = response) => {
         }
       }
     );
+    
+    await Active.findOneAndDelete({ tool: ObjectId(element.tool_id) }, (err) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          msg: "Error al solicitar la peticion",
+        });
+      }
+    });
+
   });
+  
 
   return res.status(200).json({
     status: "success",
@@ -164,6 +177,7 @@ module.exports = {
   registerActives,
   changeStatus,
   getToolsByStatus,
+  getActives,
   getActivesByCollaborator,
   deleteActivesTool,
 };

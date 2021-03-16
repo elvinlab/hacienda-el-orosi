@@ -1,8 +1,7 @@
 const { model, Schema } = require( 'mongoose' );
-const moment =  require('moment');
 const mongoosePaginate = require("mongoose-paginate-v2");
 
-moment.locale( 'es' );
+let dateTime = new Date();
 
 const ActiveSchema = Schema({
     collaborator: { 
@@ -19,7 +18,7 @@ const ActiveSchema = Schema({
 
     date_active: {
         type: String,
-        default: () => moment().format("DD-MM-YYYY"),
+        default: () => dateTime.toISOString().slice(0, 10),
         required: true,
     },
 
