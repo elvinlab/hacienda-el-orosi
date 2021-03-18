@@ -9,7 +9,8 @@ const {
   registerSalaryCollaborator,
   paymentsByCollaborator,
   getPayments,
-  registerPresence
+  registerPresence,
+  getDayPendingByCollaborator
 } = require("../controllers/Payment.js");
 
 router.post(
@@ -38,5 +39,6 @@ router.get(
   paymentsByCollaborator
 );
 router.get("/pagos/realizados/:page?", md_auth.authenticated, getPayments);
+router.get("/colaborador/dias-pendientes/:id", md_auth.authenticated, getDayPendingByCollaborator);
 
 module.exports = router;

@@ -191,9 +191,45 @@ const registerPresence = async (req, res = response) => {
   }
 };
 
+const getDayPendingByCollaborator = async (req, res = response) => {
+  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+    const collaboratorId = req.params.id;
+
+    let findPresenceByStatusAndByCollaborator = await Presence.find({
+      status: "pending",
+      collaborator: ObjectId(collaboratorId),
+    }).sort({ date: -1 });
+
+    await Presence.aggregate(
+      [
+        {
+          $match: {
+            status: { $eq: "pending" },
+            collaborator: { $eq: ObjectId(collaboratorId) },
+          },
+        },
+        { $group: { _id: null, amount: { $sum: "$total_overtime" } } },
+      ],
+      function (err, result) {
+        return res.status(200).json({
+          status: "success",
+          total_overtime: result[0] ? result[0].amount : 0,
+          pending_days: findPresenceByStatusAndByCollaborator,
+        });
+      }
+    );
+  } else {
+    res.status(400).json({
+      status: "error",
+      msg: "No tienes permisos en la plataforma",
+    });
+  }
+};
+
 module.exports = {
   registerSalaryCollaborator,
   paymentsByCollaborator,
   getPayments,
   registerPresence,
+  getDayPendingByCollaborator,
 };
