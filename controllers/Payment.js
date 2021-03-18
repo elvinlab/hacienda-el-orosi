@@ -1,4 +1,5 @@
 const Payment = require("../models/Payment.js");
+const Presence = require("../models/Presence.js");
 const { response } = require("express");
 const { ObjectId } = require("mongodb");
 
@@ -17,18 +18,18 @@ const registerSalaryCollaborator = (req, res = response) => {
 
       payment.save();
       return res.status(200).json({
-        status: "succes",
+        status: "success",
         msg: "Pago realizado con exito",
       });
     } catch (error) {
       return res.status(500).json({
-        status: "Error",
+        status: "error",
         msg: "Porfavor contacte con el Administrador para mas información",
       });
     }
   } else {
     res.status(500).json({
-      status: "Error",
+      status: "error",
       msg: "No tienes permisos en la plataforma",
     });
   }
@@ -85,7 +86,7 @@ const paymentsByCollaborator = (req, res = response) => {
     );
   } else {
     res.status(500).json({
-      status: "Error",
+      status: "error",
       msg: "No tienes permisos en la plataforma",
     });
   }
@@ -144,8 +145,55 @@ const getPayments = (req, res = response) => {
   }
 };
 
+const registerPresence = async (req, res = response) => {
+  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+    const { total_overtime } = req.body;
+    const collaboratorId = req.params.id;
+
+    try {
+      let dateTime = new Date();
+
+      let findPresenceByActualDateAndCollaborator = await Presence.findOne({
+        date: dateTime.toISOString().slice(0, 10),
+        collaborator: ObjectId(collaboratorId),
+      });
+
+      if (findPresenceByActualDateAndCollaborator) {
+        return res.status(400).json({
+          status: "error",
+          msg: "Dia laboral ya registrado para el colaborador",
+        });
+      }
+
+      let presence = new Presence();
+
+      presence.administrator = req.user.id;
+      presence.collaborator = collaboratorId;
+      presence.total_overtime = total_overtime;
+
+      await presence.save();
+
+      return res.status(200).json({
+        status: "success",
+        msg: "Se registro dia laboral con exito",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: "error",
+        msg: "Porfavor contacte con el Administrador para mas información",
+      });
+    }
+  } else {
+    res.status(400).json({
+      status: "error",
+      msg: "No tienes permisos en la plataforma",
+    });
+  }
+};
+
 module.exports = {
   registerSalaryCollaborator,
   paymentsByCollaborator,
   getPayments,
+  registerPresence,
 };
