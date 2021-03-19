@@ -18,7 +18,7 @@ router.post(
     check("name_job", "Nombre del trabajo Requerido ").not().isEmpty(),
     check("description", "Descripción requerida").not().isEmpty(),
     check("work_hours", "Horas de trabajo requerido").not().isEmpty(),
-    check("extra_hours", "Horas extra requerido").not().isEmpty(),
+    check("price_extra_hours", "Horas extra requerido").not().isEmpty(),
     check("price_day", "Precio del día requerida").not().isEmpty(),
 
     validate_fields,
@@ -32,7 +32,7 @@ router.put(
   [
     check("description", "Descripción requerida").not().isEmpty(),
     check("work_hours", "Horas de trabajo requerido").not().isEmpty(),
-    check("extra_hours", "Horas extra requerido").not().isEmpty(),
+    check("price_extra_hours", "Horas extra requerido").not().isEmpty(),
     check("price_day", "Precio del día requerida").not().isEmpty(),
   ],
   md_auth.authenticated,

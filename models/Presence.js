@@ -3,28 +3,26 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 
 let dateTime = new Date();
 
-const PaymentSchema = Schema({
+const PresenceSchema = Schema({
   administrator: { type: Schema.ObjectId, ref: "Administrator" },
   collaborator: { type: Schema.ObjectId, ref: "Collaborator" },
-  pay_day: {
+  date: {
     type: String,
     default: () => dateTime.toISOString().slice(0, 10),
-    require: true,
   },
 
-  net_salary: {
+  total_overtime: {
     type: Number,
-    require: true,
+    default: 0,
   },
-  final_salary: {
-    type: Number,
-    require: true,
-  },
-  details:{
+
+  status: {
     type: String,
-  }
+    default: "pending",
+    required: true,
+  },
 });
 
-PaymentSchema.plugin(mongoosePaginate);
+PresenceSchema.plugin(mongoosePaginate);
 
-module.exports = model("Payment", PaymentSchema);
+module.exports = model("Presence", PresenceSchema);
