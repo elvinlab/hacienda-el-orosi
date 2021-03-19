@@ -1,5 +1,4 @@
 const Collaborator = require("../models/Collaborator.js");
-const Activity = require("../models/Activity.js");
 
 const { ObjectId } = require("mongodb");
 const { response } = require("express");
@@ -8,6 +7,7 @@ const register = async (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
     const {
       document_id,
+      jobId,
       nationality,
       name,
       surname,
@@ -31,6 +31,7 @@ const register = async (req, res = response) => {
       let collaborator = new Collaborator();
 
       collaborator.document_id = document_id;
+      collaborator.job = jobId;
       collaborator.nationality = nationality;
       collaborator.name = name;
       collaborator.surname = surname;
@@ -63,6 +64,7 @@ const update = async (req, res = response) => {
     const collaboratorId = req.params.id;
     const {
       document_id,
+      jobId,
       nationality,
       name,
       surname,
@@ -87,7 +89,7 @@ const update = async (req, res = response) => {
 
     Collaborator.findByIdAndUpdate(
       { _id: collaboratorId },
-      { document_id, nationality, name, surname, direction, tel, cel },
+      { document_id, job: jobId, nationality, name, surname, direction, tel, cel },
       (err) => {
         if (err) {
           res.status(400).json({
@@ -143,7 +145,7 @@ const changeStatus = async (req, res = response) => {
 const getCollaboratorsByStatus = (req, res = response) => {
   const status = req.params.status;
 
-  Collaborator.find({ status }).exec((err, collaborators) => {
+  Collaborator.find({ status }).populate("job").exec((err, collaborators) => {
     if (err) {
       return res.status(404).send({
         status: "error",
@@ -160,91 +162,6 @@ const getCollaboratorsByStatus = (req, res = response) => {
       },
     });
   });
-};
-
-const assignWork = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
-    const { collaboratorId, jobId } = req.body;
-
-    let activity = new Activity();
-
-    activity.collaborator = collaboratorId;
-    activity.job = jobId;
-
-    await activity.save();
-  } else {
-    res.status(500).json({
-      status: "Error",
-      msg: "No tienes permisos en la plataforma",
-    });
-  }
-};
-
-const removeAssignWork = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
-    let activityId = req.params.id;
-
-    Activity.findOneAndDelete({ _id: activityId }, (err, activity) => {
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          msg: "Error al solicitar la peticion",
-        });
-      }
-      if (!activity) {
-        return res.status(404).send({
-          status: "error",
-          msg: "No se ha eliminado la actividad",
-        });
-      }
-      return res.status(200).json({
-        status: "success",
-        msg: "Removido de forma exitosa",
-      });
-    });
-  } else {
-    return res.status(400).send({
-      status: "error",
-      msg: "No tienes permisos en la plataforma",
-    });
-  }
-};
-
-const listActivities = async (req, res = response) => {
-  Activity.find().exec((err, activities) => {
-    if (err || !activities) {
-      return res.status(404).send({
-        status: "error",
-        msg: "Error inesperado",
-      });
-    }
-
-    return res.status(200).json({
-      status: "success",
-      activities: activities,
-    });
-  });
-};
-
-const listActivitiesByCollaborator = async (req, res = response) => {
-  const collaboratorId = req.params.id;
-  Activity.find({ collaborator: ObjectId(collaboratorId) }).exec(
-    (err, activities) => {
-      if (err) {
-        res
-          .status(500)
-          .send({ status: "error", msg: "Ocurrió un error en el servidor." });
-      } else {
-        if (activities) {
-          res.status(200).send({ status: "success", activities: activities });
-        } else {
-          res
-            .status(500)
-            .send({ status: "error", msg: "Sin trabajos asignados" });
-        }
-      }
-    }
-  );
 };
 
 const getCollaborator = async (req, res = response) => {
@@ -270,9 +187,5 @@ module.exports = {
   update,
   changeStatus,
   getCollaboratorsByStatus,
-  assignWork,
-  removeAssignWork,
-  listActivities,
-  listActivitiesByCollaborator,
   getCollaborator,
 };

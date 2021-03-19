@@ -10,10 +10,6 @@ const {
   update,
   changeStatus,
   getCollaboratorsByStatus,
-  assignWork,
-  removeAssignWork,
-  listActivities,
-  listActivitiesByCollaborator,
   getCollaborator,
 } = require("../controllers/Collaborator.js");
 
@@ -21,6 +17,7 @@ router.post(
   "/registrar-colaborador",
   [
     check("document_id", "Cédula requerida").not().isEmpty(),
+    check("jobId", "Trabajo requerido").not().isEmpty(),
     check("nationality", "Nacionalidad requerida").not().isEmpty(),
     check("name", "Nombre requerido").not().isEmpty(),
     check("surname", "apellido requerido").not().isEmpty(),
@@ -37,6 +34,7 @@ router.put(
   "/actualizar-colaborador/:id",
   [
     check("document_id", "Cédula requerida").not().isEmpty(),
+    check("jobId", "Trabajo requerido").not().isEmpty(),
     check("nationality", "Nacionalidad requerida").not().isEmpty(),
     check("name", "Nombre requerido").not().isEmpty(),
     check("surname", "apellido requerido").not().isEmpty(),
@@ -67,22 +65,6 @@ router.get(
   "/colaboradores/:status/:page?",
   md_auth.authenticated,
   getCollaboratorsByStatus
-);
-
-router.post(
-  "/asignar-actividad",
-  [
-    check("documentId", "Cédula requerida").not().isEmpty(),
-    check("jobId", "Cédula requerida").not().isEmpty(),
-    validate_fields,
-  ],
-  assignWork
-);
-
-router.delete(
-  "/remover-actividad/:id",
-  md_auth.authenticated,
-  removeAssignWork
 );
 
 module.exports = router;
