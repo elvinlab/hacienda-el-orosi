@@ -1,5 +1,4 @@
 const { model, Schema } = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate-v2");
 
 let dateTime = new Date();
 
@@ -41,7 +40,5 @@ const CollaboratorSchema = Schema({
     type: String,
   },
 });
-
-CollaboratorSchema.plugin(mongoosePaginate);
 
 module.exports = model("Collaborator", CollaboratorSchema);
