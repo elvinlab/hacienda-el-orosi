@@ -229,14 +229,14 @@ const getLendsByCollaborator = async (req, res = response) => {
           msg: "Error al hacer la consulta",
         });
       }
-
+      /*
       if (lends.docs.length === 0) {
         return res.status(400).json({
           status: "Error",
           msg: "Este colaborador no tiene prestamos registrados.",
         });
       }
-
+      */
       return res.status(200).json({
         status: "success",
         lends: {
