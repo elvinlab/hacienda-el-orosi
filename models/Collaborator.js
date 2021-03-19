@@ -10,6 +10,7 @@ const CollaboratorSchema = Schema({
     required: true,
   },
   administrator: { type: Schema.ObjectId, ref: "Administrator" },
+  job: { type: Schema.ObjectId, ref: "Job" },
   nationality: {
     type: String,
   },

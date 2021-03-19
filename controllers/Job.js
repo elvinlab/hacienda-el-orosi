@@ -8,7 +8,7 @@ const save = async (req, res = response) => {
       name_job,
       description,
       work_hours,
-      extra_hours,
+      price_extra_hours,
       price_day,
     } = req.body;
 
@@ -27,7 +27,7 @@ const save = async (req, res = response) => {
       job.name_job = name_job;
       job.description = description;
       job.work_hours = work_hours;
-      job.extra_hours = extra_hours;
+      job.price_extra_hours = price_extra_hours;
       job.price_day = price_day;
 
       await job.save();
@@ -51,12 +51,12 @@ const save = async (req, res = response) => {
 
 const updateJob = async (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
-    const { description, work_hours, extra_hours, price_day } = req.body;
+    const { description, work_hours, price_extra_hours, price_day } = req.body;
     const jobId = req.params.id;
 
     await Job.findByIdAndUpdate(
       { _id: jobId },
-      { description, work_hours, extra_hours, price_day },
+      { description, work_hours, price_extra_hours, price_day },
       (err) => {
         if (err) {
           res.status(400).json({
