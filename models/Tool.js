@@ -1,5 +1,5 @@
 const { model, Schema } = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate-v2");
+const moment = require("moment");
 
 let dateTime = new Date();
 
@@ -21,14 +21,12 @@ const ToolSchema = Schema({
   },
   date: {
     type: String,
-    default: () => dateTime.toISOString().slice(0, 10),
+    default: () => moment(dateTime).format("YYYY-MM-DD"),
     required: true,
   },
   liters: {
     type: Number,
   },
 });
-
-ToolSchema.plugin(mongoosePaginate);
 
 module.exports = model("Tool", ToolSchema);

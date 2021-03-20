@@ -1,20 +1,50 @@
 const Payment = require("../models/Payment.js");
 const Presence = require("../models/Presence.js");
+const moment = require("moment");
+
 const { response } = require("express");
 const { ObjectId } = require("mongodb");
 
 const registerSalaryCollaborator = (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
-    const { net_salary, final_salary, details } = req.body;
+    const { paymentReg } = req.body;
+    const collaboratorId = req.params.id;
 
+    if (paymentReg.final_salary === 0) {
+      return res.status(400).json({
+        status: "error",
+        msg: "No se puede registrar un pago con un salario final igual a cero ",
+      });
+    }
     try {
+      Presence.updateMany(
+        { status: "pending", collaborator: ObjectId(collaboratorId) },
+        { status: "paid" },
+        function (err) {
+          if (err) {
+            return res.status(500).json({
+              status: "error",
+              error: `Contacte a un ingeniero: ${err}`,
+            });
+          }
+        }
+      );
+
       let payment = new Payment();
 
       payment.administrator = req.user.id;
-      payment.collaborator = req.params.id;
-      payment.net_salary = net_salary;
-      payment.final_salary = final_salary;
-      payment.details = details;
+      payment.collaborator = collaboratorId;
+      payment.invoice_number = Math.floor(
+        Math.random() * (999999 - 100000) + 100000
+      );
+      payment.collaborator_job_name = paymentReg.collaborator_job_name;
+      payment.total_days_worked = paymentReg.total_days_worked;
+      payment.total_hours_worked = paymentReg.total_hours_worked;
+      payment.total_extra_hours_price = paymentReg.total_extra_hours_price;
+      payment.extra_hours_price = paymentReg.extra_hours_price;
+      payment.price_day = paymentReg.price_day;
+      payment.net_salary = paymentReg.net_salary;
+      payment.final_salary = paymentReg.total_salary;
 
       payment.save();
       return res.status(200).json({
@@ -28,7 +58,7 @@ const registerSalaryCollaborator = (req, res = response) => {
       });
     }
   } else {
-    res.status(500).json({
+    return res.status(400).json({
       status: "error",
       msg: "No tienes permisos en la plataforma",
     });
@@ -154,7 +184,7 @@ const registerPresence = async (req, res = response) => {
       let dateTime = new Date();
 
       let findPresenceByActualDateAndCollaborator = await Presence.findOne({
-        date: dateTime.toISOString().slice(0, 10),
+        date: moment(dateTime).format("YYYY-MM-DD"),
         collaborator: ObjectId(collaboratorId),
       });
 
@@ -225,6 +255,7 @@ const getDayPendingByCollaborator = async (req, res = response) => {
     });
   }
 };
+
 
 module.exports = {
   registerSalaryCollaborator,
