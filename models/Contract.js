@@ -22,7 +22,7 @@ const ContractSchema = Schema({
 
   date_contract: {
     type: String,
-    default: () => dateTime.toISOString().slice(0, 10),
+    default: () => moment(dateTime).format("YYYY-MM-DD"),
     required: true,
   },
 

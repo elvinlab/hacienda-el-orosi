@@ -1,5 +1,7 @@
 const Payment = require("../models/Payment.js");
 const Presence = require("../models/Presence.js");
+const moment = require("moment");
+
 const { response } = require("express");
 const { ObjectId } = require("mongodb");
 
@@ -11,8 +13,7 @@ const registerSalaryCollaborator = (req, res = response) => {
     if (paymentReg.final_salary === 0) {
       return res.status(400).json({
         status: "error",
-        msg:
-          "No se puede registrar un pago con un salario final igual a cero ",
+        msg: "No se puede registrar un pago con un salario final igual a cero ",
       });
     }
     try {
@@ -183,7 +184,7 @@ const registerPresence = async (req, res = response) => {
       let dateTime = new Date();
 
       let findPresenceByActualDateAndCollaborator = await Presence.findOne({
-        date: dateTime.toISOString().slice(0, 10),
+        date: moment(dateTime).format("YYYY-MM-DD"),
         collaborator: ObjectId(collaboratorId),
       });
 
@@ -254,6 +255,7 @@ const getDayPendingByCollaborator = async (req, res = response) => {
     });
   }
 };
+
 
 module.exports = {
   registerSalaryCollaborator,

@@ -1,5 +1,6 @@
 const { model, Schema } = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
+const moment = require("moment");
 
 let dateTime = new Date();
 
@@ -12,7 +13,7 @@ const LendSchema = Schema({
 
   date_issued: {
     type: String,
-    default: () => dateTime.toISOString().slice(0, 10),
+    default: () => moment(dateTime).format("YYYY-MM-DD"),
     required: true,
   },
 
