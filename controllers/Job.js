@@ -51,12 +51,26 @@ const save = async (req, res = response) => {
 
 const updateJob = async (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
-    const { description, work_hours, price_extra_hours, price_day } = req.body;
+    const { name_job, description, work_hours, price_extra_hours, price_day } = req.body;
     const jobId = req.params.id;
+
+    const findJobByDocumentId = await Job.findOne({
+      name_job,
+    });
+
+    if (
+      findJobByDocumentId &&
+      (findJobByDocumentId._id != jobId)
+    ) {
+      return res.status(400).json({
+        status: "Error",
+        msg: "Existe un trabajo con este nombre.",
+      });
+    }
 
     await Job.findByIdAndUpdate(
       { _id: jobId },
-      { description, work_hours, price_extra_hours, price_day },
+      { name_job, description, work_hours, price_extra_hours, price_day },
       (err) => {
         if (err) {
           res.status(400).json({
@@ -82,7 +96,6 @@ const updateJob = async (req, res = response) => {
 const removeJob = async (req, res = response) => {
   if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
     let jobId = req.params.id;
-
     Job.findOneAndDelete({ _id: jobId }, (err, job) => {
       if (err) {
         return res.status(500).send({
