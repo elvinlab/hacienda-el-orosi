@@ -27,6 +27,7 @@ const ContractSchema = Schema({
   },
   email_contracted: {
     type: String,
+
     required: true,
   },
 

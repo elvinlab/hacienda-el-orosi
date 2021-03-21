@@ -1,4 +1,5 @@
 const { model, Schema } = require("mongoose");
+const moment = require("moment");
 
 let dateTime = new Date();
 
@@ -34,7 +35,7 @@ const CollaboratorSchema = Schema({
   },
   date_admission: {
     type: String,
-    default: () => dateTime.toISOString().slice(0, 10),
+    default: () => moment(dateTime).format("YYYY-MM-DD"),
   },
   dispatch_date: {
     type: String,
