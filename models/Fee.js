@@ -1,4 +1,5 @@
 const { model, Schema } = require("mongoose");
+const moment = require("moment");
 
 let dateTime = new Date();
 
@@ -17,7 +18,7 @@ const FeeSchema = Schema({
 
   date_fee: {
     type: String,
-    default: () => dateTime.toISOString().slice(0, 10),
+    default: () => moment(dateTime).format("YYYY-MM-DD"),
     required: true,
   },
 });
