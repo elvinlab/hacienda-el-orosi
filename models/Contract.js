@@ -4,6 +4,12 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 let dateTime = new Date();
 
 const ContractSchema = Schema({
+  num_contract: {
+    type: Number,
+    unique: true,
+    require: true,
+  },
+
   administrator: {
     type: Schema.ObjectId,
     ref: "Administrator",
@@ -15,39 +21,71 @@ const ContractSchema = Schema({
     required: true,
   },
 
-  document_id: {
+  id_contracted: {
+    type: String,
+    required: true,
+  },
+  email_contracted: {
     type: String,
     required: true,
   },
 
-  date_contract: {
+  address: {
+    type: String,
+    required: true,
+  },
+
+  cel: {
+    type: String,
+    require: true,
+  },
+
+  phone: {
+    type: String,
+    require: true,
+  },
+
+  starting_amount: {
+    type: Number,
+    require: true,
+  },
+
+  final_amount: {
+    type: Number,
+    require: true,
+  },
+
+  total_amount: {
+    type: Number,
+    require: true,
+  },
+
+  starting_date: {
     type: String,
     default: () => dateTime.toISOString().slice(0, 10),
     required: true,
   },
 
-  date_pay: {
+  deadline: {
+    type: String,
+    default: () => dateTime.toISOString().slice(0, 10),
+    required: true,
+  },
+
+  deliver_date: {
+    type: String,
+    default: () => dateTime.toISOString().slice(0, 10),
+    
+  },
+
+  description: {
     type: String,
     required: true,
   },
 
-  name_job: {
+  observations: {
     type: String,
-    required: true,
-  },
-
-  amount: {
-    type: Number,
-    required: true,
-  },
-
-  number_phone: {
-    type: Number,
-    required: true,
-  },
-
-  email: {
-    type: String,
+   
   },
 
   status: {
