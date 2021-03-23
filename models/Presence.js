@@ -19,7 +19,7 @@ const PresenceSchema = Schema({
 
   status: {
     type: String,
-    default: "pending",
+    default: "Pendiente",
     required: true,
   },
 });

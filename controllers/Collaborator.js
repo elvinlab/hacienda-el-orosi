@@ -2,7 +2,7 @@ const Collaborator = require("../models/Collaborator.js");
 const { response } = require("express");
 
 const register = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const {
       document_id,
       jobId,
@@ -21,7 +21,7 @@ const register = async (req, res = response) => {
 
       if (findCollaboratorByDocumentId) {
         return res.status(400).json({
-          status: "error",
+          status: false,
           msg: "El colaborador ya existe",
         });
       }
@@ -40,25 +40,25 @@ const register = async (req, res = response) => {
       await collaborator.save();
 
       return res.status(200).json({
-        status: "success",
+        status: true,
         msg: "Colaborador registrado con exito",
       });
     } catch (error) {
       return res.status(500).json({
-        status: "Error",
+        status: false,
         msg: "Por favor contacte con el Administrador para mas información",
       });
     }
   } else {
     return res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
 const update = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const collaboratorId = req.params.id;
     const {
       document_id,
@@ -77,26 +77,35 @@ const update = async (req, res = response) => {
 
     if (
       findCollaboratorByDocumentId &&
-      (findCollaboratorByDocumentId._id != collaboratorId)
+      findCollaboratorByDocumentId._id != collaboratorId
     ) {
       return res.status(400).json({
-        status: "Error",
+        status: false,
         msg: "Existe un colaborador con esta cedula.",
       });
     }
 
     Collaborator.findByIdAndUpdate(
       { _id: collaboratorId },
-      { document_id, job: jobId, nationality, name, surname, direction, tel, cel },
+      {
+        document_id,
+        job: jobId,
+        nationality,
+        name,
+        surname,
+        direction,
+        tel,
+        cel,
+      },
       (err) => {
         if (err) {
           res.status(400).json({
-            status: "error",
+            status: false,
             msg: "Por favor hable con el administrador",
           });
         } else {
           res.status(200).send({
-            status: "success",
+            status: true,
             msg: "Datos del colaborador actualizados con exito",
           });
         }
@@ -104,14 +113,14 @@ const update = async (req, res = response) => {
     );
   } else {
     res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
 const changeStatus = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const { status, dispatch_date } = req.body;
     const collaboratorId = req.params.id;
 
@@ -121,12 +130,12 @@ const changeStatus = async (req, res = response) => {
       (err) => {
         if (err) {
           res.status(400).json({
-            status: "error",
+            status: false,
             msg: "Por favor hable con el administrador",
           });
         } else {
           res.status(200).send({
-            status: "success",
+            status: true,
             msg: "Estado actualizado para el colaborador",
           });
         }
@@ -134,7 +143,7 @@ const changeStatus = async (req, res = response) => {
     );
   } else {
     res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
@@ -143,23 +152,25 @@ const changeStatus = async (req, res = response) => {
 const getCollaboratorsByStatus = (req, res = response) => {
   const status = req.params.status;
 
-  Collaborator.find({ status }).populate("job").exec((err, collaborators) => {
-    if (err) {
-      return res.status(404).send({
-        status: "error",
-        msg: "Error al hacer la consulta",
-      });
-    }
+  Collaborator.find({ status })
+    .populate("job")
+    .exec((err, collaborators) => {
+      if (err) {
+        return res.status(404).send({
+          status: false,
+          msg: "Error al hacer la consulta",
+        });
+      }
 
-    return res.status(200).json({
-      status: "success",
-      collaborators: {
-        collaboratorsState: status,
-        collaborators: collaborators,
-        count: collaborators.length,
-      },
+      return res.status(200).json({
+        status: true,
+        collaborators: {
+          collaboratorsState: status,
+          collaborators: collaborators,
+          count: collaborators.length,
+        },
+      });
     });
-  });
 };
 
 const getCollaborator = async (req, res = response) => {
@@ -168,13 +179,13 @@ const getCollaborator = async (req, res = response) => {
   await Collaborator.findOne({ document_id }).exec((err, collaborator) => {
     if (err || !collaborator) {
       return res.status(404).send({
-        status: "error",
+        status: false,
         msg: "Colaborador no existe",
       });
     }
 
     return res.status(200).send({
-      status: "success",
+      status: true,
       collaborator: collaborator,
     });
   });

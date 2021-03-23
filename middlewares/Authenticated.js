@@ -4,7 +4,7 @@ const moment = require("moment");
 exports.authenticated = function (req, res, next) {
     if (!req.headers.authorization) {
         return res.status(403).send({
-            status: "error",
+            status: false,
             msg: "La petición no tiene la cabecera de authorization",
         });
     }
@@ -16,13 +16,13 @@ try {
 
     if (payload.exp <= moment().unix()) {
     return res.status(404).send({
-        status: "error",
+        status: false,
         msg: "El token ha expirado",
     });
     }
 } catch (ex) {
     return res.status(404).send({
-    status: "error",
+    status: false,
     msg: "El token no es válido",
     });
 }

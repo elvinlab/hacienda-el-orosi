@@ -19,7 +19,7 @@ const LendSchema = Schema({
 
   status: {
     type: String,
-    default: "active",
+    default: "Activo",
     required: true,
   },
 

@@ -4,7 +4,7 @@ const { ObjectId } = require("mongodb");
 const { response } = require("express");
 
 const register = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "CATTLE_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Encargado del Ganado") {
     const administratorID = req.user.id;
     const {
       plate_number,
@@ -33,75 +33,78 @@ const register = async (req, res = response) => {
 
       if (findCowByPlateNumber) {
         return res.status(400).json({
-          status: "error",
-          msg: `La vaca ${name} con el numero de chapa ${plate_number} ya existe`,
+          status: true,
+          msg: `El animal con numero de chapa ${plate_number} ya existe`,
         });
       }
 
-      let cow = new Animal();
+      let animal = new Animal();
 
-      cow.administrator = administratorID;
-      cow.plate_number = plate_number;
-      cow.race = race;
-      cow.status = status;
-      cow.step = step;
-      cow.age = age;
-      cow.type_cow = type_cow;
-      cow.name = name;
-      cow.photo = photo;
-      cow.next_due_date = next_due_date;
-      cow.complications = complications;
-      cow.number_deliveries = number_deliveries;
+      animal.administrator = administratorID;
+      animal.plate_number = plate_number;
+      animal.type_animal = type_animal;
+      animal.status = status;
+      animal.race = race;
+      animal.age = age;
+      animal.date_admission = date_admission;
+      animal.daughter_of = daughter_of;
+      animal.weight = weight;
+      animal.weekly_weight = weekly_weight;
+      animal.place_origin = place_origin;
+      animal.name = name;
+      animal.photo = photo;
+      animal.photo_register = photo_register;
+      animal.gender = gender;
+      animal.next_due_date = next_due_date;
+      animal.complications = complications;
+      animal.number_deliveries = number_deliveries;
 
-      await cow.save();
+      await animal.save();
 
       return res.status(200).json({
-        status: "success",
-        msg: `La vaca ${name} con el numero de chapa ${plate_number} fue registrada con exito`,
-        cow: cow,
+        status: true,
+        msg: `El numero de chapa ${plate_number} fue registrada con exito`,
+        animal: animal,
       });
     } catch (error) {
       return res.status(500).json({
-        status: "Error",
+        status: false,
         msg:
           "Por favor contacte con un ingeniero en sistemas para mas información",
       });
     }
   } else {
     return res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
 const update = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "CATTLE_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Encargado del Ganado") {
     const cowID = req.params.id;
     const {
-        plate_number,
-        race,
-        status,
-        step,
-        age,
-        name,
-        photo,
-        type_cow,
-        next_due_date,
-        complications,
-        number_deliveries,
+      plate_number,
+      race,
+      status,
+      step,
+      age,
+      name,
+      photo,
+      type_cow,
+      next_due_date,
+      complications,
+      number_deliveries,
     } = req.body;
 
     const findCowByPlateNumber = await Collaborator.findOne({
-        plate_number,
+      plate_number,
     });
 
-    if (
-      findCowByPlateNumber &&
-      findCowByPlateNumber._id != cowId
-    ) {
+    if (findCowByPlateNumber && findCowByPlateNumber._id != cowId) {
       return res.status(400).json({
-        status: "Error",
+        status: false,
         msg: "Existe una vaca con esta cedula.",
       });
     }
@@ -121,12 +124,12 @@ const update = async (req, res = response) => {
       (err) => {
         if (err) {
           res.status(400).json({
-            status: "error",
+            status: false,
             msg: "Por favor hable con el administrador",
           });
         } else {
           res.status(200).send({
-            status: "success",
+            status: true,
             msg: "Datos del colaborador actualizados con exito",
           });
         }
@@ -134,7 +137,7 @@ const update = async (req, res = response) => {
     );
   } else {
     res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }

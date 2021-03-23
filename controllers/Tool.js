@@ -17,13 +17,13 @@ const registerTool = async (req, res = response) => {
     await tool.save();
 
     return res.status(200).json({
-      status: "success",
+      status: true,
       msg: "Herramienta registrada con exito",
       tool: tool,
     });
   } catch (error) {
     return res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "Porfavor contacte con un administrador para mas informacion",
     });
   }
@@ -42,11 +42,11 @@ const registerActives = async (req, res = response) => {
 
     await Tool.findOneAndUpdate(
       { _id: element.tool_id },
-      { status: "active" },
+      { status: "Activo" },
       (err) => {
         if (err) {
           return res.status(500).send({
-            status: "error",
+            status: false,
             msg: "Error en la operacion",
           });
         }
@@ -55,7 +55,7 @@ const registerActives = async (req, res = response) => {
   });
 
   return res.status(200).json({
-    status: "success",
+    status: true,
     msg: "Herramientas asignadas con exito",
   });
 };
@@ -67,12 +67,12 @@ const changeStatus = async (req, res = response) => {
   await Tool.findByIdAndUpdate({ _id: toolId }, { status: status }, (err) => {
     if (err) {
       res.status(400).json({
-        status: "error",
+        status: false,
         msg: "por favor hable con el administrador para mas informacion",
       });
     } else {
       res.status(200).send({
-        status: "success",
+        status: true,
         msg: "Estado actualizado del Activo",
       });
     }
@@ -80,61 +80,62 @@ const changeStatus = async (req, res = response) => {
 };
 
 const getToolsByStatus = (req, res = response) => {
-  
   const status = req.params.status;
 
-  Tool.find({ status }).sort({name: 1}).exec((err, tools) => {
-    if (err) {
-      return res.status(404).send({
-        status: "error",
-        msg: "Error al hacer la consulta",
-      });
-    }
+  Tool.find({ status })
+    .sort({ name: 1 })
+    .exec((err, tools) => {
+      if (err) {
+        return res.status(404).send({
+          status: false,
+          msg: "Error al hacer la consulta",
+        });
+      }
 
-    return res.status(200).json({
-      status: "success",
-      tools: {
-        toolsState: status,
-        tools: tools,
-        count: tools.length,
-      },
+      return res.status(200).json({
+        status: true,
+        tools: {
+          toolsState: status,
+          tools: tools,
+          count: tools.length,
+        },
+      });
     });
+};
+
+const getActives = async (res = response) => {
+  const actives = await Active.find().populate("collaborator tool");
+  return res.status(200).json({
+    status: true,
+    actives: {
+      actives: actives,
+      count: actives.length,
+    },
   });
 };
 
-  const getActives = async (req, res = response) => {
-   
-    const actives = await Active.find().populate("collaborator tool");
-    return res.status(200).json({
-      status: "success",
-      actives: {
-        actives: actives,
-        count: actives.length,
-      },
-    });
-  };
-
-
 const getActivesByCollaborator = (req, res = response) => {
-  
   const collaborator_id = req.params.id;
 
-  Active.find({ collaborator: ObjectId(collaborator_id) }).populate("tool").sort({name: 1}).exec((err, actives) => {
-    if (err) {
-      return res.status(500).send({
-        status: "error",
-        msg: "Error al hacer la consulta",
-      });
-    }
+  Active.find({ collaborator: ObjectId(collaborator_id) })
+    .populate("tool")
+    .sort({ name: 1 })
+    .exec((err, actives) => {
+      if (err) {
+        return res.status(500).send({
+          status: false,
+          msg: "Error al hacer la consulta",
+        });
+      }
 
-    return res.status(200).json({
-      status: "success",
-      actives: {
-        actives: actives,
-        count: actives.length,
-      },
+      return res.status(200).json({
+        status: true,
+        actives: {
+          actives: actives,
+          count: actives.length,
+        },
+      });
     });
-  });
 };
 
 const deleteActivesTool = async (req, res = response) => {
@@ -143,31 +144,32 @@ const deleteActivesTool = async (req, res = response) => {
   tools.forEach(async function (element) {
     await Tool.findByIdAndUpdate(
       { _id: element.tool_id },
-      { status: "stock" },
+      { status: "En bodega" },
       (err) => {
         if (err) {
           return res.status(400).json({
-            status: "error",
+            status: false,
             msg: "Por favor hable con el administrador",
           });
         }
       }
     );
-    
-    await Active.findOneAndDelete({ tool: ObjectId(element.tool_id) }, (err) => {
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          msg: "Error al solicitar la peticion",
-        });
-      }
-    });
 
+    await Active.findOneAndDelete(
+      { tool: ObjectId(element.tool_id) },
+      (err) => {
+        if (err) {
+          return res.status(500).send({
+            status: false,
+            msg: "Error al solicitar la peticion",
+          });
+        }
+      }
+    );
   });
-  
 
   return res.status(200).json({
-    status: "success",
+    status: true,
     msg: "Herramienta regresada exitosamente ",
   });
 };

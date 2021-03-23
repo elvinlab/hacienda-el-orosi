@@ -52,7 +52,7 @@ const ContractSchema = Schema({
 
   status: {
     type: String,
-    default: "active",
+    default: "Activo",
     required: true,
   },
 });
