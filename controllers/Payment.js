@@ -44,7 +44,7 @@ const registerSalaryCollaborator = (req, res = response) => {
       payment.extra_hours_price = paymentReg.extra_hours_price;
       payment.price_day = paymentReg.price_day;
       payment.net_salary = paymentReg.net_salary;
-      payment.final_salary = paymentReg.total_salary;
+      payment.total_salary = paymentReg.total_salary;
 
       payment.save();
       return res.status(200).json({
@@ -229,7 +229,7 @@ const getDayPendingByCollaborator = async (req, res = response) => {
       status: "pending",
       collaborator: ObjectId(collaboratorId),
     }).sort({ date: -1 });
-
+    
     await Presence.aggregate(
       [
         {
@@ -255,7 +255,6 @@ const getDayPendingByCollaborator = async (req, res = response) => {
     });
   }
 };
-
 
 module.exports = {
   registerSalaryCollaborator,

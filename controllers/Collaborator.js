@@ -1,6 +1,4 @@
 const Collaborator = require("../models/Collaborator.js");
-
-const { ObjectId } = require("mongodb");
 const { response } = require("express");
 
 const register = async (req, res = response) => {
