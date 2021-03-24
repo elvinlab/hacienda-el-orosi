@@ -3,7 +3,7 @@ const Job = require("../models/Job.js");
 const { response } = require("express");
 
 const save = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const {
       name_job,
       description,
@@ -17,7 +17,7 @@ const save = async (req, res = response) => {
 
       if (findJobByName) {
         return res.status(401).json({
-          status: "error",
+          status: false,
           msg: "Esta actividad ya existe",
         });
       }
@@ -32,25 +32,25 @@ const save = async (req, res = response) => {
 
       await job.save();
       return res.status(200).json({
-        status: "success",
+        status: true,
         msg: "Actividad registrada con éxito",
       });
     } catch (error) {
       return res.status(500).json({
-        status: "error",
+        status: false,
         msg: "Por favor contacte con el administrador para más imformación",
       });
     }
   } else {
     return res.status(400).send({
-      status: "error",
+      status: false,
       msg: "No puedes registrar la actividad",
     });
   }
 };
 
 const updateJob = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const { description, work_hours, price_extra_hours, price_day } = req.body;
     const jobId = req.params.id;
 
@@ -60,12 +60,12 @@ const updateJob = async (req, res = response) => {
       (err) => {
         if (err) {
           res.status(400).json({
-            status: "error",
+            status: false,
             msg: "Por favor hable con el administrador",
           });
         } else {
           res.status(200).send({
-            status: "success",
+            status: true,
             msg: "Actividad actualizada con exito",
           });
         }
@@ -73,53 +73,53 @@ const updateJob = async (req, res = response) => {
     );
   } else {
     res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
 const removeJob = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     let jobId = req.params.id;
 
     Job.findOneAndDelete({ _id: jobId }, (err, job) => {
       if (err) {
         return res.status(500).send({
-          status: "error",
+          status: false,
           msg: "Error al procesar la peticion",
         });
       }
       if (!job) {
         return res.status(404).send({
-          status: "error",
+          status: false,
           msg: "No se ha eliminado el trabajo",
         });
       }
       return res.status(200).json({
-        status: "success",
+        status: true,
         msg: "Actividad removida de forma exitosa",
       });
     });
   } else {
     return res.status(400).send({
-      status: "error",
+      status: false,
       msg: "No puedes remover el trabajo",
     });
   }
 };
 
-const getJobs = (req, res = response) => {
+const getJobs = (res = response) => {
   Job.find().exec((err, jobs) => {
     if (err || !jobs) {
       return res.status(404).send({
-        status: "error",
+        status: false,
         msg: "Error inesperado",
       });
     }
 
     return res.status(200).json({
-      status: "success",
+      status: true,
       jobs: jobs,
     });
   });

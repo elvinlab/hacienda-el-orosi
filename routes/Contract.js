@@ -1,8 +1,8 @@
 const { Router } = require ( 'express' );
 const { check } = require ( 'express-validator' );
-const { validate_fields } = require( '../middelewares/Validate-fields' );
+const { validate_fields } = require( '../middlewares/Validate-fields' );
 
-const md_auth = require("../middelewares/Authenticated");
+const md_auth = require("../middlewares/Authenticated");
 const router = Router();
 
 const { 

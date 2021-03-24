@@ -20,6 +20,7 @@ app.use("/api/recursos-humanos", require("./routes/Job.js"));
 app.use("/api/recursos-humanos", require("./routes/Lend.js"));
 app.use("/api/recursos-humanos", require("./routes/Payment.js"));
 app.use("/api/recursos-humanos", require("./routes/Contract.js"));
+app.use("/api/gestion-animal", require("./routes/Animal.js"));
 
 //Herramientas
 app.use("/api/herramientas", require("./routes/Tool.js"));

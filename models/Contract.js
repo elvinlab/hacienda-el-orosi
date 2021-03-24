@@ -12,7 +12,7 @@ const ContractSchema = Schema({
 
   administrator: {
     type: Schema.ObjectId,
-    ref: "Administrator",
+    ref: "User",
     required: true,
   },
 
@@ -91,7 +91,7 @@ const ContractSchema = Schema({
 
   status: {
     type: String,
-    default: "active",
+    default: "Activo",
     required: true,
   },
 });

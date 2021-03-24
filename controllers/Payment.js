@@ -6,24 +6,24 @@ const { response } = require("express");
 const { ObjectId } = require("mongodb");
 
 const registerSalaryCollaborator = (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const { paymentReg } = req.body;
     const collaboratorId = req.params.id;
 
     if (paymentReg.final_salary === 0) {
       return res.status(400).json({
-        status: "error",
+        status: true,
         msg: "No se puede registrar un pago con un salario final igual a cero ",
       });
     }
     try {
       Presence.updateMany(
-        { status: "pending", collaborator: ObjectId(collaboratorId) },
+        { status: "Pendiente", collaborator: ObjectId(collaboratorId) },
         { status: "paid" },
         function (err) {
           if (err) {
             return res.status(500).json({
-              status: "error",
+              status: true,
               error: `Contacte a un ingeniero: ${err}`,
             });
           }
@@ -44,29 +44,29 @@ const registerSalaryCollaborator = (req, res = response) => {
       payment.extra_hours_price = paymentReg.extra_hours_price;
       payment.price_day = paymentReg.price_day;
       payment.net_salary = paymentReg.net_salary;
-      payment.final_salary = paymentReg.total_salary;
+      payment.total_salary = paymentReg.total_salary;
 
       payment.save();
       return res.status(200).json({
-        status: "success",
+        status: true,
         msg: "Pago realizado con exito",
       });
     } catch (error) {
       return res.status(500).json({
-        status: "error",
+        status: true,
         msg: "Porfavor contacte con el Administrador para mas información",
       });
     }
   } else {
     return res.status(400).json({
-      status: "error",
+      status: true,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
 const paymentsByCollaborator = (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     let page = undefined;
     const collaboratorId = req.params.id;
     if (
@@ -92,20 +92,20 @@ const paymentsByCollaborator = (req, res = response) => {
       (err, payments) => {
         if (err) {
           return res.status(500).send({
-            status: "error",
+            status: true,
             msg: "Error al hacer la consulta",
           });
         }
 
         if (!payments) {
           return res.status(404).send({
-            status: "error",
+            status: true,
             msg: "Sin pagos registrados",
           });
         }
 
         return res.status(200).json({
-          status: "success",
+          status: true,
           payments: {
             payments: payments.docs,
             count: payments.totalDocs,
@@ -116,14 +116,14 @@ const paymentsByCollaborator = (req, res = response) => {
     );
   } else {
     res.status(500).json({
-      status: "error",
+      status: true,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
 const getPayments = (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     let page = undefined;
 
     if (
@@ -146,20 +146,20 @@ const getPayments = (req, res = response) => {
     Payment.paginate({}, options, (err, payments) => {
       if (err) {
         return res.status(500).send({
-          status: "error",
+          status: true,
           msg: "Error al hacer la consulta",
         });
       }
 
       if (!payments) {
         return res.status(404).send({
-          status: "error",
+          status: true,
           msg: "Sin pagos registrados",
         });
       }
 
       return res.status(200).json({
-        status: "success",
+        status: true,
         payments: {
           payments: payments,
           count: payments.totalDocs,
@@ -176,7 +176,7 @@ const getPayments = (req, res = response) => {
 };
 
 const registerPresence = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const { total_overtime } = req.body;
     const collaboratorId = req.params.id;
 
@@ -190,7 +190,7 @@ const registerPresence = async (req, res = response) => {
 
       if (findPresenceByActualDateAndCollaborator) {
         return res.status(400).json({
-          status: "error",
+          status: true,
           msg: "Dia laboral ya registrado para el colaborador",
         });
       }
@@ -204,29 +204,29 @@ const registerPresence = async (req, res = response) => {
       await presence.save();
 
       return res.status(200).json({
-        status: "success",
+        status: true,
         msg: "Se registro dia laboral con exito",
       });
     } catch (error) {
       return res.status(500).json({
-        status: "error",
+        status: true,
         msg: "Porfavor contacte con el Administrador para mas información",
       });
     }
   } else {
     res.status(400).json({
-      status: "error",
+      status: true,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
 const getDayPendingByCollaborator = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const collaboratorId = req.params.id;
 
     let findPresenceByStatusAndByCollaborator = await Presence.find({
-      status: "pending",
+      status: "Pendiente",
       collaborator: ObjectId(collaboratorId),
     }).sort({ date: -1 });
 
@@ -234,15 +234,15 @@ const getDayPendingByCollaborator = async (req, res = response) => {
       [
         {
           $match: {
-            status: { $eq: "pending" },
+            status: { $eq: "Pendiente" },
             collaborator: { $eq: ObjectId(collaboratorId) },
           },
         },
         { $group: { _id: null, amount: { $sum: "$total_overtime" } } },
       ],
-      function (err, result) {
+      function (result) {
         return res.status(200).json({
-          status: "success",
+          status: true,
           total_overtime: result[0] ? result[0].amount : 0,
           pending_days: findPresenceByStatusAndByCollaborator,
         });
@@ -250,12 +250,11 @@ const getDayPendingByCollaborator = async (req, res = response) => {
     );
   } else {
     res.status(400).json({
-      status: "error",
+      status: true,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
-
 
 module.exports = {
   registerSalaryCollaborator,
