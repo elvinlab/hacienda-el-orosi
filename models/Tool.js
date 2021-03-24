@@ -9,7 +9,7 @@ const ToolSchema = Schema({
     unique: true,
     required: true,
   },
-  administrator: { type: Schema.ObjectId, ref: "Administrator" },
+  administrator: { type: Schema.ObjectId, ref: "User" },
   status: {
     type: String,
     default: "En bodega",

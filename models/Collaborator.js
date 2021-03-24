@@ -9,7 +9,7 @@ const CollaboratorSchema = Schema({
     unique: true,
     required: true,
   },
-  administrator: { type: Schema.ObjectId, ref: "Administrator" },
+  administrator: { type: Schema.ObjectId, ref: "User" },
   job: { type: Schema.ObjectId, ref: "Job" },
   nationality: {
     type: String,

@@ -5,7 +5,7 @@ const moment = require("moment");
 let dateTime = new Date();
 
 const PresenceSchema = Schema({
-  administrator: { type: Schema.ObjectId, ref: "Administrator" },
+  administrator: { type: Schema.ObjectId, ref: "User" },
   collaborator: { type: Schema.ObjectId, ref: "Collaborator" },
   date: {
     type: String,

@@ -16,14 +16,47 @@ const MilkSchema = Schema({
   },
 });
 
-model("Milk", MilkSchema);
-
-const AnimalSchema = Schema({
-  administrator: {
-    type: Schema.ObjectId,
-    ref: "Administrator",
+const CalvingSchema = Schema({
+  calving_number: {
+    type: Number,
     required: true,
   },
+
+  date: {
+    type: String,
+    default: () => moment(dateTime).format("YYYY-MM-DD"),
+    required: true,
+  },
+
+  complications: {
+    type: String,
+  },
+});
+
+const WeightSchema = Schema({
+  weight: {
+    type: Number,
+    required: true,
+  },
+
+  date: {
+    type: String,
+    default: () => moment(dateTime).format("YYYY-MM-DD"),
+    required: true,
+  },
+
+  observations: {
+    type: String,
+  },
+});
+
+model("Milk", MilkSchema);
+model("Calving", MilkSchema);
+model("Weight", WeightSchema);
+
+const AnimalSchema = Schema({
+
+  administrator: { type: Schema.ObjectId, ref: "User" },
 
   plate_number: {
     type: String,
@@ -58,11 +91,7 @@ const AnimalSchema = Schema({
     ref: "Animal",
   },
 
-  weight: {
-    type: Number,
-  },
-
-  weekly_weight: {
+  starting_weight: {
     type: Number,
   },
 
@@ -90,15 +119,11 @@ const AnimalSchema = Schema({
     type: String,
   },
 
-  complications: {
-    type: String,
-  },
+  milk: [MilkSchema],
 
-  number_deliveries: {
-    type: Number,
-  },
+  calving: [CalvingSchema],
 
-  milks: [MilkSchema],
+  weight: [WeightSchema],
 });
 
 AnimalSchema.plugin(mongoosePaginate);

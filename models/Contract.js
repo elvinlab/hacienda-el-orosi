@@ -6,7 +6,7 @@ let dateTime = new Date();
 const ContractSchema = Schema({
   administrator: {
     type: Schema.ObjectId,
-    ref: "Administrator",
+    ref: "User",
     required: true,
   },
 
