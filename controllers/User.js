@@ -48,7 +48,7 @@ const register = async (req, res = response) => {
         },
       });
     } catch (error) {
-      res.status(400).json({
+      return res.status(400).json({
         status: false,
         msg: "Puede que estos valores ya se encuentren registrados",
       });
@@ -68,19 +68,19 @@ const updateRole = async (req, res = response) => {
 
     await User.findByIdAndUpdate({ _id: userId }, { role: role }, (err) => {
       if (err) {
-        res.status(400).json({
+        return res.status(400).json({
           status: false,
           msg: "Por favor hable con el administrador",
         });
       } else {
-        res.status(200).send({
+        return res.status(200).send({
           status: true,
           msg: "Cargo actualizado para este administrador",
         });
       }
     });
   } else {
-    res.status(500).json({
+    return res.status(500).json({
       status: false,
       msg: "No tienes permisos en la plataforma",
     });
@@ -220,13 +220,13 @@ const set_recovery_key = async (req, res = response) => {
 
   User.findOne({ email: email }, (err, get_user) => {
     if (err) {
-      res.status(500).send({
+      return res.status(500).send({
         status: false,
         msg: "Error en el servidor",
       });
     } else {
       if (!get_user) {
-        res.status(500).send({
+        return res.status(500).send({
           status: false,
           msg:
             "El correo electrónico no se encuentra registrado, intente nuevamente.",
@@ -251,7 +251,7 @@ const set_recovery_key = async (req, res = response) => {
               });
             }
 
-            res.status(200).send({
+            return res.status(200).send({
               status: true,
               msg:
                 "Por favor revisar su correo, le hemos enviado un codigo de verificacion",
@@ -269,16 +269,18 @@ const verify_recovery_key = async (req, res = response) => {
 
   User.findOne({ email: email }, (err, user) => {
     if (err || !user) {
-      res.status(500).send({ status: false, msg: "Error en el servidor" });
+      return res
+        .status(500)
+        .send({ status: false, msg: "Error en el servidor" });
     } else {
       if (user.recovery_key == code) {
-        res.status(200).send({
+        return res.status(200).send({
           status: true,
           msg: "Por favor prosiga a cambiar la contraseña",
           token: true,
         });
       } else {
-        res.status(400).send({
+        return res.status(400).send({
           status: false,
           msg: "El codigo no es igual al enviado previamente",
         });
@@ -293,10 +295,12 @@ const change_password = async (req, res = response) => {
 
   User.findOne({ email: email }, (err, user) => {
     if (err) {
-      res.status(500).send({ status: false, msg: "Error en el servidor" });
+      return res
+        .status(500)
+        .send({ status: false, msg: "Error en el servidor" });
     } else {
       if (!user) {
-        res.status(500).send({
+        return res.status(500).send({
           status: false,
           msg:
             "El correo electrónico no se encuentra registrado, intente nuevamente.",
@@ -307,13 +311,13 @@ const change_password = async (req, res = response) => {
 
         User.findByIdAndUpdate({ _id: user._id }, { password: hash }, (err) => {
           if (err) {
-            res.status(500).send({
+            return res.status(500).send({
               status: false,
               msg: "Error en el servidor",
             });
           }
 
-          res.status(200).send({
+          return res.status(200).send({
             status: true,
             msg: "Contraseña actualizada con exito",
           });

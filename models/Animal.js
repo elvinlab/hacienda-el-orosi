@@ -11,7 +11,6 @@ const MilkSchema = Schema({
   },
   registration_date: {
     type: String,
-    default: () => moment(dateTime).format("YYYY-MM-DD"),
     required: true,
   },
 });
@@ -19,12 +18,12 @@ const MilkSchema = Schema({
 const CalvingSchema = Schema({
   calving_number: {
     type: Number,
+    unique: true,
     required: true,
   },
 
   date: {
     type: String,
-    default: () => moment(dateTime).format("YYYY-MM-DD"),
     required: true,
   },
 
@@ -41,7 +40,6 @@ const WeightSchema = Schema({
 
   date: {
     type: String,
-    default: () => moment(dateTime).format("YYYY-MM-DD"),
     required: true,
   },
 
@@ -50,12 +48,7 @@ const WeightSchema = Schema({
   },
 });
 
-model("Milk", MilkSchema);
-model("Calving", MilkSchema);
-model("Weight", WeightSchema);
-
 const AnimalSchema = Schema({
-
   administrator: { type: Schema.ObjectId, ref: "User" },
 
   plate_number: {
@@ -76,6 +69,10 @@ const AnimalSchema = Schema({
   date_admission: {
     type: String,
     required: true,
+  },
+
+  gender: {
+    type: String,
   },
 
   race: {
@@ -108,10 +105,6 @@ const AnimalSchema = Schema({
   },
 
   photo_register: {
-    type: String,
-  },
-
-  gender: {
     type: String,
   },
 

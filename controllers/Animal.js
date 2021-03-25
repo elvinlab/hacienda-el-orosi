@@ -148,55 +148,69 @@ const update = async (req, res = response) => {
 };
 
 const changeStatus = async (req, res = response) => {
-  const { status } = req.body;
-  const animalID = req.params.id;
+  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+    const { status } = req.body;
+    const animalID = req.params.id;
 
-  await Animal.findByIdAndUpdate(
-    { _id: animalID },
-    { status: status },
-    { new: true },
-    (err, animal) => {
-      if (err) {
-        res.status(400).json({
-          status: false,
-          msg:
-            "Por favor contacte con un ingeniero en sistemas para mas información",
-        });
-      } else {
-        res.status(200).send({
-          status: true,
-          msg: "Estado actualizado del animal",
-          animal: animal,
-        });
+    await Animal.findByIdAndUpdate(
+      { _id: animalID },
+      { status: status },
+      { new: true },
+      (err, animal) => {
+        if (err) {
+          res.status(400).json({
+            status: false,
+            msg:
+              "Por favor contacte con un ingeniero en sistemas para mas información",
+          });
+        } else {
+          res.status(200).send({
+            status: true,
+            msg: "Estado actualizado del animal",
+            animal: animal,
+          });
+        }
       }
-    }
-  );
+    );
+  } else {
+    res.status(500).json({
+      status: false,
+      msg: "No tienes permisos en la plataforma",
+    });
+  }
 };
 
 const changeNextDueDate = async (req, res = response) => {
-  const { next_due_date } = req.body;
-  const animalID = req.params.id;
+  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+    const { next_due_date } = req.body;
+    const animalID = req.params.id;
 
-  await Animal.findByIdAndUpdate(
-    { _id: animalID },
-    { next_due_date },
-    { new: true },
-    (err, animal) => {
-      if (err) {
-        res.status(400).json({
-          status: false,
-          msg:
-            "Por favor contacte con un ingeniero en sistemas para mas información",
-        });
-      } else {
-        res.status(200).send({
-          status: true,
-          msg: "Fecha proxima del parto actualizada",
-          animal: animal,
-        });
+    await Animal.findByIdAndUpdate(
+      { _id: animalID },
+      { next_due_date },
+      { new: true },
+      (err, animal) => {
+        if (err) {
+          res.status(400).json({
+            status: false,
+            msg:
+              "Por favor contacte con un ingeniero en sistemas para mas información",
+          });
+        } else {
+          res.status(200).send({
+            status: true,
+            msg: "Fecha proxima del parto actualizada",
+            animal: animal,
+          });
+        }
       }
-    }
-  );
+    );
+  } else {
+    res.status(500).json({
+      status: false,
+      msg: "No tienes permisos en la plataforma",
+    });
+  }
 };
 
 const getAnimals = (req, res = response) => {
