@@ -1,8 +1,8 @@
 const { Router } = require ( 'express' );
 const { check } = require ( 'express-validator' );
-const { validate_fields } = require( '../middelewares/Validate-fields' );
+const { validate_fields } = require( '../middlewares/Validate-fields' );
 
-const md_auth = require("../middelewares/Authenticated");
+const md_auth = require("../middlewares/Authenticated");
 const router = Router();
 
 const { 
@@ -16,13 +16,16 @@ router.post(
     '/realizar-contracto',
     [
         check("name_contracted", "Nombre de la persona contratada Requerido ").not().isEmpty(),
-        check("document_id", "Cedula requerida").not().isEmpty(),
-        check("date_pay", "Fecha de pago requerido").not().isEmpty(),
-        check("date_contract", "Fecha de contrato requerido").not().isEmpty(),
-        check("name_job", "Nombre del trabajo requerido").not().isEmpty(),
-        check("amount", "Pago requerido").not().isEmpty(),
-        check("name_contracted", "Nonbre del trabajo a realizar requerido").not().isEmpty(),
-        check("number_phone", "Numero de telefono requerido").not().isEmpty(),
+        check("id_contracted", "Cedula requerida").not().isEmpty(),
+        check("email_contracted", "Correo requerido").not().isEmpty(),
+        check("address", "Direccion requerida").not().isEmpty(),
+        check("cel", "Celular requerido").not().isEmpty(),
+        check("phone", "Telefono requerido").not().isEmpty(),
+        check("starting_amount", "Pago inicial requerido").not().isEmpty(),
+        check("total_amount", "pago total requerido").not().isEmpty(),
+        check("starting_date", "Fecha de inicio requerido").not().isEmpty(),
+        check("deadline", "Fecha final requerida").not().isEmpty(),
+        check("description", "Descripcion del trabajo requerido").not().isEmpty(),
         validate_fields,
     ],
     md_auth.authenticated,
@@ -32,6 +35,9 @@ router.post(
  router.put(
     "/contrato/cambiar-estado/:id",
     [check("status", "Estado no recibido").not().isEmpty(), validate_fields],
+    check("deliver_date", "Fecha de entrega requerido").not().isEmpty(),
+    check("final_amount", "pago final requerido").not().isEmpty(),
+    check("observations", "pago final requerido").not().isEmpty(),
     md_auth.authenticated,
     changeStatus
   );

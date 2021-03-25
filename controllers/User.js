@@ -9,7 +9,7 @@ const { createToken } = require("../helpers/Jwt");
 require("dotenv").config();
 
 const register = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE") {
+  if (req.user.role === "Dueño") {
     const { document_id, password, email, name, surname, role } = req.body;
 
     try {
@@ -18,7 +18,7 @@ const register = async (req, res = response) => {
 
       if (findUserByDocumentId || findUserByEmail) {
         return res.status(400).json({
-          status: "error",
+          status: false,
           msg: "El administrador ya existe",
         });
       }
@@ -37,7 +37,7 @@ const register = async (req, res = response) => {
       await user.save();
 
       res.status(201).send({
-        status: "success",
+        status: true,
         msg: "Administrador registrado con exito",
         user: {
           document_id: user.document_id,
@@ -49,69 +49,69 @@ const register = async (req, res = response) => {
       });
     } catch (error) {
       res.status(400).json({
-        status: "error",
+        status: false,
         msg: "Puede que estos valores ya se encuentren registrados",
       });
     }
   } else {
     return res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
 const updateRole = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE") {
+  if (req.user.role === "Dueño") {
     const { role } = req.body;
     const userId = req.params.id;
 
     await User.findByIdAndUpdate({ _id: userId }, { role: role }, (err) => {
       if (err) {
         res.status(400).json({
-          status: "error",
+          status: false,
           msg: "Por favor hable con el administrador",
         });
       } else {
         res.status(200).send({
-          status: "success",
+          status: true,
           msg: "Cargo actualizado para este administrador",
         });
       }
     });
   } else {
     res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
 const removeAdmin = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE") {
+  if (req.user.role === "Dueño") {
     let userId = req.params.id;
 
     User.findOneAndDelete({ _id: userId }, (err, user) => {
       if (err) {
         return res.status(500).send({
-          status: "error",
+          status: false,
           msg: "Error al solicitar la peticion",
         });
       }
       if (!user) {
         return res.status(404).send({
-          status: "error",
+          status: false,
           msg: "No se ha eliminado el administrador",
         });
       }
       return res.status(200).json({
-        status: "success",
+        status: true,
         msg: "Removido de forma exitosa",
       });
     });
   } else {
     return res.status(400).send({
-      status: "error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
@@ -125,7 +125,7 @@ const login = async (req, res = response) => {
 
     if (!findUser) {
       return res.status(400).json({
-        status: "error",
+        status: false,
         msg: "Administrador no encontrado",
       });
     }
@@ -134,8 +134,8 @@ const login = async (req, res = response) => {
 
     if (!validPassword) {
       return res.status(400).json({
-        status: "error",
-        msg: "Password incorrecto",
+        status: false,
+        msg: "Contraseña incorrecta",
       });
     }
 
@@ -149,8 +149,8 @@ const login = async (req, res = response) => {
     );
 
     return res.status(200).json({
-      status: "success",
-      msg: "Login correcto",
+      status: true,
+      msg: "Inicio de sesión correcto",
       token: token,
       user: {
         id: findUser._id,
@@ -163,7 +163,7 @@ const login = async (req, res = response) => {
     });
   } catch (error) {
     return res.status(400).json({
-      status: "error",
+      status: false,
       msg: "Por favor hable con el administrador",
     });
   }
@@ -175,13 +175,13 @@ const getUser = async (req, res = response) => {
   await User.findById(userId).exec((err, get_user) => {
     if (err || !get_user) {
       return res.status(404).send({
-        status: "error",
+        status: false,
         msg: "No existe el usuario",
       });
     }
 
     return res.status(200).send({
-      status: "success",
+      status: true,
       msg: "Datos obtenidos",
       user: {
         id: get_user._id,
@@ -221,13 +221,13 @@ const set_recovery_key = async (req, res = response) => {
   User.findOne({ email: email }, (err, get_user) => {
     if (err) {
       res.status(500).send({
-        status: "error",
+        status: false,
         msg: "Error en el servidor",
       });
     } else {
       if (!get_user) {
         res.status(500).send({
-          status: "error",
+          status: false,
           msg:
             "El correo electrónico no se encuentra registrado, intente nuevamente.",
         });
@@ -238,7 +238,7 @@ const set_recovery_key = async (req, res = response) => {
           (err) => {
             if (err) {
               return res.status(400).json({
-                status: "error",
+                status: false,
                 msg: "Por favor hable con el administrador",
               });
             } else {
@@ -252,7 +252,7 @@ const set_recovery_key = async (req, res = response) => {
             }
 
             res.status(200).send({
-              status: "success",
+              status: true,
               msg:
                 "Por favor revisar su correo, le hemos enviado un codigo de verificacion",
             });
@@ -269,17 +269,17 @@ const verify_recovery_key = async (req, res = response) => {
 
   User.findOne({ email: email }, (err, user) => {
     if (err || !user) {
-      res.status(500).send({ status: "error", msg: "Error en el servidor" });
+      res.status(500).send({ status: false, msg: "Error en el servidor" });
     } else {
       if (user.recovery_key == code) {
         res.status(200).send({
-          status: "success",
+          status: true,
           msg: "Por favor prosiga a cambiar la contraseña",
           token: true,
         });
       } else {
         res.status(400).send({
-          status: "error",
+          status: false,
           msg: "El codigo no es igual al enviado previamente",
         });
       }
@@ -293,11 +293,11 @@ const change_password = async (req, res = response) => {
 
   User.findOne({ email: email }, (err, user) => {
     if (err) {
-      res.status(500).send({ status: "error", msg: "Error en el servidor" });
+      res.status(500).send({ status: false, msg: "Error en el servidor" });
     } else {
       if (!user) {
         res.status(500).send({
-          status: "error",
+          status: false,
           msg:
             "El correo electrónico no se encuentra registrado, intente nuevamente.",
         });
@@ -308,13 +308,13 @@ const change_password = async (req, res = response) => {
         User.findByIdAndUpdate({ _id: user._id }, { password: hash }, (err) => {
           if (err) {
             res.status(500).send({
-              status: "error",
+              status: false,
               msg: "Error en el servidor",
             });
           }
 
           res.status(200).send({
-            status: "success",
+            status: true,
             msg: "Contraseña actualizada con exito",
           });
         });
@@ -324,23 +324,23 @@ const change_password = async (req, res = response) => {
 };
 
 const list_admins = (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE") {
+  if (req.user.role === "Dueño") {
     User.find().exec((err, admins) => {
       if (err) {
         return res.status(404).send({
-          status: "error",
+          status: false,
           msg: "Error al hacer la consulta",
         });
       }
 
       return res.status(200).json({
-        status: "success",
+        status: true,
         administrators: admins,
       });
     });
   } else {
     return res.status(400).send({
-      status: "error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }

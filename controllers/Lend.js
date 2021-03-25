@@ -5,13 +5,13 @@ const { ObjectId } = require("mongodb");
 const { response } = require("express");
 
 const make = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const { collaborator_id, initial_amount, fee_amount } = req.body;
 
     try {
       if (fee_amount >= initial_amount || fee_amount < 5000) {
         return res.status(400).json({
-          status: "error",
+          status: false,
           msg:
             "La cuota no puede ser mayor al prestamo inicial o menor a 5,000",
         });
@@ -27,26 +27,26 @@ const make = async (req, res = response) => {
       await lend.save();
 
       return res.status(200).json({
-        status: "success",
+        status: true,
         msg: "Prestamo realizado exitosamente",
         lend: lend,
       });
     } catch (error) {
       return res.status(500).json({
-        status: "error",
+        status: false,
         msg: "Por favor hable con el administrador encargado",
       });
     }
   } else {
     res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
 const changeAmountFee = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const { newFee } = req.body;
     const lendId = req.params.id;
 
@@ -57,12 +57,12 @@ const changeAmountFee = async (req, res = response) => {
       (err, lend) => {
         if (err) {
           res.status(400).json({
-            status: "error",
+            status: false,
             msg: "Por favor hable con el administrador",
           });
         } else {
           res.status(200).send({
-            status: "success",
+            status: true,
             msg: "Se actualizo la cuota semanal",
             lend: lend,
           });
@@ -71,14 +71,14 @@ const changeAmountFee = async (req, res = response) => {
     ).populate("collaborator");
   } else {
     res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
 };
 
 const registerFee = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const { collaborator_id, lend_id } = req.body;
 
     try {
@@ -92,7 +92,7 @@ const registerFee = async (req, res = response) => {
       let newStatus = findLend.status;
 
       if (newAmount <= 0) {
-        newStatus = "cancel";
+        newStatus = "Cancelado";
         newAmount = 0;
       }
 
@@ -102,7 +102,7 @@ const registerFee = async (req, res = response) => {
         (err) => {
           if (err) {
             res.status(400).json({
-              status: "error",
+              status: false,
               msg: "Por favor hable con el administrador",
             });
           }
@@ -112,18 +112,18 @@ const registerFee = async (req, res = response) => {
       await fee.save();
 
       return res.status(200).json({
-        status: "success",
+        status: true,
         msg: "Abono realizado exitosamente",
       });
     } catch (error) {
       return res.status(500).json({
-        status: "error",
+        status: false,
         msg: "Por favor hable con el administrador encargado",
       });
     }
   } else {
     res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
@@ -134,13 +134,13 @@ const getFeesByLend = async (req, res = response) => {
   Fee.find({ lend: lend_id }).exec((err, fees) => {
     if (err) {
       return res.status(404).send({
-        status: "error",
-        msg: "Error al hacer la consulta",
+        status: false,
+        msg: "Error en la consulta",
       });
     }
 
     return res.status(200).json({
-      status: "success",
+      status: true,
       fees: fees,
     });
   });
@@ -171,13 +171,13 @@ const getLendsByStatus = (req, res = response) => {
   Lend.paginate({ status: status }, options, (err, lends) => {
     if (err) {
       return res.status(500).send({
-        status: "error",
+        status: false,
         msg: "Error al hacer la consulta",
       });
     }
 
     return res.status(200).json({
-      status: "success",
+      status: true,
       lends: {
         lendsState: status,
         lends: lends.docs,
@@ -215,7 +215,7 @@ const getLendsByCollaborator = async (req, res = response) => {
 
   if (!findCollaboratorByDocumentId) {
     return res.status(400).json({
-      status: "Error",
+      status: false,
       msg: "Ningun colalorador con esta cedula.",
     });
   }
@@ -225,20 +225,13 @@ const getLendsByCollaborator = async (req, res = response) => {
     (err, lends) => {
       if (err) {
         return res.status(500).send({
-          status: "error",
+          status: false,
           msg: "Error al hacer la consulta",
         });
       }
-      /*
-      if (lends.docs.length === 0) {
-        return res.status(400).json({
-          status: "Error",
-          msg: "Este colaborador no tiene prestamos registrados.",
-        });
-      }
-      */
+
       return res.status(200).json({
-        status: "success",
+        status: true,
         lends: {
           lends: lends.docs,
           count: lends.totalDocs,
@@ -249,14 +242,14 @@ const getLendsByCollaborator = async (req, res = response) => {
 };
 
 const deleteLend = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const { lendId } = req.body;
 
     let findLend = await Fee.findOne({ lend: ObjectId(lendId) });
 
     if (findLend) {
       return res.status(400).json({
-        status: "Error",
+        status: false,
         msg: "Este prestamo se encuentra en continuidad.",
       });
     }
@@ -265,17 +258,17 @@ const deleteLend = async (req, res = response) => {
 
     if (!lendRemoved) {
       return res.status(404).send({
-        status: "error",
+        status: false,
         msg: "Prestamo no existe en la base de datos",
       });
     }
     return res.status(200).json({
-      status: "success",
+      status: true,
       msg: "Removido de forma exitosa",
     });
   } else {
     res.status(500).json({
-      status: "Error",
+      status: false,
       msg: "No tienes permisos en la plataforma",
     });
   }
