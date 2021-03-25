@@ -1,8 +1,7 @@
 const { model, Schema } = require("mongoose");
 const moment = require("moment");
-const mongoosePaginate = require("mongoose-paginate-v2");
 
-moment.locale("es");
+let dateTime = new Date();
 
 const CollaboratorSchema = Schema({
   document_id: {
@@ -10,7 +9,8 @@ const CollaboratorSchema = Schema({
     unique: true,
     required: true,
   },
-  administrator: { type: Schema.ObjectId, ref: "Administrator" },
+  administrator: { type: Schema.ObjectId, ref: "User" },
+  job: { type: Schema.ObjectId, ref: "Job" },
   nationality: {
     type: String,
   },
@@ -31,17 +31,15 @@ const CollaboratorSchema = Schema({
   },
   status: {
     type: String,
-    default: "active",
+    default: "Activo",
   },
   date_admission: {
     type: String,
-    default: () => moment().format("DD-MM-YYYY"),
+    default: () => moment(dateTime).format("YYYY-MM-DD"),
   },
   dispatch_date: {
     type: String,
   },
 });
-
-CollaboratorSchema.plugin(mongoosePaginate);
 
 module.exports = model("Collaborator", CollaboratorSchema);

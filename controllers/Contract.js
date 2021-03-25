@@ -3,16 +3,22 @@ const Contract = require("../models/Contract.js");
 const { response } = require("express");
 
 const save = (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const {
       name_contracted,
-      document_id,
-      date_contract,
-      date_pay,
-      name_job,
-      amount,
-      number_phone,
-      email,
+      id_contracted,
+      email_contracted,
+      address,
+      cel,
+      phone,
+      starting_amount,
+      final_amount,
+      total_amount,
+      starting_date,
+      deadline,
+      deliver_date,
+      description,
+      observations,
     } = req.body;
 
     try {
@@ -20,23 +26,32 @@ const save = (req, res = response) => {
 
       contract.administrator = req.user.id;
       contract.name_contracted = name_contracted;
-      contract.document_id = document_id;
-      contract.date_contract = date_contract;
-      contract.date_pay = date_pay;
-      contract.name_job = name_job;
-      contract.amount = amount;
-      contract.number_phone = number_phone;
-      contract.email = email;
+      contract.id_contracted = id_contracted;
+      contract.num_contract = Math.floor(
+        Math.random() * (999999 - 100000) + 100000
+      );
+      contract.starting_date = starting_date;
+      contract.deadline = deadline;
+      contract.deliver_date = deliver_date;
+      contract.description = description;
+      contract.starting_amount = starting_amount;
+      contract.final_amount = final_amount;
+      contract.total_amount = total_amount;
+      contract.email_contracted = email_contracted;
+      contract.address = address;
+      contract.cel = cel;
+      contract.phone = phone;
+      contract.observations = observations;
 
       contract.save();
 
       return res.status(200).json({
-        status: "success",
+        status: true,
         msg: "Contrato realizado exitosamente",
       });
     } catch (error) {
       return res.status(500).json({
-        status: "error",
+        status: false,
         msg: "Por favor hable con el administrador encargado",
       });
     }
@@ -56,19 +71,20 @@ const getContracts = (req, res = response) => {
     .exec((err, contracts) => {
       if (err) {
         res.status(500).send({
-          status: "error",
+          status: false,
           msg: "Error en la peticion",
         });
       }
 
       if (!contracts) {
         res.status(404).send({
-          status: "error",
+          status: false,
           msg: "No hay pagos por mostrar",
         });
       }
+
       res.status(200).send({
-        status: "success",
+        status: true,
         contracts,
       });
     });
@@ -78,31 +94,31 @@ const getContractsByContracted = (req, res = response) => {
   const status = req.params.status;
   const document_id = req.params.id;
 
-  Contract.find({ status: status, document_id: document_id })
+  Contract.find({ status: status, id_contracted: document_id })
     .sort([["date_contract", "ascending"]])
     .exec((err, contracts) => {
       if (err) {
         res.status(500).send({
-          status: "error",
+          status: false,
           msg: "Error en la peticion",
         });
       }
 
       if (!contracts) {
         res.status(404).send({
-          status: "error",
+          status: false,
           msg: "No hay pagos por mostrar",
         });
       }
       res.status(200).send({
-        status: "success",
+        status: true,
         contracts,
       });
     });
 };
 
 const changeStatus = async (req, res = response) => {
-  if (req.user.role === "GENERAL_ROLE" || req.user.role === "RESOURCES_ROLE") {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const { status } = req.body;
     const contractId = req.params.id;
 
@@ -112,12 +128,12 @@ const changeStatus = async (req, res = response) => {
       (err) => {
         if (err) {
           res.status(400).json({
-            status: "error",
+            status: false,
             msg: "Por favor hable con el administrador",
           });
         } else {
           res.status(200).send({
-            status: "success",
+            status: true,
             msg: "Estado actualizado para este contrato",
           });
         }

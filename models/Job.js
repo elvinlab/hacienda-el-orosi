@@ -15,7 +15,7 @@ const JobSchema = Schema({
     type: Number,
     required: true,
   },
-  extra_hours: {
+  price_extra_hours: {
     type: Number,
     required: false,
   },

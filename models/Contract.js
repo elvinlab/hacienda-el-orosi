@@ -1,13 +1,18 @@
 const { model, Schema } = require("mongoose");
-const moment = require("moment");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
-moment.locale("es");
+let dateTime = new Date();
 
 const ContractSchema = Schema({
+  num_contract: {
+    type: Number,
+    unique: true,
+    require: true,
+  },
+
   administrator: {
     type: Schema.ObjectId,
-    ref: "Administrator",
+    ref: "User",
     required: true,
   },
 
@@ -16,44 +21,77 @@ const ContractSchema = Schema({
     required: true,
   },
 
-  document_id: {
+  id_contracted: {
+    type: String,
+    required: true,
+  },
+  email_contracted: {
+    type: String,
+
+    required: true,
+  },
+
+  address: {
     type: String,
     required: true,
   },
 
-  date_contract: {
+  cel: {
     type: String,
-    default: () => moment().format("DD-MM-YYYY"),
-    required: true,
+    require: true,
   },
 
-  date_pay: {
+  phone: {
     type: String,
-    required: true,
+    require: true,
   },
 
-  name_job: {
-    type: String,
-    required: true,
-  },
-
-  amount: {
+  starting_amount: {
     type: Number,
-    required: true,
+    require: true,
   },
 
-  number_phone: {
+  final_amount: {
     type: Number,
+    require: true,
+  },
+
+  total_amount: {
+    type: Number,
+    require: true,
+  },
+
+  starting_date: {
+    type: String,
+    default: () => dateTime.toISOString().slice(0, 10),
     required: true,
   },
 
-  email: {
+  deadline: {
     type: String,
+    default: () => dateTime.toISOString().slice(0, 10),
+    required: true,
+  },
+
+  deliver_date: {
+    type: String,
+    default: () => dateTime.toISOString().slice(0, 10),
+    
+  },
+
+  description: {
+    type: String,
+    required: true,
+  },
+
+  observations: {
+    type: String,
+   
   },
 
   status: {
     type: String,
-    default: "active",
+    default: "Activo",
     required: true,
   },
 });
