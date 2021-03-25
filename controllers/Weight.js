@@ -32,7 +32,7 @@ const addRegisterWeight = async (req, res = response) => {
         });
       }
 
-      await animal.weight.push(req.body);
+      await animal.weight.unshift(req.body);
 
       await animal.save();
 

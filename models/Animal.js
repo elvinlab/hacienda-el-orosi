@@ -18,7 +18,6 @@ const MilkSchema = Schema({
 const CalvingSchema = Schema({
   calving_number: {
     type: Number,
-    unique: true,
     required: true,
   },
 

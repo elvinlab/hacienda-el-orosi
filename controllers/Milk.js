@@ -21,7 +21,7 @@ const addRegisterMilk = async (req, res = response) => {
         });
       }
 
-      await cow.milk.push({
+      await cow.milk.unshift({
         liters: liters,
         registration_date: registration_date,
       });
