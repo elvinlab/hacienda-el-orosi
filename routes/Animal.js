@@ -48,6 +48,7 @@ router.post(
 
     check("type_animal", "Tipo de animal  requerido").not().isEmpty(),
     check("status", "El estado es requerido").not().isEmpty(),
+    check("gender", "El genero es requerido").not().isEmpty(),
 
     validate_fields,
   ],

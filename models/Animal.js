@@ -73,6 +73,7 @@ const AnimalSchema = Schema({
 
   gender: {
     type: String,
+    required: true,
   },
 
   race: {
@@ -80,7 +81,7 @@ const AnimalSchema = Schema({
   },
 
   age: {
-    type: Number,
+    type: String,
   },
 
   daughter_of: {
