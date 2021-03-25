@@ -30,7 +30,7 @@ const addRegisterCalving = async (req, res = response) => {
           msg: "Numero de parto ya registrado",
         });
       }
-      await animal.calving.push(req.body);
+      await animal.calving.unshift(req.body);
 
       await animal.save();
 
