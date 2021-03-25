@@ -35,7 +35,7 @@ const {
 } = require("../controllers/Weight.js");
 
 router.post(
-  "/registrar-animal",
+  "/registrar",
   md_auth.authenticated,
   [
     check("plate_number", "Numero de chapa requerida requerida")
@@ -48,6 +48,7 @@ router.post(
 
     check("type_animal", "Tipo de animal  requerido").not().isEmpty(),
     check("status", "El estado es requerido").not().isEmpty(),
+    check("gender", "El genero es requerido").not().isEmpty(),
 
     validate_fields,
   ],
@@ -55,7 +56,7 @@ router.post(
 );
 
 router.put(
-  "/actualizar-animal/:id",
+  "/actualizar/:id",
   md_auth.authenticated,
   [
     check("plate_number", "Numero de chapa requerida requerida")
@@ -90,15 +91,15 @@ router.put(
   changeNextDueDate
 );
 
-router.get("/animales/:page?", md_auth.authenticated, getAnimals);
+router.get("/todos/:page?", md_auth.authenticated, getAnimals);
 
 router.get(
-  "/animales/tipo/:type/:page?",
+  "/tipo/:type/:page?",
   md_auth.authenticated,
   getAnimalByType
 );
 router.get(
-  "/animales/tipo/:type/estado/:status/:page?",
+  "/tipo/:type/estado/:status/:page?",
   md_auth.authenticated,
   getAnimalByStatusAndType
 );
@@ -169,7 +170,7 @@ router.delete(
 //rutas de Weight
 
 router.post(
-  "/registar-peso/animal/:id",
+  "/:animal/registar-peso",
   md_auth.authenticated,
   [
     check("weight", "Peso no recibido").not().isEmpty(),

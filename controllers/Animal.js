@@ -21,7 +21,7 @@ const register = async (req, res = response) => {
       next_due_date,
     } = req.body;
 
-    try {
+   
       let findAnimalByPlateNumber = await Animal.findOne({
         plate_number,
       });
@@ -58,13 +58,7 @@ const register = async (req, res = response) => {
         msg: `El animal con numero de chapa ${plate_number} fue registrado con exito`,
         animal: animal,
       });
-    } catch (error) {
-      return res.status(500).json({
-        status: false,
-        msg:
-          "Por favor contacte con un ingeniero en sistemas para mas información",
-      });
-    }
+
   } else {
     return res.status(500).json({
       status: false,
@@ -272,7 +266,7 @@ const getAnimalByType = (req, res = response) => {
     sort: { date_admission: -1 },
     limit: 10,
     page: page,
-    populate: "administrator",
+    populate: "administrator daughter_of",
   };
 
   Animal.paginate({ type_animal: type }, options, (err, animals) => {

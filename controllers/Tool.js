@@ -103,7 +103,7 @@ const getToolsByStatus = (req, res = response) => {
     });
 };
 
-const getActives = async (res = response) => {
+const getActives = async (req, res = response) => {
   const actives = await Active.find().populate("collaborator tool");
   return res.status(200).json({
     status: true,
