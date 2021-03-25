@@ -13,11 +13,29 @@ const {
   getAnimalByType,
   getAnimalByStatusAndType,
   getAnimals,
-  findAnimalByPlateNumber
+  findAnimalByPlateNumber,
 } = require("../controllers/Animal.js");
 
+const {
+  addRegisterMilk,
+  updateRegisterMilk,
+  deleteRegisterMilk,
+} = require("../controllers/Milk.js");
+
+const {
+  addRegisterCalving,
+  updateRegisterCalving,
+  deleteRegisterCalving,
+} = require("../controllers/Calving.js");
+
+const {
+  addRegisterWeight,
+  updateRegisterWeight,
+  deleteRegisterWeight,
+} = require("../controllers/Weight.js");
+
 router.post(
-  "/registrar-animal",
+  "/registrar",
   md_auth.authenticated,
   [
     check("plate_number", "Numero de chapa requerida requerida")
@@ -30,6 +48,7 @@ router.post(
 
     check("type_animal", "Tipo de animal  requerido").not().isEmpty(),
     check("status", "El estado es requerido").not().isEmpty(),
+    check("gender", "El genero es requerido").not().isEmpty(),
 
     validate_fields,
   ],
@@ -37,7 +56,7 @@ router.post(
 );
 
 router.put(
-  "/actualizar-animal/:id",
+  "/actualizar/:id",
   md_auth.authenticated,
   [
     check("plate_number", "Numero de chapa requerida requerida")
@@ -72,11 +91,112 @@ router.put(
   changeNextDueDate
 );
 
-router.get("/animales/:page?", md_auth.authenticated, getAnimals);
+router.get("/todos/:page?", md_auth.authenticated, getAnimals);
 
-router.get("/animales/tipo/:type/:page?", md_auth.authenticated, getAnimalByType);
-router.get("/animales/tipo/:type/estado/:status/:page?", md_auth.authenticated, getAnimalByStatusAndType);
+router.get(
+  "/tipo/:type/:page?",
+  md_auth.authenticated,
+  getAnimalByType
+);
+router.get(
+  "/tipo/:type/estado/:status/:page?",
+  md_auth.authenticated,
+  getAnimalByStatusAndType
+);
 
 router.get("/buscar/:id", md_auth.authenticated, findAnimalByPlateNumber);
+
+//Rutas de MIlk
+router.post(
+  "/registar-leche/vaca/:id",
+  md_auth.authenticated,
+  [
+    check("liters", "Litros no recibidos").not().isEmpty(),
+    check("registration_date", "Fecha no recibida").not().isEmpty(),
+    validate_fields,
+  ],
+  addRegisterMilk
+);
+
+router.put(
+  "/leche/:milk/acutalizar-registro/animal/:cow",
+  md_auth.authenticated,
+  [
+    check("liters", "Litros no recibidos").not().isEmpty(),
+    check("registration_date", "Fecha no recibida").not().isEmpty(),
+    validate_fields,
+  ],
+  updateRegisterMilk
+);
+
+router.delete(
+  "/vaca/:cow/eliminar-registro/leche/:milk",
+  md_auth.authenticated,
+  deleteRegisterMilk
+);
+
+//rutas de Calving
+
+router.post(
+  "/registar-parto/animal/:id",
+  md_auth.authenticated,
+  [
+    check("calving_number", "Numero de parto no recibidos").not().isEmpty(),
+    check("date", "Fecha no recibida").not().isEmpty(),
+    check("complications", "Complicaciones no recibidas").not().isEmpty(),
+    validate_fields,
+  ],
+  addRegisterCalving
+);
+
+router.put(
+  "/parto/:calving/acutalizar-registro/animal/:animal",
+  md_auth.authenticated,
+  [
+    check("calving_number", "Numero de parto no recibidos").not().isEmpty(),
+    check("date", "Fecha no recibida").not().isEmpty(),
+    check("complications", "Complicaciones no recibidas").not().isEmpty(),
+    validate_fields,
+  ],
+  updateRegisterCalving
+);
+
+router.delete(
+  "/:animal/eliminar-parto/:calving",
+  md_auth.authenticated,
+  deleteRegisterCalving
+);
+
+//rutas de Weight
+
+router.post(
+  "/:animal/registar-peso",
+  md_auth.authenticated,
+  [
+    check("weight", "Peso no recibido").not().isEmpty(),
+    check("date", "Fecha no recibida").not().isEmpty(),
+    check("observations", "Observaciones no recibidas").not().isEmpty(),
+    validate_fields,
+  ],
+  addRegisterWeight
+);
+
+router.put(
+  "/peso/:weight/acutalizar-registro/animal/:animal",
+  md_auth.authenticated,
+  [
+    check("weight", "Peso no recibido").not().isEmpty(),
+    check("date", "Fecha no recibida").not().isEmpty(),
+    check("observations", "Observaciones no recibidas").not().isEmpty(),
+    validate_fields,
+  ],
+  updateRegisterWeight
+);
+
+router.delete(
+  "/:animal/eliminar-peso/:weight",
+  md_auth.authenticated,
+  deleteRegisterWeight
+);
 
 module.exports = router;

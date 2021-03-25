@@ -124,19 +124,12 @@ const removeJob = async (req, res = response) => {
   }
 };
 
-const getJobs = (res = response) => {
-  Job.find().exec((err, jobs) => {
-    if (err || !jobs) {
-      return res.status(404).send({
-        status: false,
-        msg: "Error inesperado",
-      });
-    }
+const getJobs = async (req, res = response) => {
+  const jobs = await Job.find();
 
-    return res.status(200).json({
-      status: true,
-      jobs: jobs,
-    });
+  return res.status(200).json({
+    status: true,
+    jobs: jobs,
   });
 };
 
