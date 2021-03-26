@@ -6,8 +6,8 @@ const validate_fields = (req, res = response, next )=>{
 
     if ( !errors.isEmpty() ){
         return res.status( 400 ).json({
-            status: 'Error',
-            errors: errors.mapped(),
+            status: false,
+            msg: errors.mapped(),
         });
     } 
 

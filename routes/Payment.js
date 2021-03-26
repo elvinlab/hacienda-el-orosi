@@ -1,35 +1,40 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { validate_fields } = require("../middelewares/Validate-fields");
+const { validate_fields } = require("../middlewares/Validate-fields");
 
-const md_auth = require("../middelewares/Authenticated");
+const md_auth = require("../middlewares/Authenticated");
 const router = Router();
 
 const {
   registerSalaryCollaborator,
   paymentsByCollaborator,
   getPayments,
+  registerPresence,
+  getDayPendingByCollaborator,
 } = require("../controllers/Payment.js");
 
 router.post(
   "/realizar/pago/colaborador/:id",
-  [
-    check("net_salary", "Salario bruto  del colaborador requerido").not().isEmpty(),
-    check("final_salary", "Salario total del colaborador requerido").not().isEmpty(),
-    validate_fields,
-  ],
+  [check("paymentReg", "Faltan datos").not().isEmpty(), validate_fields],
   md_auth.authenticated,
   registerSalaryCollaborator
 );
+router.post(
+  "/registrar/dia-laboral/:id",
+  md_auth.authenticated,
+  registerPresence
+);
+
 router.get(
   "/pagos/colaborador/:id/:page?",
   md_auth.authenticated,
   paymentsByCollaborator
 );
+router.get("/pagos/realizados/:page?", md_auth.authenticated, getPayments);
 router.get(
-    "/pagos/realizados/:page?",
-    md_auth.authenticated,
-    getPayments
-  );
+  "/colaborador/dias-pendientes/:id",
+  md_auth.authenticated,
+  getDayPendingByCollaborator
+);
 
 module.exports = router;
