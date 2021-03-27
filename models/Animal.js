@@ -16,10 +16,6 @@ const MilkSchema = Schema({
 });
 
 const CalvingSchema = Schema({
-  calving_number: {
-    type: Number,
-    required: true,
-  },
 
   date: {
     type: String,

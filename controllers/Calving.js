@@ -7,7 +7,6 @@ const addRegisterCalving = async (req, res = response) => {
     const animalID = req.params.id;
 
     try {
-      let validate = false;
 
       let animal = await Animal.findById({ _id: animalID });
 
@@ -18,18 +17,6 @@ const addRegisterCalving = async (req, res = response) => {
         });
       }
 
-      animal.calving.forEach((element) => {
-        if (req.body.calving_number === element.calving_number) {
-          validate = true;
-        }
-      });
-
-      if (validate) {
-        return res.status(400).json({
-          status: false,
-          msg: "Numero de parto ya registrado",
-        });
-      }
       await animal.calving.unshift(req.body);
 
       await animal.save();
@@ -55,7 +42,7 @@ const addRegisterCalving = async (req, res = response) => {
 
 const updateRegisterCalving = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { calving_number, date, complications } = req.body;
+    const {date, complications } = req.body;
     const registerCalvingID = req.params.calving;
     const animalID = req.params.animal;
 
@@ -66,10 +53,8 @@ const updateRegisterCalving = async (req, res = response) => {
 
       animal &&
         animal.calving.forEach((element) => {
-          if (calving_number === element.calving_number) {
-            if (
-              element._id != registerCalvingID ||
-              element.date != moment(dateTime).format("YYYY-MM-DD")
+          if (element._id == registerCalvingID ) {
+            if (element.date != moment(dateTime).format("YYYY-MM-DD")
             ) {
               validate = true;
             }
@@ -87,7 +72,6 @@ const updateRegisterCalving = async (req, res = response) => {
         { "calving._id": registerCalvingID },
         {
           $set: {
-            "calving.$.calving_number": calving_number,
             "calving.$.date": date,
             "calving.$.complications": complications,
           },
