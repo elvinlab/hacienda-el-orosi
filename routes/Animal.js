@@ -141,7 +141,6 @@ router.post(
   "/registar-parto/animal/:id",
   md_auth.authenticated,
   [
-    check("calving_number", "Numero de parto no recibidos").not().isEmpty(),
     check("date", "Fecha no recibida").not().isEmpty(),
     check("complications", "Complicaciones no recibidas").not().isEmpty(),
     validate_fields,
