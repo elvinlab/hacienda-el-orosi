@@ -13,7 +13,7 @@ const save = async (req, res = response) => {
       diet.stage = stage;
       diet.diet_name = diet_name;
       diet.animal = animal;
-      diet.aliment = aliment;
+      diet.aliment =aliment;
 
       await diet.save();
 

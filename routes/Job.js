@@ -30,6 +30,7 @@ router.post(
 router.put(
   "/actualizar-trabajo/:id",
   [
+    check("name_job", "Nombre del trabajo requerido ").not().isEmpty(),
     check("description", "Descripción requerida").not().isEmpty(),
     check("work_hours", "Horas de trabajo requerido").not().isEmpty(),
     check("price_extra_hours", "Horas extra requerido").not().isEmpty(),
