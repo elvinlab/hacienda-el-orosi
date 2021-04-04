@@ -5,15 +5,13 @@ const { response } = require("express");
 
 const save = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { stage, diet_name, animal, aliment } = req.body;
+    const { diet_name, description } = req.body;
 
     try {
       let diet = new Diet();
 
-      diet.stage = stage;
       diet.diet_name = diet_name;
-      diet.animal = animal;
-      diet.aliment =aliment;
+      diet.description = description;
 
       await diet.save();
 
@@ -78,7 +76,7 @@ const addAliment = async (req, res = response) => {
 
 const updateDiet = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { dietAliments } = req.body;
+    const { diet_name, description } = req.body;
     const dietId = req.params.id;
 
     const findDietByName = await Diet.findOne({
@@ -92,13 +90,9 @@ const updateDiet = async (req, res = response) => {
       });
     }
 
-    dietAliments.forEach(async function (element) {
       await Diet.findByIdAndUpdate(
         { _id: dietId },
-        {
-          diet:
-            (element.diet_name, element.stage, element.animal, element.aliment),
-        },
+        {diet_name, description},
         (err) => {
           if (err) {
             res.status(400).json({
@@ -113,7 +107,6 @@ const updateDiet = async (req, res = response) => {
           }
         }
       );
-    });
   } else {
     res.status(500).json({
       status: false,

@@ -1,4 +1,7 @@
 const { model, Schema } = require("mongoose");
+const moment = require("moment");
+
+let dateTime = new Date();
 
 const DietSchema = Schema({
 
@@ -7,8 +10,15 @@ const DietSchema = Schema({
     required: true,
     unique: true,
   },
-  animal: { type: Schema.ObjectId, ref: "Animal" },
-  aliment: { type: Schema.ObjectId, ref: "Product" },
+  description: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: String,
+    default: () => moment(dateTime).format("YYYY-MM-DD"),
+    required: true,
+  },
 });
 
 module.exports = model("Diet", DietSchema);

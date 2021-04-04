@@ -20,11 +20,9 @@ const {
 router.post(
   "/guardar-dieta",
   [
-    check("stage", "Etapa requerida de la dieta ").not().isEmpty(),
     check("diet_name", "Nombre de la dieta requerida ").not().isEmpty(),
-    check("animal", "Animal requerido ").not().isEmpty(),
-    check("aliment", "Alimento  de la dieta requerido ").not().isEmpty(),
-
+    check("description", "La descripcion es requerida").not().isEmpty(),
+   
     validate_fields,
   ],
   md_auth.authenticated,
@@ -48,7 +46,8 @@ router.post(
 
 router.put(
   "/modificar-dieta/:id",
-  [check("dietAliments", "Datos requeridos de la dieta ").not().isEmpty()],
+  check("diet_name", "Nombre de la dieta requerida ").not().isEmpty(),
+  check("description", "La descripcion es requerida").not().isEmpty(),
   md_auth.authenticated,
   updateDiet
 );
