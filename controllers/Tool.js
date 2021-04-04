@@ -73,7 +73,7 @@ const changeStatus = async (req, res = response) => {
     } else {
       res.status(200).send({
         status: true,
-        msg: "Estado actualizado del Activo",
+        msg: "Estado actualizado de la Herramienta",
       });
     }
   });
