@@ -1,7 +1,6 @@
 const Sale = require("../models/Sale.js");
 const Animal = require("../models/Animal.js");
 
-const { ObjectId } = require("mongodb");
 const { response } = require("express");
 
 const make = async ( req, res = response ) => {
