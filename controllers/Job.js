@@ -52,7 +52,7 @@ const save = async (req, res = response) => {
 const updateJob = async (req, res = response) => {
 
   if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
-    const { description, work_hours, price_extra_hours, price_day } = req.body;
+    const { name_job, description, work_hours, price_extra_hours, price_day } = req.body;
 
     const jobId = req.params.id;
 
