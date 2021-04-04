@@ -1,7 +1,6 @@
 const Animal = require("../models/Animal.js");
 const moment = require("moment");
 const { response } = require("express");
-const { body } = require("express-validator");
 
 const addRegisterWeight = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {

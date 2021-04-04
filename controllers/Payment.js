@@ -243,7 +243,7 @@ const getDayPendingByCollaborator = async (req, res = response) => {
       function (result) {
         return res.status(200).json({
           status: true,
-          total_overtime: result[0] ? result[0].amount : 0,
+          total_overtime: result ? result[0].amount: 0,
           pending_days: findPresenceByStatusAndByCollaborator,
         });
       }
