@@ -1,5 +1,4 @@
 const Product = require("../models/Product.js");
-const Diet = require("../models/Diet.js");
 
 const { ObjectId } = require("mongodb");
 const { response } = require("express");
@@ -100,6 +99,44 @@ const update = async (req, res = response) => {
     }
 }
 
+const getProducts = async (req, res = response) => {
+    let page = undefined;
+
+  if (
+    !req.params.page ||
+    req.params.page == 0 ||
+    req.params.page == "0" ||
+    req.params.page == null ||
+    req.params.page == undefined
+  ) {
+    page = 1;
+  } else {
+    page = parseInt(req.params.page);
+  }
+  const options = {
+    sort: { date_issued: -1 },
+    limit: 10,
+    page: page,
+  };
+
+  Product.paginate({}, options, (err, products) => {
+    if (err) {
+      return res.status(500).send({
+        status: false,
+        msg: "Error al hacer la consulta",
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      products: {
+        products: products.docs,
+        count: products.totalDocs,
+      },
+    });
+  });
+  };
+
 const remove = async (req, res = response) => {
     if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
 
@@ -141,5 +178,6 @@ const remove = async (req, res = response) => {
 module.exports = {
     save,
     update,
+    getProducts,
     remove
 };
