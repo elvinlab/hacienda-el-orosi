@@ -1,8 +1,5 @@
 const { model, Schema } = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
-const moment = require("moment");
-
-let dateTime = new Date();
 
 const MilkSchema = Schema({
   liters: {

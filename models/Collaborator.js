@@ -9,6 +9,12 @@ const CollaboratorSchema = Schema({
     unique: true,
     required: true,
   },
+  contract_number: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
+
   administrator: { type: Schema.ObjectId, ref: "User" },
   job: { type: Schema.ObjectId, ref: "Job" },
   nationality: {

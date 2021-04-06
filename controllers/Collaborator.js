@@ -5,7 +5,7 @@ const register = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const {
       document_id,
-      jobId,
+      job,
       nationality,
       name,
       surname,
@@ -29,7 +29,10 @@ const register = async (req, res = response) => {
       let collaborator = new Collaborator();
 
       collaborator.document_id = document_id;
-      collaborator.job = jobId;
+      collaborator.contract_number = Math.floor(
+        Math.random() * (999999 - 100000) + 100000
+      );
+      collaborator.job = job;
       collaborator.nationality = nationality;
       collaborator.name = name;
       collaborator.surname = surname;
@@ -42,6 +45,7 @@ const register = async (req, res = response) => {
       return res.status(200).json({
         status: true,
         msg: "Colaborador registrado con exito",
+        collaborator: collaborator,
       });
     } catch (error) {
       return res.status(500).json({
@@ -62,7 +66,7 @@ const update = async (req, res = response) => {
     const collaboratorId = req.params.id;
     const {
       document_id,
-      jobId,
+      job,
       nationality,
       name,
       surname,
@@ -89,7 +93,7 @@ const update = async (req, res = response) => {
       { _id: collaboratorId },
       {
         document_id,
-        job: jobId,
+        job,
         nationality,
         name,
         surname,

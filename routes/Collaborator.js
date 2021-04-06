@@ -17,7 +17,7 @@ router.post(
   "/registrar-colaborador",
   [
     check("document_id", "Cédula requerida").not().isEmpty(),
-    check("jobId", "Trabajo requerido").not().isEmpty(),
+    check("job", "Trabajo requerido").not().isEmpty(),
     check("nationality", "Nacionalidad requerida").not().isEmpty(),
     check("name", "Nombre requerido").not().isEmpty(),
     check("surname", "apellido requerido").not().isEmpty(),
@@ -34,7 +34,7 @@ router.put(
   "/actualizar-colaborador/:id",
   [
     check("document_id", "Cédula requerida").not().isEmpty(),
-    check("jobId", "Trabajo requerido").not().isEmpty(),
+    check("job", "Trabajo requerido").not().isEmpty(),
     check("nationality", "Nacionalidad requerida").not().isEmpty(),
     check("name", "Nombre requerido").not().isEmpty(),
     check("surname", "apellido requerido").not().isEmpty(),
