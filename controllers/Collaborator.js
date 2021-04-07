@@ -1,17 +1,21 @@
 const Collaborator = require("../models/Collaborator.js");
 const { response } = require("express");
 
+const moment = require("moment");
+
 const register = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const {
       document_id,
-      jobId,
+      job,
       nationality,
       name,
       surname,
       direction,
       tel,
       cel,
+      date_admission,
+      dispatch_date,
     } = req.body;
 
     try {
@@ -29,19 +33,29 @@ const register = async (req, res = response) => {
       let collaborator = new Collaborator();
 
       collaborator.document_id = document_id;
-      collaborator.job = jobId;
+      collaborator.contract_number = Math.floor(
+        Math.random() * (999999 - 100000) + 100000
+      );
+      collaborator.job = job;
       collaborator.nationality = nationality;
       collaborator.name = name;
       collaborator.surname = surname;
       collaborator.direction = direction;
       collaborator.tel = tel;
       collaborator.cel = cel;
+      collaborator.date_admission = moment(date_admission).format("YYYY-MM-DD");
+      collaborator.dispatch_date = moment(dispatch_date).format("YYYY-MM-DD");
 
       await collaborator.save();
+
+      const findNewCollaborator = await Collaborator.findById(
+        collaborator._id
+      ).populate("job");
 
       return res.status(200).json({
         status: true,
         msg: "Colaborador registrado con exito",
+        collaborator: findNewCollaborator,
       });
     } catch (error) {
       return res.status(500).json({
@@ -62,13 +76,15 @@ const update = async (req, res = response) => {
     const collaboratorId = req.params.id;
     const {
       document_id,
-      jobId,
+      job,
       nationality,
       name,
       surname,
       direction,
       tel,
       cel,
+      date_admission,
+      dispatch_date,
     } = req.body;
 
     const findCollaboratorByDocumentId = await Collaborator.findOne({
@@ -89,13 +105,15 @@ const update = async (req, res = response) => {
       { _id: collaboratorId },
       {
         document_id,
-        job: jobId,
+        job,
         nationality,
         name,
         surname,
         direction,
         tel,
         cel,
+        date_admission: moment(date_admission).format("YYYY-MM-DD"),
+        dispatch_date: moment(dispatch_date).format("YYYY-MM-DD"),
       },
       (err) => {
         if (err) {
@@ -154,6 +172,7 @@ const getCollaboratorsByStatus = (req, res = response) => {
 
   Collaborator.find({ status })
     .populate("job")
+    .sort({ date_admission: -1 })
     .exec((err, collaborators) => {
       if (err) {
         return res.status(404).send({
