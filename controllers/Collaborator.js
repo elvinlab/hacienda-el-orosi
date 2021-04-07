@@ -1,6 +1,8 @@
 const Collaborator = require("../models/Collaborator.js");
 const { response } = require("express");
 
+const moment = require("moment");
+
 const register = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
     const {
@@ -12,6 +14,8 @@ const register = async (req, res = response) => {
       direction,
       tel,
       cel,
+      date_admission,
+      dispatch_date,
     } = req.body;
 
     try {
@@ -39,13 +43,19 @@ const register = async (req, res = response) => {
       collaborator.direction = direction;
       collaborator.tel = tel;
       collaborator.cel = cel;
+      collaborator.date_admission = moment(date_admission).format("YYYY-MM-DD");
+      collaborator.dispatch_date = moment(dispatch_date).format("YYYY-MM-DD");
 
       await collaborator.save();
+
+      const findNewCollaborator = await Collaborator.findById(
+        collaborator._id
+      ).populate("job");
 
       return res.status(200).json({
         status: true,
         msg: "Colaborador registrado con exito",
-        collaborator: collaborator,
+        collaborator: findNewCollaborator,
       });
     } catch (error) {
       return res.status(500).json({
@@ -73,6 +83,8 @@ const update = async (req, res = response) => {
       direction,
       tel,
       cel,
+      date_admission,
+      dispatch_date,
     } = req.body;
 
     const findCollaboratorByDocumentId = await Collaborator.findOne({
@@ -100,6 +112,8 @@ const update = async (req, res = response) => {
         direction,
         tel,
         cel,
+        date_admission: moment(date_admission).format("YYYY-MM-DD"),
+        dispatch_date: moment(dispatch_date).format("YYYY-MM-DD"),
       },
       (err) => {
         if (err) {
@@ -158,6 +172,7 @@ const getCollaboratorsByStatus = (req, res = response) => {
 
   Collaborator.find({ status })
     .populate("job")
+    .sort({ date_admission: -1 })
     .exec((err, collaborators) => {
       if (err) {
         return res.status(404).send({
