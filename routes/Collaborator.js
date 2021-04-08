@@ -10,6 +10,7 @@ const {
   update,
   changeStatus,
   getCollaboratorsByStatus,
+  generatePDFByCollaborator,
   getCollaborator,
 } = require("../controllers/Collaborator.js");
 
@@ -66,9 +67,15 @@ router.put(
 router.get("/ver-colaborador/:id", md_auth.authenticated, getCollaborator);
 
 router.get(
-  "/colaboradores/:status/:page?",
+  "/colaboradores/:status",
   md_auth.authenticated,
   getCollaboratorsByStatus
+);
+
+router.get(
+  "/reporte/colaboradores/:status",
+  md_auth.authenticated,
+  generatePDFByCollaborator
 );
 
 module.exports = router;

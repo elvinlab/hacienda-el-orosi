@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/elvinlab/hacienda-el-orosi-web-app#readme",
   "dependencies": {
+    "aws-sdk": "^2.882.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -32,6 +33,7 @@
     "nodemailer": "^6.4.17",
     "nodemailer-smtp-transport": "^2.7.4",
     "nodemon": "^2.0.7",
+    "pdf-creator-node": "^2.2.2",
     "validator": "^13.5.2"
   }
 }

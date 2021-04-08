@@ -2,6 +2,38 @@ const Collaborator = require("../models/Collaborator.js");
 const { response } = require("express");
 
 const moment = require("moment");
+const pdf = require("pdf-creator-node");
+const fs = require("fs");
+const AWS = require("aws-sdk");
+const view_report_collaborator_by_status = fs.readFileSync(
+  "views/view_report_collaborator_by_status.html",
+  "utf8"
+);
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ID,
+  secretAccessKey: process.env.AWS_SECRET,
+});
+
+const options = {
+  format: "A3",
+  orientation: "portrait",
+  border: "10mm",
+  header: {
+    height: "45mm",
+    contents: '<div style="text-align: center;">Reporte de colaboradores</div>',
+  },
+  footer: {
+    height: "28mm",
+    contents: {
+      first: "Cover page",
+      2: "Second page", // Any page number is working. 1-based index
+      default:
+        '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', // fallback value
+      last: "Last Page",
+    },
+  },
+};
 
 const register = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
@@ -173,6 +205,7 @@ const getCollaboratorsByStatus = (req, res = response) => {
   Collaborator.find({ status })
     .populate("job")
     .sort({ date_admission: -1 })
+    .lean()
     .exec((err, collaborators) => {
       if (err) {
         return res.status(404).send({
@@ -180,7 +213,6 @@ const getCollaboratorsByStatus = (req, res = response) => {
           msg: "Error al hacer la consulta",
         });
       }
-
       return res.status(200).json({
         status: true,
         collaborators: {
@@ -191,7 +223,6 @@ const getCollaboratorsByStatus = (req, res = response) => {
       });
     });
 };
-
 const getCollaborator = async (req, res = response) => {
   let document_id = req.params.id;
 
@@ -210,10 +241,75 @@ const getCollaborator = async (req, res = response) => {
   });
 };
 
+const generatePDFByCollaborator = async (req, res = response) => {
+  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
+    const status = req.params.status;
+
+    try {
+      const collaborators = await Collaborator.find({ status })
+        .populate("job")
+        .sort({ date_admission: -1 })
+        .lean();
+
+      var document = {
+        html: view_report_collaborator_by_status,
+        data: {
+          collaborators: collaborators,
+        },
+        path: `storage/reporte-colaboradores-${
+          status == "Activo" ? "activos" : "inactivos"
+        }.pdf`,
+        type: "pdf",
+      };
+
+      await pdf
+        .create(document, options)
+        .then((res) => {})
+        .catch((error) => {
+          console.error(error);
+        });
+
+      const fileContent = fs.readFileSync(
+        `storage/reporte-colaboradores-${
+          status == "Activo" ? "activos" : "inactivos"
+        }.pdf`
+      );
+      const params = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: `reporte-colaboradores-${
+          status == "Activo" ? "activos" : "inactivos"
+        }.pdf`,
+        Body: fileContent,
+      };
+
+      s3.upload(params, function (err, data) {
+        if (err) {
+          throw err;
+        }
+        return res.status(200).send({
+          status: true,
+          link: data.Location,
+        });
+      });
+    } catch (error) {
+      res.status(400).json({
+        status: false,
+        msg: "Por favor hable con el administrador",
+      });
+    }
+  } else {
+    res.status(500).json({
+      status: false,
+      msg: "No tienes permisos en la plataforma",
+    });
+  }
+};
+
 module.exports = {
   register,
   update,
   changeStatus,
   getCollaboratorsByStatus,
+  generatePDFByCollaborator,
   getCollaborator,
 };
