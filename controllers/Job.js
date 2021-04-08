@@ -107,7 +107,6 @@ const removeJob = async (req, res = response) => {
     let jobId = req.params.id;
 
     const finJobByID = await Collaborator.findOne({ job: ObjectId(jobId) });
-    console.log(finJobByID);
     if (finJobByID) {
       return res.status(404).send({
         status: false,
