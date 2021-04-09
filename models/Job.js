@@ -1,7 +1,10 @@
 const { model, Schema } = require("mongoose");
+const moment = require("moment");
+
+let dateTime = new Date();
 
 const JobSchema = Schema({
-  name_job: {
+  name: {
     type: String,
     required: true,
     unique: true,
@@ -22,6 +25,11 @@ const JobSchema = Schema({
   price_day: {
     type: Number,
     required: true,
+  },
+
+  create_at: {
+    type: String,
+    default: () => moment(dateTime).format("YYYY-MM-DD"),
   },
 });
 
