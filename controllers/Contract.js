@@ -63,12 +63,29 @@ const save = (req, res = response) => {
   }
 };
 
-const getContracts = (req, res = response) => {
+const getContractsByStatus = (req, res = response) => {
   const status = req.params.status;
+  let page = undefined;
 
-  Contract.find({ status: status })
-    .sort([["date_contract", "ascending"]])
-    .exec((err, contracts) => {
+  if (
+    !req.params.page ||
+    req.params.page == 0 ||
+    req.params.page == "0" ||
+    req.params.page == null ||
+    req.params.page == undefined
+  ) {
+    page = 1;
+  } else {
+    page = parseInt(req.params.page);
+  }
+  const options = {
+    sort: { starting_date: -1 },
+    limit: 10,
+    page: page,
+  };
+
+  Contract.paginate({ status: status }),
+    options.sort([["date_contract", "ascending"]]).exec((err, contracts) => {
       if (err) {
         res.status(500).send({
           status: false,
@@ -79,13 +96,16 @@ const getContracts = (req, res = response) => {
       if (!contracts) {
         res.status(404).send({
           status: false,
-          msg: "No hay pagos por mostrar",
+          msg: "No hay contratos por mostrar",
         });
       }
 
       res.status(200).send({
         status: true,
-        contracts,
+        contracts: {
+          contracts: contracts.docs,
+          count: contracts.totalDocs,
+        },
       });
     });
 };
@@ -107,7 +127,7 @@ const getContractsByContracted = (req, res = response) => {
       if (!contracts) {
         res.status(404).send({
           status: false,
-          msg: "No hay pagos por mostrar",
+          msg: "No hay contratos por mostrar",
         });
       }
       res.status(200).send({
@@ -149,7 +169,7 @@ const changeStatus = async (req, res = response) => {
 
 module.exports = {
   save,
-  getContracts,
+  getContractsByStatus,
   getContractsByContracted,
   changeStatus,
 };

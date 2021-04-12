@@ -7,7 +7,7 @@ const router = Router();
 
 const { 
     save,
-    getContracts,
+    getContractsByStatus,
     getContractsByContracted,
     changeStatus,
 } = require ( '../controllers/Contract.js');
@@ -42,7 +42,7 @@ router.post(
     changeStatus
   );
 
- router.get("/ver-contratos/:status",  md_auth.authenticated,  getContracts );
+ router.get("/ver-contratos/:status/:page?",  md_auth.authenticated,  getContractsByStatus );
  router.get("/ver-contratos/especificos/:status/:id",  md_auth.authenticated,  getContractsByContracted );
 
 module.exports = router;
