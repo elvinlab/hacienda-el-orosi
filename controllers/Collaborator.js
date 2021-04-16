@@ -16,6 +16,7 @@ const s3 = new AWS.S3({
 });
 
 const options = {
+  phantomArgs: ["--web-security=yes"],
   format: "A3",
   orientation: "portrait",
   border: "10mm",
