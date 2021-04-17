@@ -8,7 +8,6 @@ const router = Router();
 
 const {
   register,
-  updateRole,
   removeAdmin,
   login,
   getUser,
@@ -31,13 +30,6 @@ router.post(
   ],
   md_auth.authenticated,
   register
-);
-
-router.put(
-  "/cambiar-rol/:id",
-  [check("role", "Rol no recibido").not().isEmpty(), validate_fields],
-  md_auth.authenticated,
-  updateRole
 );
 
 router.post(

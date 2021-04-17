@@ -39,13 +39,7 @@ const register = async (req, res = response) => {
       res.status(201).send({
         status: true,
         msg: "Administrador registrado con exito",
-        user: {
-          document_id: user.document_id,
-          email: user.email,
-          name: user.given_name,
-          surname: user.surname,
-          role: user.role,
-        },
+        administrator: user,
       });
     } catch (error) {
       return res.status(400).json({
@@ -61,35 +55,18 @@ const register = async (req, res = response) => {
   }
 };
 
-const updateRole = async (req, res = response) => {
-  if (req.user.role === "Dueño") {
-    const { role } = req.body;
-    const userId = req.params.id;
-
-    await User.findByIdAndUpdate({ _id: userId }, { role: role }, (err) => {
-      if (err) {
-        return res.status(400).json({
-          status: false,
-          msg: "Por favor hable con el administrador",
-        });
-      } else {
-        return res.status(200).send({
-          status: true,
-          msg: "Cargo actualizado para este administrador",
-        });
-      }
-    });
-  } else {
-    return res.status(500).json({
-      status: false,
-      msg: "No tienes permisos en la plataforma",
-    });
-  }
-};
-
 const removeAdmin = async (req, res = response) => {
   if (req.user.role === "Dueño") {
     let userId = req.params.id;
+
+    let findUserByDocumentId = await User.findById({ _id: userId });
+
+    if (findUserByDocumentId.role === "Dueño") {
+      return res.status(400).send({
+        status: false,
+        msg: "No se puede eliminar al dueño de la Hacienda",
+      });
+    }
 
     User.findOneAndDelete({ _id: userId }, (err, user) => {
       if (err) {
@@ -107,6 +84,7 @@ const removeAdmin = async (req, res = response) => {
       return res.status(200).json({
         status: true,
         msg: "Removido de forma exitosa",
+        administrator: user
       });
     });
   } else {
@@ -357,7 +335,6 @@ module.exports = {
   set_recovery_key,
   verify_recovery_key,
   change_password,
-  updateRole,
   removeAdmin,
   list_admins,
 };
