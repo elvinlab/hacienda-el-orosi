@@ -1,5 +1,4 @@
 const { model, Schema } = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate-v2");
 const moment = require("moment");
 
 let dateTime = new Date();
@@ -23,7 +22,5 @@ const PresenceSchema = Schema({
     required: true,
   },
 });
-
-PresenceSchema.plugin(mongoosePaginate);
 
 module.exports = model("Presence", PresenceSchema);

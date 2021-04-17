@@ -51,6 +51,18 @@ const register = async (req, res = response) => {
       dispatch_date,
     } = req.body;
 
+    /*
+    var fecha1 = moment(date_admission);
+    var fecha2 = moment(dispatch_date);
+        console.log(fecha2.diff(fecha1, 'days'), ' dias de diferencia');
+    */
+    if (moment(date_admission) >= moment(dispatch_date)) {
+      return res.status(400).json({
+        status: false,
+        msg: "La fecha inicial no puede ser mayor o igual a la fecha final",
+      });
+    }
+
     try {
       let findCollaboratorByDocumentId = await Collaborator.findOne({
         document_id,
@@ -131,6 +143,13 @@ const update = async (req, res = response) => {
       return res.status(400).json({
         status: false,
         msg: "Existe un colaborador con esta cedula.",
+      });
+    }
+
+    if (moment(date_admission) >= moment(dispatch_date)) {
+      return res.status(400).json({
+        status: false,
+        msg: "La fecha inicial no puede ser mayor o igual a la fecha final",
       });
     }
 
