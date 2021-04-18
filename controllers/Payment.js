@@ -230,7 +230,7 @@ const getDayPendingByCollaborator = async (req, res = response) => {
       collaborator: ObjectId(collaboratorId),
     }).sort({ date: -1 });
 
-    await Presence.aggregate(
+    Presence.aggregate(
       [
         {
           $match: {
@@ -238,14 +238,20 @@ const getDayPendingByCollaborator = async (req, res = response) => {
             collaborator: { $eq: ObjectId(collaboratorId) },
           },
         },
-        { $group: { _id: null, amount: { $sum: "$total_overtime" } } },
+        {
+          $group: { _id: null, amount: { $sum: "$total_overtime" } },
+        },
       ],
-      function (result) {
-        return res.status(200).json({
-          status: true,
-          total_overtime: result ? result[0].amount: 0,
-          pending_days: findPresenceByStatusAndByCollaborator,
-        });
+      function (err, result) {
+        if (err) {
+          res.send(err);
+        } else {
+          return res.status(200).json({
+            status: true,
+            total_overtime: result ? result[0].amount : 0,
+            pending_days: findPresenceByStatusAndByCollaborator,
+          });
+        }
       }
     );
   } else {
