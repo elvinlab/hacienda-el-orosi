@@ -1,5 +1,6 @@
 const { model, Schema } = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
+const moment = require("moment");
 
 let dateTime = new Date();
 
@@ -58,6 +59,12 @@ const ContractSchema = Schema({
 
   total_amount: {
     type: Number,
+    require: true,
+  },
+
+  created_at: {
+    type: String,
+    default: () => moment(dateTime).format("YYYY-MM-DD"),
     require: true,
   },
 

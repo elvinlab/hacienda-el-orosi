@@ -12,6 +12,11 @@ const AlimentSchema = Schema({
     required: true,
   },
 
+  aliment_kg: {
+    type: Number,
+    required: true,
+  },
+
   price_aliment: {
     type: Number,
     required: true,

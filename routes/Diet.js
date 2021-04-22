@@ -38,6 +38,7 @@ router.post(
     check("quantity_supplied", "Cantidad suministrada requerida ")
       .not()
       .isEmpty(),
+    check("aliment_kg", "Peso del alimento requerido ").not().isEmpty(),
     check("price_aliment", "Precio del alimento requerido ").not().isEmpty(),
 
     validate_fields,

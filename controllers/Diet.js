@@ -37,7 +37,7 @@ const save = async (req, res = response) => {
 
 const addAliment = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { name_aliment, quantity_supplied, price_aliment } = req.body;
+    const { name_aliment, quantity_supplied, aliment_kg, price_aliment } = req.body;
 
     try {
       let findAlimentByName = await Aliment.findOne({
@@ -55,6 +55,7 @@ const addAliment = async (req, res = response) => {
 
       aliment.name_aliment = name_aliment;
       aliment.quantity_supplied = quantity_supplied;
+      aliment.aliment_kg = aliment_kg;
       aliment.price_aliment = price_aliment;
 
       await aliment.save();
@@ -124,7 +125,7 @@ const updateDiet = async (req, res = response) => {
 
 const updateAliment = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { name_aliment, quantity_supplied, price_aliment } = req.body;
+    const { name_aliment, quantity_supplied, aliment_kg, price_aliment } = req.body;
     const alimentId = req.params.id;
 
     const findAlimentByName = await Aliment.findOne({
@@ -140,7 +141,7 @@ const updateAliment = async (req, res = response) => {
 
     await Aliment.findByIdAndUpdate(
       { _id: alimentId },
-      { name_aliment, quantity_supplied, price_aliment },
+      { name_aliment, quantity_supplied, aliment_kg, price_aliment },
       (err) => {
         if (err) {
           res.status(400).json({
