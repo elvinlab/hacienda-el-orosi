@@ -2,12 +2,13 @@ const Diet = require("../models/Diet.js");
 const Product = require("../models/Product.js");
 
 const { response } = require("express");
+const Aliment = require("../models/Aliment.js");
 
 const save = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { diet_name, description } = req.body;
+    const { diet_name, description} = req.body;
 
-    try {
+
       let diet = new Diet();
 
       diet.diet_name = diet_name;
@@ -18,13 +19,10 @@ const save = async (req, res = response) => {
       return res.status(200).json({
         status: true,
         msg: "Dieta registrada con éxito.",
+        diet: diet,
       });
-    } catch (error) {
-      return res.status(500).json({
-        status: false,
-        msg: "Por favor contacté con un ING en Sistemas para más información.",
-      });
-    }
+
+    
   } else {
     return res.status(400).send({
       status: false,
@@ -35,30 +33,21 @@ const save = async (req, res = response) => {
 
 const addAliment = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { name_aliment, quantity_supplied, price_aliment } = req.body;
+    const { diet_id, product_id, quantity_supplied } = req.body;
 
     try {
-      let findAlimentByName = await Product.findOne({
-        name_aliment,
-      });
+      let aliment = new Aliment();
 
-      if (findAlimentByName) {
-        return res.status(400).json({
-          status: false,
-          msg: "El alimento ya existe.",
-        });
-      }
-
-      let aliment = new Product();
-
-      aliment.name_aliment = name_aliment;
+      aliment.diet_id = diet_id;
       aliment.quantity_supplied = quantity_supplied;
-      aliment.price_aliment = price_aliment;
+      aliment.product_id = product_id;
 
       await aliment.save();
+
       return res.status(200).json({
         status: true,
         msg: "Alimento agregado con éxito.",
+        aliment: aliment,
       });
     } catch (error) {
       return res.status(500).json({
@@ -76,7 +65,7 @@ const addAliment = async (req, res = response) => {
 
 const updateDiet = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { diet_name, description } = req.body;
+    const { diet_name, description, animal} = req.body;
     const dietId = req.params.id;
 
     const findDietByName = await Diet.findOne({
@@ -92,7 +81,7 @@ const updateDiet = async (req, res = response) => {
 
       await Diet.findByIdAndUpdate(
         { _id: dietId },
-        {diet_name, description},
+        {diet_name, description, animal},
         (err) => {
           if (err) {
             res.status(400).json({
@@ -235,7 +224,7 @@ const deleteAliment = async (req, res = response) => {
 };
 
 const getDiets = async (req, res = response) => {
- const diets = await Diet.find().populate("animal aliment");
+ const diets = await Diet.find();
       
 
       return res.status(200).json({
@@ -268,12 +257,41 @@ const getDietByAnimal = (res = response) => {
 };
 
 const getAliments = async (req, res = response) => {
-  const aliments = await Product.find();
+  let page = undefined;
 
-  return res.status(200).json({
-    status: true,
-    aliments: aliments,
-  });
+  if (
+    !req.params.page ||
+    req.params.page == 0 ||
+    req.params.page == "0" ||
+    req.params.page == null ||
+    req.params.page == undefined
+  ) {
+    page = 1;
+  } else {
+    page = parseInt(req.params.page);
+  }
+  const options = {
+    sort: { date_issued: -1 },
+    limit: 10,
+    page: page,
+    populate: "diet product",
+  };
+  Aliment.paginate({}, options, (err,aliments) => {
+    if (err) {
+      return res.status(500).send({
+        status: false,
+        msg: "Error al hacer la consulta",
+      });
+    }
+    return res.status(200).json({
+      status: true,
+      aliments: {
+        aliments: aliments.docs,
+        count: aliments.count,
+      }
+    });
+  })
+
 };
 
 module.exports = {

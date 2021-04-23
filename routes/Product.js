@@ -32,7 +32,7 @@ router.put(
   update
 );
 
-router.get("/listar-productos", md_auth.authenticated, getProducts);
+router.get("/listar-productos/:page", md_auth.authenticated, getProducts);
 router.delete("/remover-producto/:id", md_auth.authenticated, remove);
 
 module.exports = router;

@@ -64,7 +64,7 @@ const update = async (req, res = response) => {
                     kilograms,
                     liters,
                     price_product,
-                    updatedAt =  moment(dateTime).format("YYYY-MM-DD")
+                    updatedAt : moment(dateTime).format("YYYY-MM-DD")
                 },
                 { new: true },
                 (err, product) => {
@@ -114,7 +114,7 @@ const getProducts = async (req, res = response) => {
     page = parseInt(req.params.page);
   }
   const options = {
-    sort: { date_issued: -1 },
+    sort: { createdAt: -1 },
     limit: 10,
     page: page,
   };
