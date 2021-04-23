@@ -199,12 +199,12 @@ const changeStatus = async (req, res = response) => {
       { status: status, dispatch_date: dispatch_date },
       (err) => {
         if (err) {
-          res.status(400).json({
+          return res.status(400).json({
             status: false,
             msg: "Por favor hable con el administrador",
           });
         } else {
-          res.status(200).send({
+        return res.status(200).send({
             status: true,
             msg: "Estado actualizado para el colaborador",
           });

@@ -1,5 +1,4 @@
 const { model, Schema } = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate-v2");
 
 const MilkSchema = Schema({
   liters: {
@@ -13,7 +12,6 @@ const MilkSchema = Schema({
 });
 
 const CalvingSchema = Schema({
-
   date: {
     type: String,
     required: true,
@@ -42,13 +40,13 @@ const WeightSchema = Schema({
 
 const AnimalSchema = Schema({
   administrator: { type: Schema.ObjectId, ref: "User" },
+  type: { type: Schema.ObjectId, ref: "Type" },
 
   plate_number: {
     type: String,
     required: true,
   },
-
-  type_animal: {
+  plate_color: {
     type: String,
     required: true,
   },
@@ -63,7 +61,11 @@ const AnimalSchema = Schema({
     required: true,
   },
 
-  gender: {
+  name: {
+    type: String,
+    required: true,
+  },
+  place_origin: {
     type: String,
     required: true,
   },
@@ -85,15 +87,7 @@ const AnimalSchema = Schema({
     type: Number,
   },
 
-  place_origin: {
-    type: String,
-  },
-
-  name: {
-    type: String,
-  },
-
-  photo: {
+  photo_link: {
     type: String,
   },
 
@@ -111,7 +105,5 @@ const AnimalSchema = Schema({
 
   weight: [WeightSchema],
 });
-
-AnimalSchema.plugin(mongoosePaginate);
 
 module.exports = model("Animal", AnimalSchema);
