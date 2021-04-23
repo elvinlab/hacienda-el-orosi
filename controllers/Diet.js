@@ -1,19 +1,17 @@
 const Diet = require("../models/Diet.js");
-const Aliment = require("../models/Aliment.js");
+const Product = require("../models/Product.js");
 
 const { response } = require("express");
 
 const save = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { stage, diet_name, animal, aliment } = req.body;
+    const { diet_name, description } = req.body;
 
     try {
       let diet = new Diet();
 
-      diet.stage = stage;
       diet.diet_name = diet_name;
-      diet.animal = animal;
-      diet.aliment =aliment;
+      diet.description = description;
 
       await diet.save();
 
@@ -40,7 +38,7 @@ const addAliment = async (req, res = response) => {
     const { name_aliment, quantity_supplied, price_aliment } = req.body;
 
     try {
-      let findAlimentByName = await Aliment.findOne({
+      let findAlimentByName = await Product.findOne({
         name_aliment,
       });
 
@@ -51,7 +49,7 @@ const addAliment = async (req, res = response) => {
         });
       }
 
-      let aliment = new Aliment();
+      let aliment = new Product();
 
       aliment.name_aliment = name_aliment;
       aliment.quantity_supplied = quantity_supplied;
@@ -78,7 +76,7 @@ const addAliment = async (req, res = response) => {
 
 const updateDiet = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { dietAliments } = req.body;
+    const { diet_name, description } = req.body;
     const dietId = req.params.id;
 
     const findDietByName = await Diet.findOne({
@@ -92,13 +90,9 @@ const updateDiet = async (req, res = response) => {
       });
     }
 
-    dietAliments.forEach(async function (element) {
       await Diet.findByIdAndUpdate(
         { _id: dietId },
-        {
-          diet:
-            (element.diet_name, element.stage, element.animal, element.aliment),
-        },
+        {diet_name, description},
         (err) => {
           if (err) {
             res.status(400).json({
@@ -113,7 +107,6 @@ const updateDiet = async (req, res = response) => {
           }
         }
       );
-    });
   } else {
     res.status(500).json({
       status: false,
@@ -127,7 +120,7 @@ const updateAliment = async (req, res = response) => {
     const { name_aliment, quantity_supplied, price_aliment } = req.body;
     const alimentId = req.params.id;
 
-    const findAlimentByName = await Aliment.findOne({
+    const findAlimentByName = await Product.findOne({
       name_aliment,
     });
 
@@ -138,7 +131,7 @@ const updateAliment = async (req, res = response) => {
       });
     }
 
-    await Aliment.findByIdAndUpdate(
+    await Product.findByIdAndUpdate(
       { _id: alimentId },
       { name_aliment, quantity_supplied, price_aliment },
       (err) => {
@@ -275,7 +268,7 @@ const getDietByAnimal = (res = response) => {
 };
 
 const getAliments = async (req, res = response) => {
-  const aliments = await Aliment.find();
+  const aliments = await Product.find();
 
   return res.status(200).json({
     status: true,

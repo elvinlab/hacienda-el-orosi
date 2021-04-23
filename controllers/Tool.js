@@ -31,7 +31,6 @@ const registerTool = async (req, res = response) => {
 
 const registerActives = async (req, res = response) => {
   const { tools } = req.body;
-
   tools.forEach(async function (element) {
     active = new Active();
 
@@ -64,7 +63,7 @@ const changeStatus = async (req, res = response) => {
   const { status } = req.body;
   const toolId = req.params.id;
 
-  await Tool.findByIdAndUpdate({ _id: toolId }, { status: status }, (err) => {
+  await Tool.findByIdAndUpdate({ _id: toolId }, { status: status }, {new: true}, (err, tool) => {
     if (err) {
       res.status(400).json({
         status: false,
@@ -74,6 +73,7 @@ const changeStatus = async (req, res = response) => {
       res.status(200).send({
         status: true,
         msg: "Estado actualizado de la Herramienta",
+        tool: tool
       });
     }
   });
