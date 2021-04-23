@@ -14,7 +14,7 @@ const addRegisterWeight = async (req, res = response) => {
       if (!animal || animal.status == "Vendido") {
         return res.status(400).json({
           status: false,
-          msg: "Animal no registrado o no se encuentra en la hacienda",
+          msg: "Animal no registrado o no se encuentra en la hacienda.",
         });
       }
 
@@ -27,7 +27,7 @@ const addRegisterWeight = async (req, res = response) => {
       if (validate) {
         return res.status(400).json({
           status: false,
-          msg: "No se puede registrar mas de un peso por dia",
+          msg: "No se puede registrar más de un peso por día.",
         });
       }
 
@@ -37,19 +37,19 @@ const addRegisterWeight = async (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        msg: "Peso de animal guardado con exito",
+        msg: "Peso de animal guardado con éxito.",
         animal: animal,
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacte con un ing en sistemas para mas información",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -79,7 +79,7 @@ const updateRegisterWeight = async (req, res = response) => {
         return res.status(400).json({
           status: false,
           msg:
-            "No se puede actualizar ya que tiene una fecha diferente al registro",
+            "No se puede actualizar, la fecha es diferente en el registro.",
         });
       }
 
@@ -97,19 +97,19 @@ const updateRegisterWeight = async (req, res = response) => {
           if (err) {
             return res.status(500).send({
               status: "error",
-              message: "Error en la petición",
+              message: "Error en la petición.",
             });
           }
 
           if (!animal) {
             return res.status(404).send({
               status: "error",
-              message: "No existe registro",
+              message: "No existe registro.",
             });
           }
           return res.status(200).send({
             status: true,
-            msg: "Datos actualizados con exito",
+            msg: "Datos actualizados con éxito.",
             animal: animal,
           });
         }
@@ -117,13 +117,13 @@ const updateRegisterWeight = async (req, res = response) => {
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacte con un ing en sistemas para mas información",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -152,7 +152,7 @@ const deleteRegisterWeight = async (req, res = response) => {
         return res.status(400).json({
           status: false,
           msg:
-            "No se puede eliminar ya que tiene una fecha diferente al registro",
+            "No se puede actualizar, la fecha es diferente en el registro.",
         });
       }
 
@@ -170,13 +170,13 @@ const deleteRegisterWeight = async (req, res = response) => {
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacte con un ing en sistemas para mas información",
+        msg: "Por favor contacté con un ING en Sistemas para más información",
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };

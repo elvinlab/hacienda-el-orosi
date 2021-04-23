@@ -52,13 +52,13 @@ const save = (req, res = response) => {
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor hable con el administrador encargado",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     res.status(500).json({
       status: "Error",
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -72,14 +72,14 @@ const getContracts = (req, res = response) => {
       if (err) {
         res.status(500).send({
           status: false,
-          msg: "Error en la peticion",
+          msg: "Error en la petición.",
         });
       }
 
       if (!contracts) {
         res.status(404).send({
           status: false,
-          msg: "No hay pagos por mostrar",
+          msg: "No hay pagos pendientes.",
         });
       }
 
@@ -100,14 +100,14 @@ const getContractsByContracted = (req, res = response) => {
       if (err) {
         res.status(500).send({
           status: false,
-          msg: "Error en la peticion",
+          msg: "Error en la petición",
         });
       }
 
       if (!contracts) {
         res.status(404).send({
           status: false,
-          msg: "No hay pagos por mostrar",
+          msg: "No hay pagos pendientes.",
         });
       }
       res.status(200).send({
@@ -129,12 +129,12 @@ const changeStatus = async (req, res = response) => {
         if (err) {
           res.status(400).json({
             status: false,
-            msg: "Por favor hable con el administrador",
+            msg: "Por favor contacté con un ING en Sistemas para más información.",
           });
         } else {
           res.status(200).send({
             status: true,
-            msg: "Estado actualizado para este contrato",
+            msg: "Estado del contrato actualizado.",
           });
         }
       }
@@ -142,7 +142,7 @@ const changeStatus = async (req, res = response) => {
   } else {
     res.status(500).json({
       status: "Error",
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };

@@ -24,20 +24,20 @@ const make = async ( req, res = response ) => {
 
         return res.status(200).json({
             status: true,
-            msg: "Venta realizada exitosamente",
+            msg: "Venta realizada con éxito.",
             sale: sale,
           });
 
        }catch (error) {
         return res.status(500).json({
           status: false,
-          msg: "Por favor hable con el administrador encargado",
+          msg: "Por favor contacte con un ING en Sistemas.",
         });
       }
     }else {
         res.status(500).json({
           status: false,
-          msg: "No tienes permisos en la plataforma",
+          msg: "No posees los privilegios necesarios en la plataforma.",
         });
       }
 };

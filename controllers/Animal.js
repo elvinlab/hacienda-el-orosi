@@ -23,7 +23,7 @@ const saveAnimalType = async (req, res = response) => {
       if (findTypeByName) {
         return res.status(400).json({
           status: false,
-          msg: `El tipo de animal con nombre ${name} ya existe`,
+          msg: `El tipo de animal con nombre ${name} ya existe.`,
         });
       }
 
@@ -36,19 +36,19 @@ const saveAnimalType = async (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        msg: `El tipo de animal con nombre ${name} fue registrado con exito`,
+        msg: `El tipo de animal con nombre ${name} fue registrado con éxito.`,
         type: type,
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Porfavor contacte con el Administrador para mas información",
+        msg: "Por favor contacté con un ING en Sistemas.",
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "Este perfil no cuenta actualmente con los privilegios necesarios.",
     });
   }
 };
@@ -71,7 +71,7 @@ const removeType = async (req, res = response) => {
       return res.status(404).send({
         status: false,
         msg:
-          "Este tipo de animal se encuentra actualmente signado en algun animal",
+          "Este tipo de animal ya ha sido asignado con anterioridad.",
       });
     }
 
@@ -80,7 +80,7 @@ const removeType = async (req, res = response) => {
     if (findAllType.length === 1) {
       return res.status(404).send({
         status: false,
-        msg: "No se puede estar sin tipos de animales",
+        msg: "No se puede estar sin tipos de animales.",
       });
     }
 
@@ -88,25 +88,25 @@ const removeType = async (req, res = response) => {
       if (err) {
         return res.status(500).send({
           status: false,
-          msg: "Error al procesar la peticion",
+          msg: "Error al guardar la información.",
         });
       }
       if (!type) {
         return res.status(404).send({
           status: false,
-          msg: "No se ha eliminado el tipo de animal",
+          msg: "No se logro eliminar el tipo de animal",
         });
       }
       return res.status(200).json({
         status: true,
-        msg: "Tipo de animal removido de forma exitosa",
+        msg: "Tipo de animal removido correctamente.",
         type: type,
       });
     });
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No puedes remover el tipo de animal",
+      msg: "No se puede remover este tipo de animal.",
     });
   }
 };
@@ -136,7 +136,7 @@ const register = async (req, res = response) => {
     if (findAnimalByPlateNumber) {
       return res.status(400).json({
         status: false,
-        msg: `El animal con numero de chapa ${plate_number} ya existe`,
+        msg: `El animal con número de chapa ${plate_number} ya existe.`,
       });
     }
 
@@ -165,13 +165,13 @@ const register = async (req, res = response) => {
 
     return res.status(200).json({
       status: true,
-      msg: `El animal con numero de chapa ${plate_number} fue registrado con exito`,
+      msg: `El animal con número de chapa ${plate_number} fue registrado con éxito.`,
       animal: animalFind,
     });
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "Este perfil no cuenta actualmente con los privilegios necesarios.",
     });
   }
 };
@@ -201,7 +201,7 @@ const update = async (req, res = response) => {
     if (findAnimalByPlateNumber && findAnimalByPlateNumber._id != animalID) {
       return res.status(400).json({
         status: false,
-        msg: "Ya existe un animal con este numero de chapa.",
+        msg: "Este número de chapa ya se encuentra registrado.",
       });
     }
 
@@ -227,12 +227,12 @@ const update = async (req, res = response) => {
           res.status(400).json({
             status: false,
             msg:
-              "Por favor contacte con un ingeniero en sistemas para mas información",
+              "Por favor contacté con un ingeniero en sistemas para mas información.",
           });
         } else {
           res.status(200).send({
             status: true,
-            msg: "Datos del animal actualizados con exito",
+            msg: "Datos del animal actualizados con éxito.",
             animal: animal,
           });
         }
@@ -241,7 +241,7 @@ const update = async (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No cuentas con los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -260,12 +260,12 @@ const changeStatus = async (req, res = response) => {
           res.status(400).json({
             status: false,
             msg:
-              "Por favor contacte con un ingeniero en sistemas para mas información",
+              "Por favor contacté con un ingeniero en sistemas para más información.",
           });
         } else {
           res.status(200).send({
             status: true,
-            msg: "Estado actualizado del animal",
+            msg: "Estado actualizado del animal.",
             animal: animal,
           });
         }
@@ -274,7 +274,7 @@ const changeStatus = async (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No se posee los permisos necesarios en la plataforma.",
     });
   }
 };
@@ -293,12 +293,12 @@ const changeNextDueDate = async (req, res = response) => {
           return res.status(400).json({
             status: false,
             msg:
-              "Por favor contacte con un ingeniero en sistemas para mas información",
+              "Por favor contacté con un ingeniero en sistemas para más información.",
           });
         } else {
           return res.status(200).send({
             status: true,
-            msg: "Fecha proxima del parto actualizada",
+            msg: "Fecha próxima del parto actualizada.",
             animal: animal,
           });
         }
@@ -307,7 +307,7 @@ const changeNextDueDate = async (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No tienes los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -329,7 +329,7 @@ const getAnimalByType = async (req, res = response) => {
   if (!typeID) {
     return res.status(400).json({
       status: false,
-      msg: "Problemas en la consulta",
+      msg: "Problemas en la consulta.",
     });
   } else {
   }
@@ -352,12 +352,12 @@ const getAnimal = async (req, res = response) => {
       if (err || !animal) {
         return res.status(404).send({
           status: false,
-          msg: "Animal no existe",
+          msg: "Este animal no existe.",
         });
       }
 
       return res.status(200).send({
-        msg: "Se encontro con exito",
+        msg: "Se ha encontrado el animal con éxito",
         status: true,
         animal: animal,
       });
@@ -400,7 +400,7 @@ const uploadImgProfile = (req, res) => {
     ) {
       return res.status(200).send({
         status: false,
-        msg: "La extension del archivo no es valida.",
+        msg: "El formato de la imagen no es válida.",
       });
     }
 
@@ -423,13 +423,13 @@ const uploadImgProfile = (req, res) => {
           if (err || !animal) {
             return res.status(500).send({
               status: "error",
-              msg: "Error al guardar el registro",
+              msg: "Error al guardar el registro.",
             });
           }
 
           return res.status(200).send({
             status: "success",
-            msg: "Datos actualizados en el registro",
+            msg: "Datos actualizados en el registro.",
             animal: animal,
           });
         }
@@ -438,7 +438,7 @@ const uploadImgProfile = (req, res) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -465,7 +465,7 @@ const uploadImgReg = (req, res) => {
     ) {
       return res.status(200).send({
         status: false,
-        msg: "La extension del archivo no es valida.",
+        msg: "El formato de la imagen no es válida",
       });
     }
 
@@ -488,13 +488,13 @@ const uploadImgReg = (req, res) => {
           if (err || !animal) {
             return res.status(500).send({
               status: "error",
-              msg: "Error al guardar el registro",
+              msg: "Error al guardar el registro.",
             });
           }
 
           return res.status(200).send({
             status: "success",
-            msg: "Datos actualizados en el registro",
+            msg: "Datos actualizados en el registro.",
             animal: animal,
           });
         }
@@ -503,7 +503,7 @@ const uploadImgReg = (req, res) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
