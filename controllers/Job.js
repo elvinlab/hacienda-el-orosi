@@ -20,7 +20,7 @@ const save = async (req, res = response) => {
       if (findJobByName) {
         return res.status(401).json({
           status: false,
-          msg: "Este trabajo ya existe",
+          msg: "Este trabajo ya existe.",
         });
       }
 
@@ -35,19 +35,19 @@ const save = async (req, res = response) => {
       await job.save();
       return res.status(200).json({
         status: true,
-        msg: "Trabajo registrada con éxito",
+        msg: "Trabajo registrada con éxito.",
         job: job,
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacte con el administrador para más informacion",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No puedes registrar el trabajo",
+      msg: "No puedes registrar este trabajo.",
     });
   }
 };
@@ -71,7 +71,7 @@ const updateJob = async (req, res = response) => {
     if (findJobByDocumentId && findJobByDocumentId._id != jobId) {
       return res.status(400).json({
         status: "Error",
-        msg: "Existe un trabajo con este nombre.",
+        msg: "Este trabajo ya se encuentra registrado.",
       });
     }
 
@@ -83,12 +83,12 @@ const updateJob = async (req, res = response) => {
         if (err) {
           res.status(400).json({
             status: false,
-            msg: "Por favor hable con el administrador",
+            msg: "Por favor contacté con un ING en Sistemas para más información.",
           });
         } else {
           res.status(200).send({
             status: true,
-            msg: "Trabajo actualizado con exito",
+            msg: "Trabajo actualizado con éxito.",
             job: job,
           });
         }
@@ -97,7 +97,7 @@ const updateJob = async (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -111,7 +111,7 @@ const removeJob = async (req, res = response) => {
       return res.status(404).send({
         status: false,
         msg:
-          "Este trabajo se encuentra acualmente signado en algun colaborador",
+          "Este trabajo se encuentra acualmente asignado en algún colaborador.",
       });
     }
 
@@ -119,25 +119,25 @@ const removeJob = async (req, res = response) => {
       if (err) {
         return res.status(500).send({
           status: false,
-          msg: "Error al procesar la peticion",
+          msg: "Error al procesar la petición.",
         });
       }
       if (!job) {
         return res.status(404).send({
           status: false,
-          msg: "No se ha eliminado el trabajo",
+          msg: "No se logro eliminar el trabajo.",
         });
       }
       return res.status(200).json({
         status: true,
-        msg: "Trabajo removido de forma exitosa",
+        msg: "Trabajo removido con éxito.",
         job: job,
       });
     });
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No puedes remover el trabajo",
+      msg: "No se puede remover este trabajo.",
     });
   }
 };

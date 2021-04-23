@@ -13,7 +13,7 @@ const registerSalaryCollaborator = (req, res = response) => {
     if (paymentReg.final_salary === 0) {
       return res.status(400).json({
         status: false,
-        msg: "No se puede registrar un pago con un salario final igual a cero ",
+        msg: "No se puede registrar un pago con un salario final igual a cero.",
       });
     }
     try {
@@ -49,18 +49,18 @@ const registerSalaryCollaborator = (req, res = response) => {
       payment.save();
       return res.status(200).json({
         status: true,
-        msg: "Pago realizado con exito",
+        msg: "Pago realizado con éxito.",
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Porfavor contacte con el Administrador para mas información",
+        msg: "Por favor contacté con un ING en Sistemas para más información",
       });
     }
   } else {
     return res.status(400).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -100,7 +100,7 @@ const paymentsByCollaborator = (req, res = response) => {
         if (!payments) {
           return res.status(404).send({
             status: false,
-            msg: "Sin pagos registrados",
+            msg: "No se encuentran pagos registrados.",
           });
         }
 
@@ -117,7 +117,7 @@ const paymentsByCollaborator = (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -147,14 +147,14 @@ const getPayments = (req, res = response) => {
       if (err) {
         return res.status(500).send({
           status: false,
-          msg: "Error al hacer la consulta",
+          msg: "Error al hacer la consulta.",
         });
       }
 
       if (!payments) {
         return res.status(404).send({
           status: false,
-          msg: "Sin pagos registrados",
+          msg: "No se encuentran pagos registrados.",
         });
       }
 
@@ -170,7 +170,7 @@ const getPayments = (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -191,7 +191,7 @@ const registerPresence = async (req, res = response) => {
       if (findPresenceByActualDateAndCollaborator) {
         return res.status(400).json({
           status: false,
-          msg: "Dia laboral ya registrado para el colaborador",
+          msg: "Este día ya se le registro al colaborador.",
         });
       }
 
@@ -205,18 +205,18 @@ const registerPresence = async (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        msg: "Se registro dia laboral con exito",
+        msg: "Día laboral registrado con éxito.",
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Porfavor contacte con el Administrador para mas información",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     res.status(400).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -257,7 +257,7 @@ const getDayPendingByCollaborator = async (req, res = response) => {
   } else {
     res.status(400).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };

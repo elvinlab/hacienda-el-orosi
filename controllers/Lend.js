@@ -13,7 +13,7 @@ const make = async (req, res = response) => {
         return res.status(400).json({
           status: false,
           msg:
-            "La cuota no puede ser mayor al prestamo inicial o menor a 5,000",
+            "La cuota no puede ser mayor al prestamo inicial o menor a 5,000.",
         });
       }
 
@@ -28,19 +28,19 @@ const make = async (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        msg: "Prestamo realizado exitosamente",
+        msg: "Préstamo realizado con éxito.",
         lend: lend,
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor hable con el administrador encargado",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -58,12 +58,12 @@ const changeAmountFee = async (req, res = response) => {
         if (err) {
           res.status(400).json({
             status: false,
-            msg: "Por favor hable con el administrador",
+            msg: "Por favor contacté con un ING en Sistemas para más información.",
           });
         } else {
           res.status(200).send({
             status: true,
-            msg: "Se actualizo la cuota semanal",
+            msg: "Se actualizo la cuota semanal.",
             lend: lend,
           });
         }
@@ -72,7 +72,7 @@ const changeAmountFee = async (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -103,7 +103,7 @@ const registerFee = async (req, res = response) => {
           if (err) {
             res.status(400).json({
               status: false,
-              msg: "Por favor hable con el administrador",
+              msg: "Por favor contacté con un ING en Sistemas para más información.",
             });
           }
         }
@@ -113,18 +113,18 @@ const registerFee = async (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        msg: "Abono realizado exitosamente",
+        msg: "Abono realizado con éxito.",
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor hable con el administrador encargado",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -216,7 +216,7 @@ const getLendsByCollaborator = async (req, res = response) => {
   if (!findCollaboratorByDocumentId) {
     return res.status(400).json({
       status: false,
-      msg: "Ningun colalorador con esta cedula.",
+      msg: "Esta cédula de identidad no se encuentra registrada.",
     });
   }
   await Lend.paginate(
@@ -250,7 +250,7 @@ const deleteLend = async (req, res = response) => {
     if (findLend) {
       return res.status(400).json({
         status: false,
-        msg: "Este prestamo se encuentra en continuidad.",
+        msg: "Préstamo no cancelado.",
       });
     }
 
@@ -259,17 +259,17 @@ const deleteLend = async (req, res = response) => {
     if (!lendRemoved) {
       return res.status(404).send({
         status: false,
-        msg: "Prestamo no existe en la base de datos",
+        msg: "No se encuentran registros de este préstamo.",
       });
     }
     return res.status(200).json({
       status: true,
-      msg: "Removido de forma exitosa",
+      msg: "Removido de forma con éxito.",
     });
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
