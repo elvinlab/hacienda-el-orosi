@@ -4,7 +4,6 @@ const moment = require("moment");
 let dateTime = new Date();
 
 const DietSchema = Schema({
-
   diet_name: {
     type: String,
     required: true,
