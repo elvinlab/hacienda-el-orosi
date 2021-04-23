@@ -5,33 +5,29 @@ const { response } = require("express");
 const addRegisterCalving = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
     const animalID = req.params.id;
+    const { date, complications } = req.body;
 
-    try {
+    let animal = await Animal.findById({ _id: animalID }).populate("type");
 
-      let animal = await Animal.findById({ _id: animalID });
-
-      if (!animal || animal.gender != "Hembra") {
-        return res.status(400).json({
-          status: false,
-          msg: "Solo se le pueden registrar partos a hembras.",
-        });
-      }
-
-      await animal.calving.unshift(req.body);
-
-      await animal.save();
-
-      return res.status(200).json({
-        status: true,
-        msg: "Parto registrado con exito.",
-        animal: animal,
-      });
-    } catch (error) {
-      return res.status(500).json({
+    if (!animal || animal.type.gender != "Hembra") {
+      return res.status(400).json({
         status: false,
-        msg: "Por favor contacté con un ing en sistemas para mas información.",
+        msg: "Solo se le pueden registrar partos a hembras.",
       });
     }
+
+    await animal.calving.unshift({
+      date: moment(date).format("YYYY-MM-DD"),
+      complications: complications,
+    });
+
+    await animal.save();
+
+    return res.status(200).json({
+      status: true,
+      msg: "Parto registrado con exito.", 
+      animal: animal,
+    });
   } else {
     return res.status(500).json({
       status: false,
@@ -42,7 +38,7 @@ const addRegisterCalving = async (req, res = response) => {
 
 const updateRegisterCalving = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const {date, complications } = req.body;
+    const { date, complications } = req.body;
     const registerCalvingID = req.params.calving;
     const animalID = req.params.animal;
 
@@ -53,9 +49,8 @@ const updateRegisterCalving = async (req, res = response) => {
 
       animal &&
         animal.calving.forEach((element) => {
-          if (element._id == registerCalvingID ) {
-            if (element.date != moment(dateTime).format("YYYY-MM-DD")
-            ) {
+          if (element._id == registerCalvingID) {
+            if (element.date != moment(dateTime).format("YYYY-MM-DD")) {
               validate = true;
             }
           }
