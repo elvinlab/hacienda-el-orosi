@@ -17,18 +17,18 @@ const save = async (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        msg: "Dieta registrada con éxito",
+        msg: "Dieta registrada con éxito.",
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacte con el administrador para más imformación",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No puedes registrar la dieta",
+      msg: "No se puede registrar la dieta.",
     });
   }
 };
@@ -45,7 +45,7 @@ const addAliment = async (req, res = response) => {
       if (findAlimentByName) {
         return res.status(400).json({
           status: false,
-          msg: "El alimento ya existe",
+          msg: "El alimento ya existe.",
         });
       }
 
@@ -58,18 +58,18 @@ const addAliment = async (req, res = response) => {
       await aliment.save();
       return res.status(200).json({
         status: true,
-        msg: "Alimento agregado exitosamente",
+        msg: "Alimento agregado con éxito.",
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor hable con el administrador encargado",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -86,7 +86,7 @@ const updateDiet = async (req, res = response) => {
     if (findDietByName && findDietByName._id != dietId) {
       return res.status(400).json({
         status: "Error",
-        msg: "Existe una dieta con este nombre.",
+        msg: "El nombre de esta dieta ya se encuentra registrado.",
       });
     }
 
@@ -97,12 +97,12 @@ const updateDiet = async (req, res = response) => {
           if (err) {
             res.status(400).json({
               status: false,
-              msg: "Por favor hable con el administrador",
+              msg: "Por favor contacté con un ING en Sistemas para más información.",
             });
           } else {
             res.status(200).send({
               status: true,
-              msg: "Dieta actualizada con exito",
+              msg: "Dieta actualizada con éxito",
             });
           }
         }
@@ -110,7 +110,7 @@ const updateDiet = async (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -127,7 +127,7 @@ const updateAliment = async (req, res = response) => {
     if (findAlimentByName && findAlimentByName._id != alimentId) {
       return res.status(400).json({
         status: "Error",
-        msg: "Existe un alimento con este nombre.",
+        msg: "El nombre del alimento ya se encuentra registrado.",
       });
     }
 
@@ -138,12 +138,12 @@ const updateAliment = async (req, res = response) => {
         if (err) {
           res.status(400).json({
             status: false,
-            msg: "Por favor hable con el administrador",
+            msg: "Por favor contacté con un ING en Sistemas para más información.",
           });
         } else {
           res.status(200).send({
             status: true,
-            msg: "Alimento actualizado con exito",
+            msg: "Alimento actualizado con éxito.",
           });
         }
       }
@@ -151,7 +151,7 @@ const updateAliment = async (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -173,24 +173,24 @@ const removeDiet = async (req, res = response) => {
       if (err) {
         return res.status(500).send({
           status: false,
-          msg: "Error al procesar la peticion",
+          msg: "Error al procesar la peticion.",
         });
       }
       if (!diet) {
         return res.status(404).send({
           status: false,
-          msg: "No se ha eliminado la dieta",
+          msg: "No se logro eliminar la dieta.",
         });
       }
       return res.status(200).json({
         status: true,
-        msg: "Dieta removida de forma exitosa",
+        msg: "Dieta removida con éxito.",
       });
     });
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No puedes remover la dieta",
+      msg: "No se puede remover la dieta.",
     });
   }
 };
@@ -212,24 +212,24 @@ const deleteAliment = async (req, res = response) => {
       if (err) {
         return res.status(500).send({
           status: false,
-          msg: "Error al procesar la peticion",
+          msg: "Error al procesar la peticion.",
         });
       }
       if (!aliment) {
         return res.status(404).send({
           status: false,
-          msg: "No se ha eliminado el alimento",
+          msg: "No se logro eliminar el alimento.",
         });
       }
       return res.status(200).json({
         status: true,
-        msg: "Alimento eliminado de forma exitosa",
+        msg: "Alimento eliminado de forma exitosa.",
       });
     });
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No puedes eliminar el alimento",
+      msg: "No se puede eliminar este alimento",
     });
   }
 };

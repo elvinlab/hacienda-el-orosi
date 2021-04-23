@@ -13,7 +13,7 @@ const addRegisterCalving = async (req, res = response) => {
       if (!animal || animal.gender != "Hembra") {
         return res.status(400).json({
           status: false,
-          msg: "Solo se le pueden registrar partos a hembras",
+          msg: "Solo se le pueden registrar partos a hembras.",
         });
       }
 
@@ -23,19 +23,19 @@ const addRegisterCalving = async (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        msg: "Parto registrado con exito",
+        msg: "Parto registrado con exito.",
         animal: animal,
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacte con un ing en sistemas para mas información",
+        msg: "Por favor contacté con un ing en sistemas para mas información.",
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -64,7 +64,7 @@ const updateRegisterCalving = async (req, res = response) => {
       if (validate) {
         return res.status(400).json({
           status: false,
-          msg: "Numero de parto ya registrado o fecha diferente al registro",
+          msg: "Número de parto ya registrado o fecha diferente de registro.",
         });
       }
 
@@ -81,19 +81,19 @@ const updateRegisterCalving = async (req, res = response) => {
           if (err) {
             return res.status(500).send({
               status: "error",
-              message: "Error en la petición",
+              message: "Error al registrar los partos.",
             });
           }
 
           if (!animal) {
             return res.status(404).send({
               status: "error",
-              message: "No existe registro",
+              message: "Se logro encontran registros existentes.",
             });
           }
           return res.status(200).send({
             status: true,
-            msg: "Datos actualizados con exito",
+            msg: "Datos actualizados con éxito.",
             animal: animal,
           });
         }
@@ -101,13 +101,13 @@ const updateRegisterCalving = async (req, res = response) => {
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacte con un ing en sistemas para mas información",
+        msg: "Por favor contacté con un ING en Sistemas para más información",
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -136,7 +136,7 @@ const deleteRegisterCalving = async (req, res = response) => {
         return res.status(400).json({
           status: false,
           msg:
-            "Numero de parto no se puede eliminar porque tiene fecha diferente al registro",
+            "Número de parto no se puede eliminar, la fecha no coincide con las registradas.",
         });
       }
 
@@ -153,13 +153,13 @@ const deleteRegisterCalving = async (req, res = response) => {
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacte con un ing en sistemas para mas información",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };

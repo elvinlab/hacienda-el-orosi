@@ -20,20 +20,20 @@ const save = async (req, res = response) => {
 
             return res.status(200).json({
                 status: true,
-                msg: "producto registrado con exito",
+                msg: "producto registrado con éxito",
             });
 
         } catch (error) {
             return res.status(500).json({
                 status: false,
-                msg: "Por favor contacte con el administrador para más imformación",
+                msg: "Por favor contacté con un ING en Sistemas para más información",
             });
         }
 
     } else {
         return res.status(400).send({
             status: false,
-            msg: "No tiene permisos en la plataforma",
+            msg: "No posees los privilegios necesarios en la plataforma.",
         });
     }
 };
@@ -53,7 +53,7 @@ const update = async (req, res = response) => {
             if (findproductByName && findproductByName._id != productID) {
                 return res.status(400).json({
                     status: "Error",
-                    msg: "Existe un producto con este nombre.",
+                    msg: "Este nombre ya se encuentra en uso.",
                 });
             }
 
@@ -71,12 +71,12 @@ const update = async (req, res = response) => {
                     if (err) {
                         return res.status(400).json({
                             status: false,
-                            msg: "Por favor hable con un ingeniero en sistemas",
+                            msg: "Por favor contacté con un ING en Sistemas para más información.",
                         });
                     } else {
                         return res.status(200).send({
                             status: true,
-                            msg: "Datos del producto actualziado",
+                            msg: "Datos del producto actualizado.",
                             product: product
                         });
                     }
@@ -87,14 +87,14 @@ const update = async (req, res = response) => {
         } catch (error) {
             return res.status(500).json({
                 status: false,
-                msg: "Por favor contacte con el administrador para más imformación",
+                msg: "Por favor contacté con un ING en Sistemas para más información.",
             });
         }
 
     } else {
         return res.status(400).send({
             status: false,
-            msg: "No tiene permisos en la plataforma",
+            msg: "No posees los privilegios necesarios en la plataforma.",
         });
     }
 }
@@ -123,7 +123,7 @@ const getProducts = async (req, res = response) => {
     if (err) {
       return res.status(500).send({
         status: false,
-        msg: "Error al hacer la consulta",
+        msg: "Error al hacer la consulta.",
       });
     }
 
@@ -146,7 +146,7 @@ const remove = async (req, res = response) => {
         } else {
             return res.status(400).send({
                 status: false,
-                msg: "No se puede eliminar ya que este producto esta siendo utilizado por una dieta en este momento",
+                msg: "No se puede eliminar, este producto esta siendo utilizado.",
             });
 
         }
@@ -157,20 +157,20 @@ const remove = async (req, res = response) => {
 
             return res.status(400).send({
                 status: false,
-                msg: "Ocurrio un error al eliminar el producto de la base de datos",
+                msg: "Error no se ha podido eliminar el producto.",
             });
         }
 
         return res.status(200).send({
             status: true,
-            msg: "producto se elimino con exito",
+            msg: "producto elimado con éxito.",
             product: productRemove
         });
 
     } else {
         return res.status(400).send({
             status: false,
-            msg: "No tiene permisos en la plataforma",
+            msg: "No posees los privilegios necesarios en la plataforma.",
         });
     }
 }
