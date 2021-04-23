@@ -51,15 +51,11 @@ const register = async (req, res = response) => {
       dispatch_date,
     } = req.body;
 
-    /*
-    var fecha1 = moment(date_admission);
-    var fecha2 = moment(dispatch_date);
-        console.log(fecha2.diff(fecha1, 'days'), ' dias de diferencia');
-    */
+   
     if (moment(date_admission) >= moment(dispatch_date)) {
       return res.status(400).json({
         status: false,
-        msg: "La fecha inicial no puede ser mayor o igual a la fecha final",
+        msg: "La fecha inicial no puede superar o igual a la fecha final.",
       });
     }
 
@@ -71,7 +67,7 @@ const register = async (req, res = response) => {
       if (findCollaboratorByDocumentId) {
         return res.status(400).json({
           status: false,
-          msg: "El colaborador ya existe",
+          msg: "El colaborador ya existe.",
         });
       }
 
@@ -99,19 +95,19 @@ const register = async (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        msg: "Colaborador registrado con exito",
+        msg: "Colaborador registrado con éxito.",
         collaborator: findNewCollaborator,
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacte con el Administrador para mas información",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -142,14 +138,14 @@ const update = async (req, res = response) => {
     ) {
       return res.status(400).json({
         status: false,
-        msg: "Existe un colaborador con esta cedula.",
+        msg: "Esta cédula ya ha sido registrada anteriormente.",
       });
     }
 
     if (moment(date_admission) >= moment(dispatch_date)) {
       return res.status(400).json({
         status: false,
-        msg: "La fecha inicial no puede ser mayor o igual a la fecha final",
+        msg: "La fecha inicial no puede superar o igual a la fecha final.",
       });
     }
 
@@ -171,12 +167,12 @@ const update = async (req, res = response) => {
         if (err) {
           res.status(400).json({
             status: false,
-            msg: "Por favor hable con el administrador",
+            msg: "Por favor contacté con un ING en Sistemas para más información.",
           });
         } else {
           res.status(200).send({
             status: true,
-            msg: "Datos del colaborador actualizados con exito",
+            msg: "Datos del colaborador actualizados con éxito.",
           });
         }
       }
@@ -184,7 +180,7 @@ const update = async (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -201,12 +197,12 @@ const changeStatus = async (req, res = response) => {
         if (err) {
           return res.status(400).json({
             status: false,
-            msg: "Por favor hable con el administrador",
+            msg: "Por favor contacté con un ING en Sistemas para más información.",
           });
         } else {
         return res.status(200).send({
             status: true,
-            msg: "Estado actualizado para el colaborador",
+            msg: "Estado del colaborador actualizado.",
           });
         }
       }
@@ -214,7 +210,7 @@ const changeStatus = async (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -230,7 +226,7 @@ const getCollaboratorsByStatus = (req, res = response) => {
       if (err) {
         return res.status(404).send({
           status: false,
-          msg: "Error al hacer la consulta",
+          msg: "Error al realizar la consulta.",
         });
       }
       return res.status(200).json({
@@ -250,7 +246,7 @@ const getCollaborator = async (req, res = response) => {
     if (err || !collaborator) {
       return res.status(404).send({
         status: false,
-        msg: "Colaborador no existe",
+        msg: "El colaborador no existe.",
       });
     }
 
@@ -314,13 +310,13 @@ const generatePDFByCollaborator = async (req, res = response) => {
     } catch (error) {
       res.status(400).json({
         status: false,
-        msg: "Por favor hable con el administrador",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
