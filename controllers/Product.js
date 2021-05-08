@@ -1,4 +1,5 @@
 const Product = require("../models/Product.js");
+const Diet = require("../models/Diet.js")
 
 const { ObjectId } = require("mongodb");
 const { response } = require("express");
@@ -143,30 +144,25 @@ const remove = async (req, res = response) => {
         const productID = req.params.id;
 
         if (await Diet.findOne({ product: ObjectId(productID) })) {
-        } else {
             return res.status(400).send({
                 status: false,
                 msg: "No se puede eliminar, este producto esta siendo utilizado.",
             });
-
-        }
-
-        const productRemove = await Product.findByIdAndRemove({ productID });
-
-        if (!productRemove) {
-
-            return res.status(400).send({
-                status: false,
-                msg: "Error no se ha podido eliminar el producto.",
+        } 
+        Product.findOneAndDelete({ _id: productID }, (err, product) => {
+            if (err || !product) {
+                return res.status(400).send({
+                    status: false,
+                    msg: "Error no se ha podido eliminar el producto.",
+                });
+            }
+            return res.status(200).send({
+                status: true,
+                msg: "Producto eliminado con éxito.",
+                product: product
             });
-        }
-
-        return res.status(200).send({
-            status: true,
-            msg: "producto elimado con éxito.",
-            product: productRemove
-        });
-
+          });
+    
     } else {
         return res.status(400).send({
             status: false,
