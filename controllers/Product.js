@@ -9,7 +9,7 @@ const save = async (req, res = response) => {
         const { name, kilograms, liters, price } = req.body;
 
         try {
-
+            if(liters === null){ liters = 0; }else if(kilograms === null) kilograms = 0;
             let product = new Product();
 
             product.name = name;
@@ -22,6 +22,7 @@ const save = async (req, res = response) => {
             return res.status(200).json({
                 status: true,
                 msg: "producto registrado con éxito",
+                product,
             });
 
         } catch (error) {
@@ -159,7 +160,6 @@ const remove = async (req, res = response) => {
             return res.status(200).send({
                 status: true,
                 msg: "Producto eliminado con éxito.",
-                product: product
             });
           });
     
