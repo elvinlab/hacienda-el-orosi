@@ -12,7 +12,7 @@ const {
   deleteAliment,
   getDiets,
   getDietByAnimal,
-  getAliments,
+  getAlimentsByDiet,
   updateDiet,
   updateAliment,
 } = require("../controllers/Diet.js");
@@ -54,7 +54,7 @@ router.put(
 
 router.get("/listar-dietas", md_auth.authenticated, getDiets);
 router.get("/dieta/animal/:id", md_auth.authenticated, getDietByAnimal);
-router.get("/listar-alimentos/:page?", md_auth.authenticated, getAliments);
+router.get("/listar-alimentos/:id/:page?", md_auth.authenticated, getAlimentsByDiet);
 router.delete("/remover-dieta/:id", md_auth.authenticated, removeDiet);
 
 module.exports = router;

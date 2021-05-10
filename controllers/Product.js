@@ -154,7 +154,7 @@ const remove = async (req, res = response) => {
             if (err || !product) {
                 return res.status(400).send({
                     status: false,
-                    msg: "Error no se ha podido eliminar el producto.",
+                    msg: "Error, no se pudo eliminar el producto.",
                 });
             }
             return res.status(200).send({
