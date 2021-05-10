@@ -1,4 +1,5 @@
 const { model, Schema } = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const MilkSchema = Schema({
   liters: {
@@ -105,5 +106,7 @@ const AnimalSchema = Schema({
 
   weight: [WeightSchema],
 });
+
+AnimalSchema.plugin(mongoosePaginate);
 
 module.exports = model("Animal", AnimalSchema);

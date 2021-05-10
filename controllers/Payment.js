@@ -19,7 +19,7 @@ const registerSalaryCollaborator = (req, res = response) => {
     try {
       Presence.updateMany(
         { status: "Pendiente", collaborator: ObjectId(collaboratorId) },
-        { status: "paid" },
+        { status: "Pagado" },
         function (err) {
           if (err) {
             return res.status(500).json({
@@ -230,30 +230,16 @@ const getDayPendingByCollaborator = async (req, res = response) => {
       collaborator: ObjectId(collaboratorId),
     }).sort({ date: -1 });
 
-    Presence.aggregate(
-      [
-        {
-          $match: {
-            status: { $eq: "Pendiente" },
-            collaborator: { $eq: ObjectId(collaboratorId) },
-          },
-        },
-        {
-          $group: { _id: null, amount: { $sum: "$total_overtime" } },
-        },
-      ],
-      function (err, result) {
-        if (err) {
-          res.send(err);
-        } else {
-          return res.status(200).json({
-            status: true,
-            total_overtime: result ? result[0].amount : 0,
-            pending_days: findPresenceByStatusAndByCollaborator,
-          });
-        }
-      }
-    );
+    let total_overtime = 0;
+    findPresenceByStatusAndByCollaborator.forEach(function (e) {
+      total_overtime += e.total_overtime;
+    });
+
+    return res.status(200).json({
+      status: true,
+      total_overtime: total_overtime,
+      pending_days: findPresenceByStatusAndByCollaborator,
+    });
   } else {
     res.status(400).json({
       status: false,

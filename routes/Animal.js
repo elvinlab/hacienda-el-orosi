@@ -17,7 +17,6 @@ const {
   getAnimalByType,
   getAnimalByStatusAndType,
   getAnimal,
-  getAnimals,
   uploadImgProfile,
   uploadImgReg,
 } = require("../controllers/Animal.js");
@@ -136,9 +135,7 @@ router.put(
   changeNextDueDate
 );
 
-router.get("/todos/", md_auth.authenticated, getAnimals);
-
-router.get("/tipo/:type", md_auth.authenticated, getAnimalByType);
+router.get("/tipo/:type/:page?", md_auth.authenticated, getAnimalByType);
 
 //Rutas de MIlk
 router.post(

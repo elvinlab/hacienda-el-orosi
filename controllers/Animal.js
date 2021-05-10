@@ -70,8 +70,7 @@ const removeType = async (req, res = response) => {
     if (findTypeByID) {
       return res.status(404).send({
         status: false,
-        msg:
-          "Este tipo de animal ya ha sido asignado con anterioridad.",
+        msg: "Este tipo de animal ya ha sido asignado con anterioridad.",
       });
     }
 
@@ -312,37 +311,6 @@ const changeNextDueDate = async (req, res = response) => {
   }
 };
 
-const getAnimals = async (req, res = response) => {
-  const animals = await Animal.find()
-    .populate("daughter_of type")
-    .sort({ date_admission: -1 });
-
-  return res.status(200).json({
-    status: true,
-    animals: animals,
-  });
-};
-
-const getAnimalByType = async (req, res = response) => {
-  let typeID = req.params.type;
-
-  if (!typeID) {
-    return res.status(400).json({
-      status: false,
-      msg: "Problemas en la consulta.",
-    });
-  } else {
-  }
-  const animals = await Animal.find({ type: ObjectId(typeID) })
-    .populate("daughter_of type")
-    .sort({ date_admission: -1 });
-
-  return res.status(200).json({
-    status: true,
-    animals: animals,
-  });
-};
-
 const getAnimal = async (req, res = response) => {
   let plate_number = req.params.id;
 
@@ -362,6 +330,44 @@ const getAnimal = async (req, res = response) => {
         animal: animal,
       });
     });
+};
+
+const getAnimalByType = async (req, res = response) => {
+  let type = req.params.type;
+  let page = undefined;
+
+  if (
+    !req.params.page ||
+    req.params.page == 0 ||
+    req.params.page == "0" ||
+    req.params.page == null ||
+    req.params.page == undefined
+  ) {
+    page = 1;
+  } else {
+    page = parseInt(req.params.page);
+  }
+  const options = {
+    date_admission: -1,
+    limit: 5,
+    page: page,
+    populate: "daughter_of type",
+  };
+
+  await Animal.paginate({ type }, options, (err, animals) => {
+    if (err) {
+      return res.status(500).send({
+        status: false,
+        msg: "Error al hacer la consulta",
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      animals: animals.docs,
+      count: animals.totalDocs,
+    });
+  });
 };
 
 const getAnimalByStatusAndType = async (req, res = response) => {
@@ -516,7 +522,6 @@ module.exports = {
   update,
   changeStatus,
   changeNextDueDate,
-  getAnimals,
   getAnimal,
   getAnimalByType,
   getAnimalByStatusAndType,
