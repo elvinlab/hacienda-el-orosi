@@ -1,19 +1,19 @@
-const Animal = require("../models/Animal.js");
-const Type = require("../models/Type.js");
-const moment = require("moment");
-const AWS = require("aws-sdk");
-const { uuid } = require("uuidv4");
+const Animal = require('../models/Animal.js');
+const Type = require('../models/Type.js');
+const moment = require('moment');
+const AWS = require('aws-sdk');
+const { uuid } = require('uuidv4');
 
-const { ObjectId } = require("mongodb");
-const { response } = require("express");
+const { ObjectId } = require('mongodb');
+const { response } = require('express');
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ID,
-  secretAccessKey: process.env.AWS_SECRET,
+  secretAccessKey: process.env.AWS_SECRET
 });
 
 const saveAnimalType = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const administratorID = req.user.id;
     const { name, gender } = req.body;
 
@@ -23,7 +23,7 @@ const saveAnimalType = async (req, res = response) => {
       if (findTypeByName) {
         return res.status(400).json({
           status: false,
-          msg: `El tipo de animal con nombre ${name} ya existe.`,
+          msg: `El tipo de animal con nombre ${name} ya existe.`
         });
       }
 
@@ -37,40 +37,40 @@ const saveAnimalType = async (req, res = response) => {
       return res.status(200).json({
         status: true,
         msg: `El tipo de animal con nombre ${name} fue registrado con éxito.`,
-        type: type,
+        type: type
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacté con un ING en Sistemas.",
+        msg: 'Por favor contacté con un ING en Sistemas.'
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "Este perfil no cuenta actualmente con los privilegios necesarios.",
+      msg: 'Este perfil no cuenta actualmente con los privilegios necesarios.'
     });
   }
 };
 
 const getTypes = async (req, res = response) => {
-  const types = await Type.find().sort({ create_at: -1 });
+  const types = await Type.find();
 
   return res.status(200).json({
     status: true,
-    types: types,
+    types: types
   });
 };
 
 const removeType = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Recursos Humanos') {
     let typeID = req.params.id;
 
     const findTypeByID = await Animal.findOne({ type: ObjectId(typeID) });
     if (findTypeByID) {
       return res.status(404).send({
         status: false,
-        msg: "Este tipo de animal ya ha sido asignado con anterioridad.",
+        msg: 'Este tipo de animal ya ha sido asignado con anterioridad.'
       });
     }
 
@@ -79,7 +79,7 @@ const removeType = async (req, res = response) => {
     if (findAllType.length === 1) {
       return res.status(404).send({
         status: false,
-        msg: "No se puede estar sin tipos de animales.",
+        msg: 'No se puede estar sin tipos de animales.'
       });
     }
 
@@ -87,31 +87,31 @@ const removeType = async (req, res = response) => {
       if (err) {
         return res.status(500).send({
           status: false,
-          msg: "Error al guardar la información.",
+          msg: 'Error al guardar la información.'
         });
       }
       if (!type) {
         return res.status(404).send({
           status: false,
-          msg: "No se logro eliminar el tipo de animal",
+          msg: 'No se logro eliminar el tipo de animal'
         });
       }
       return res.status(200).json({
         status: true,
-        msg: "Tipo de animal removido correctamente.",
-        type: type,
+        msg: 'Tipo de animal removido correctamente.',
+        type: type
       });
     });
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No se puede remover este tipo de animal.",
+      msg: 'No se puede remover este tipo de animal.'
     });
   }
 };
 
 const register = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const administratorID = req.user.id;
     const {
       plate_number,
@@ -125,17 +125,17 @@ const register = async (req, res = response) => {
       starting_weight,
       place_origin,
       name,
-      next_due_date,
+      next_due_date
     } = req.body;
 
     let findAnimalByPlateNumber = await Animal.findOne({
-      plate_number,
+      plate_number
     });
 
     if (findAnimalByPlateNumber) {
       return res.status(400).json({
         status: false,
-        msg: `El animal con número de chapa ${plate_number} ya existe.`,
+        msg: `El animal con número de chapa ${plate_number} ya existe.`
       });
     }
 
@@ -148,35 +148,34 @@ const register = async (req, res = response) => {
     animal.status = status;
     animal.race = race;
     animal.age = age;
-    animal.date_admission = moment(date_admission).format("YYYY-MM-DD");
+    animal.date_admission = moment(date_admission).format('YYYY-MM-DD');
     animal.daughter_of = daughter_of;
     animal.starting_weight = starting_weight;
     animal.place_origin = place_origin;
     animal.name = name;
-    animal.next_due_date =
-      next_due_date && moment(next_due_date).format("YYYY-MM-DD");
+    animal.next_due_date = next_due_date && moment(next_due_date).format('YYYY-MM-DD');
 
     await animal.save();
 
     const animalFind = await Animal.findById(ObjectId(animal._id))
-      .populate("daughter_of type")
+      .populate('daughter_of type')
       .sort({ date_admission: -1 });
 
     return res.status(200).json({
       status: true,
       msg: `El animal con número de chapa ${plate_number} fue registrado con éxito.`,
-      animal: animalFind,
+      animal: animalFind
     });
   } else {
     return res.status(500).json({
       status: false,
-      msg: "Este perfil no cuenta actualmente con los privilegios necesarios.",
+      msg: 'Este perfil no cuenta actualmente con los privilegios necesarios.'
     });
   }
 };
 
 const update = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const animalID = req.params.id;
     const {
       plate_number,
@@ -190,17 +189,17 @@ const update = async (req, res = response) => {
       starting_weight,
       place_origin,
       name,
-      next_due_date,
+      next_due_date
     } = req.body;
 
     const findAnimalByPlateNumber = await Animal.findOne({
-      plate_number,
+      plate_number
     });
 
     if (findAnimalByPlateNumber && findAnimalByPlateNumber._id != animalID) {
       return res.status(400).json({
         status: false,
-        msg: "Este número de chapa ya se encuentra registrado.",
+        msg: 'Este número de chapa ya se encuentra registrado.'
       });
     }
 
@@ -213,40 +212,39 @@ const update = async (req, res = response) => {
         status,
         race,
         age,
-        date_admission: moment(date_admission).format("YYYY-MM-DD"),
+        date_admission: moment(date_admission).format('YYYY-MM-DD'),
         daughter_of,
         starting_weight,
         place_origin,
         name,
-        next_due_date,
+        next_due_date
       },
       { new: true },
       (err, animal) => {
         if (err) {
           res.status(400).json({
             status: false,
-            msg:
-              "Por favor contacté con un ingeniero en sistemas para mas información.",
+            msg: 'Por favor contacté con un ingeniero en sistemas para mas información.'
           });
         } else {
           res.status(200).send({
             status: true,
-            msg: "Datos del animal actualizados con éxito.",
-            animal: animal,
+            msg: 'Datos del animal actualizados con éxito.',
+            animal: animal
           });
         }
       }
-    ).populate("daughter_of type");
+    ).populate('daughter_of type');
   } else {
     res.status(500).json({
       status: false,
-      msg: "No cuentas con los privilegios necesarios en la plataforma.",
+      msg: 'No cuentas con los privilegios necesarios en la plataforma.'
     });
   }
 };
 
 const changeStatus = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const { status } = req.body;
     const animalID = req.params.id;
 
@@ -258,55 +256,53 @@ const changeStatus = async (req, res = response) => {
         if (err) {
           res.status(400).json({
             status: false,
-            msg:
-              "Por favor contacté con un ingeniero en sistemas para más información.",
+            msg: 'Por favor contacté con un ingeniero en sistemas para más información.'
           });
         } else {
           res.status(200).send({
             status: true,
-            msg: "Estado actualizado del animal.",
-            animal: animal,
+            msg: 'Estado actualizado del animal.',
+            animal: animal
           });
         }
       }
-    );
+    ).populate(' daughter_of type');
   } else {
     res.status(500).json({
       status: false,
-      msg: "No se posee los permisos necesarios en la plataforma.",
+      msg: 'No se posee los permisos necesarios en la plataforma.'
     });
   }
 };
 
 const changeNextDueDate = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const { next_due_date } = req.body;
     const animalID = req.params.id;
 
     await Animal.findByIdAndUpdate(
       { _id: animalID },
-      { next_due_date },
+      { next_due_date: moment(next_due_date).format('YYYY-MM-DD') },
       { new: true },
       (err, animal) => {
         if (err) {
           return res.status(400).json({
             status: false,
-            msg:
-              "Por favor contacté con un ingeniero en sistemas para más información.",
+            msg: 'Por favor contacté con un ingeniero en sistemas para más información.'
           });
         } else {
           return res.status(200).send({
             status: true,
-            msg: "Fecha próxima del parto actualizada.",
-            animal: animal,
+            msg: 'Fecha próxima del parto actualizada.',
+            animal: animal
           });
         }
       }
-    );
+    ).populate(' daughter_of type');
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes los privilegios necesarios en la plataforma.",
+      msg: 'No tienes los privilegios necesarios en la plataforma.'
     });
   }
 };
@@ -315,19 +311,19 @@ const getAnimal = async (req, res = response) => {
   let plate_number = req.params.id;
 
   await Animal.findOne({ plate_number })
-    .populate("daughter_of type")
+    .populate('daughter_of type')
     .exec((err, animal) => {
       if (err || !animal) {
         return res.status(404).send({
           status: false,
-          msg: "Este animal no existe.",
+          msg: 'Este animal no existe.'
         });
       }
 
       return res.status(200).send({
-        msg: "Se ha encontrado el animal con éxito",
+        msg: 'Se ha encontrado el animal con éxito',
         status: true,
-        animal: animal,
+        animal: animal
       });
     });
 };
@@ -339,7 +335,7 @@ const getAnimalByType = async (req, res = response) => {
   if (
     !req.params.page ||
     req.params.page == 0 ||
-    req.params.page == "0" ||
+    req.params.page == '0' ||
     req.params.page == null ||
     req.params.page == undefined
   ) {
@@ -351,14 +347,57 @@ const getAnimalByType = async (req, res = response) => {
     date_admission: -1,
     limit: 5,
     page: page,
-    populate: "daughter_of type",
+    populate: 'daughter_of type'
   };
 
-  await Animal.paginate({ type }, options, (err, animals) => {
+  if (type === 'undefined' || !type) {
+    const getOneType = await Type.findOne();
+    type = getOneType._id;
+  }
+
+  await Animal.paginate({ type: ObjectId(type) }, options, (err, animals) => {
     if (err) {
       return res.status(500).send({
         status: false,
-        msg: "Error al hacer la consulta",
+        msg: 'Error al hacer la consulta'
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      animals: animals.docs,
+      count: animals.totalDocs
+    });
+  });
+};
+
+const getAnimalByStatus = async (req, res = response) => {
+  let status = req.params.status;
+  let page = undefined;
+
+  if (
+    !req.params.page ||
+    req.params.page == 0 ||
+    req.params.page == '0' ||
+    req.params.page == null ||
+    req.params.page == undefined
+  ) {
+    page = 1;
+  } else {
+    page = parseInt(req.params.page);
+  }
+  const options = {
+    date_admission: -1,
+    limit: 5,
+    page: page,
+    populate: 'daughter_of type'
+  };
+
+  await Animal.paginate({ status: status }, options, (err, animals) => {
+    if (err) {
+      return res.status(500).send({
+        status: false,
+        msg: 'Error al hacer la consulta'
       });
     }
 
@@ -366,54 +405,76 @@ const getAnimalByType = async (req, res = response) => {
       status: true,
       animals: animals.docs,
       count: animals.totalDocs,
+      animalState: status
     });
   });
 };
 
 const getAnimalByStatusAndType = async (req, res = response) => {
-  let typeID = req.params.type;
   let status = req.params.status;
+  let type = req.params.type;
+  let page = undefined;
 
-  const animals = await Animal.find({ type: ObjectId(typeID), status: status })
-    .populate(" daughter_of type")
-    .sort({ date_admission: -1 });
+  if (
+    !req.params.page ||
+    req.params.page == 0 ||
+    req.params.page == '0' ||
+    req.params.page == null ||
+    req.params.page == undefined
+  ) {
+    page = 1;
+  } else {
+    page = parseInt(req.params.page);
+  }
+  const options = {
+    date_admission: -1,
+    limit: 5,
+    page: page,
+    populate: 'daughter_of type'
+  };
 
-  return res.status(200).json({
-    status: true,
-    animals: animals,
+  await Animal.paginate({ status: status, type: ObjectId(type) }, options, (err, animals) => {
+    if (err) {
+      return res.status(500).send({
+        status: false,
+        msg: 'Error al hacer la consulta'
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      animals: animals.docs,
+      count: animals.totalDocs,
+      animalState: status
+    });
   });
 };
 
 const uploadImgProfile = (req, res) => {
-  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     let animalID = req.params.id;
 
     if (!req.file || !animalID) {
       return res.status(400).send({
         status: false,
-        msg: "Imagen del registro no subida...",
+        msg: 'Imagen del registro no subida...'
       });
     }
 
-    let myFile = req.file.originalname.split(".");
+    let myFile = req.file.originalname.split('.');
     const fileType = myFile[myFile.length - 1];
 
-    if (
-      fileType != "png" &&
-      fileType != "jpg" &&
-      fileType != "jpeg" &&
-      fileType != "gif"
-    ) {
+    if (fileType != 'png' && fileType != 'jpg' && fileType != 'jpeg' && fileType != 'gif') {
       return res.status(200).send({
         status: false,
-        msg: "El formato de la imagen no es válida.",
+        msg: 'El formato de la imagen no es válida.'
       });
     }
 
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Key: `${uuid()}.${fileType}`,
-      Body: req.file.buffer,
+      Body: req.file.buffer
     };
 
     s3.upload(params, (error, data) => {
@@ -428,57 +489,52 @@ const uploadImgProfile = (req, res) => {
         (err, animal) => {
           if (err || !animal) {
             return res.status(500).send({
-              status: "error",
-              msg: "Error al guardar el registro.",
+              status: 'error',
+              msg: 'Error al guardar el registro.'
             });
           }
 
           return res.status(200).send({
-            status: "success",
-            msg: "Datos actualizados en el registro.",
-            animal: animal,
+            status: 'success',
+            msg: 'Datos actualizados en el registro.',
+            animal: animal
           });
         }
-      ).populate(" daughter_of type");
+      ).populate(' daughter_of type');
     });
   } else {
     res.status(500).json({
       status: false,
-      msg: "No posees los privilegios necesarios en la plataforma.",
+      msg: 'No posees los privilegios necesarios en la plataforma.'
     });
   }
 };
 
 const uploadImgReg = (req, res) => {
-  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     let animalID = req.params.id;
 
     if (!req.file || !animalID) {
       return res.status(400).send({
         status: false,
-        msg: "Imagen del registro no subida...",
+        msg: 'Imagen del registro no subida...'
       });
     }
 
-    let myFile = req.file.originalname.split(".");
+    let myFile = req.file.originalname.split('.');
     const fileType = myFile[myFile.length - 1];
 
-    if (
-      fileType != "png" &&
-      fileType != "jpg" &&
-      fileType != "jpeg" &&
-      fileType != "gif"
-    ) {
+    if (fileType != 'png' && fileType != 'jpg' && fileType != 'jpeg' && fileType != 'gif') {
       return res.status(200).send({
         status: false,
-        msg: "El formato de la imagen no es válida",
+        msg: 'El formato de la imagen no es válida'
       });
     }
 
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Key: `${uuid()}.${fileType}`,
-      Body: req.file.buffer,
+      Body: req.file.buffer
     };
 
     s3.upload(params, (error, data) => {
@@ -493,23 +549,23 @@ const uploadImgReg = (req, res) => {
         (err, animal) => {
           if (err || !animal) {
             return res.status(500).send({
-              status: "error",
-              msg: "Error al guardar el registro.",
+              status: 'error',
+              msg: 'Error al guardar el registro.'
             });
           }
 
           return res.status(200).send({
-            status: "success",
-            msg: "Datos actualizados en el registro.",
-            animal: animal,
+            status: 'success',
+            msg: 'Datos actualizados en el registro.',
+            animal: animal
           });
         }
-      ).populate(" daughter_of type");
+      ).populate(' daughter_of type');
     });
   } else {
     res.status(500).json({
       status: false,
-      msg: "No posees los privilegios necesarios en la plataforma.",
+      msg: 'No posees los privilegios necesarios en la plataforma.'
     });
   }
 };
@@ -524,7 +580,8 @@ module.exports = {
   changeNextDueDate,
   getAnimal,
   getAnimalByType,
+  getAnimalByStatus,
   getAnimalByStatusAndType,
   uploadImgProfile,
-  uploadImgReg,
+  uploadImgReg
 };
