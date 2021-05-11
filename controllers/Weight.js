@@ -1,20 +1,20 @@
-const Animal = require("../models/Animal.js");
-const moment = require("moment");
-const { response } = require("express");
+const Animal = require('../models/Animal.js');
+const moment = require('moment');
+const { response } = require('express');
 
 const addRegisterWeight = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const animalID = req.params.animal;
 
     try {
       let validate = false;
 
-      let animal = await Animal.findById({ _id: animalID });
+      let animal = await Animal.findById({ _id: animalID }).populate('daughter_of type');
 
-      if (!animal || animal.status == "Vendido") {
+      if (!animal || animal.status == 'Vendido') {
         return res.status(400).json({
           status: false,
-          msg: "Animal no registrado o no se encuentra en la hacienda.",
+          msg: 'Animal no registrado o no se encuentra en la hacienda.'
         });
       }
 
@@ -27,7 +27,7 @@ const addRegisterWeight = async (req, res = response) => {
       if (validate) {
         return res.status(400).json({
           status: false,
-          msg: "No se puede registrar más de un peso por día.",
+          msg: 'No se puede registrar más de un peso por día.'
         });
       }
 
@@ -37,25 +37,25 @@ const addRegisterWeight = async (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        msg: "Peso de animal guardado con éxito.",
-        animal: animal,
+        msg: 'Peso de animal guardado con éxito.',
+        animal: animal
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacté con un ING en Sistemas para más información.",
+        msg: 'Por favor contacté con un ING en Sistemas para más información.'
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No posees los privilegios necesarios en la plataforma.",
+      msg: 'No posees los privilegios necesarios en la plataforma.'
     });
   }
 };
 
 const updateRegisterWeight = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const { weight, date, observations } = req.body;
     const animalID = req.params.animal;
     const weightID = req.params.weight;
@@ -69,7 +69,7 @@ const updateRegisterWeight = async (req, res = response) => {
       animal &&
         animal.weight.forEach((element) => {
           if (element._id == weightID) {
-            if (element.date != moment(dateTime).format("YYYY-MM-DD")) {
+            if (element.date != moment(dateTime).format('YYYY-MM-DD')) {
               validate = true;
             }
           }
@@ -78,58 +78,57 @@ const updateRegisterWeight = async (req, res = response) => {
       if (validate) {
         return res.status(400).json({
           status: false,
-          msg:
-            "No se puede actualizar, la fecha es diferente en el registro.",
+          msg: 'No se puede actualizar, la fecha es diferente en el registro.'
         });
       }
 
       Animal.findOneAndUpdate(
-        { "weight._id": weightID },
+        { 'weight._id': weightID },
         {
           $set: {
-            "weight.$.weight": weight,
-            "weight.$.date": date,
-            "weight.$.observations": observations,
-          },
+            'weight.$.weight': weight,
+            'weight.$.date': date,
+            'weight.$.observations': observations
+          }
         },
         { new: true },
         (err, animal) => {
           if (err) {
             return res.status(500).send({
-              status: "error",
-              message: "Error en la petición.",
+              status: 'error',
+              message: 'Error en la petición.'
             });
           }
 
           if (!animal) {
             return res.status(404).send({
-              status: "error",
-              message: "No existe registro.",
+              status: 'error',
+              message: 'No existe registro.'
             });
           }
           return res.status(200).send({
             status: true,
-            msg: "Datos actualizados con éxito.",
-            animal: animal,
+            msg: 'Datos actualizados con éxito.',
+            animal: animal
           });
         }
       );
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacté con un ING en Sistemas para más información.",
+        msg: 'Por favor contacté con un ING en Sistemas para más información.'
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No posees los privilegios necesarios en la plataforma.",
+      msg: 'No posees los privilegios necesarios en la plataforma.'
     });
   }
 };
 
 const deleteRegisterWeight = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const animalID = req.params.animal;
     const weightID = req.params.weight;
 
@@ -137,12 +136,12 @@ const deleteRegisterWeight = async (req, res = response) => {
       let validate = false;
       let dateTime = new Date();
 
-      let animal = await Animal.findById({ _id: animalID });
+      let animal = await Animal.findById({ _id: animalID }).populate('daughter_of type');
 
       animal &&
         animal.weight.forEach((element) => {
           if (element._id == weightID) {
-            if (element.date != moment(dateTime).format("YYYY-MM-DD")) {
+            if (element.date != moment(dateTime).format('YYYY-MM-DD')) {
               validate = true;
             }
           }
@@ -151,8 +150,7 @@ const deleteRegisterWeight = async (req, res = response) => {
       if (validate) {
         return res.status(400).json({
           status: false,
-          msg:
-            "No se puede actualizar, la fecha es diferente en el registro.",
+          msg: 'No se puede eliminar, la fecha es diferente en el registro.'
         });
       }
 
@@ -164,19 +162,19 @@ const deleteRegisterWeight = async (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        msg: "Registro eliminado con exito",
-        animal: animal,
+        msg: 'Registro eliminado con exito',
+        animal: animal
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacté con un ING en Sistemas para más información",
+        msg: 'Por favor contacté con un ING en Sistemas para más información'
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No posees los privilegios necesarios en la plataforma.",
+      msg: 'No posees los privilegios necesarios en la plataforma.'
     });
   }
 };
@@ -184,5 +182,5 @@ const deleteRegisterWeight = async (req, res = response) => {
 module.exports = {
   addRegisterWeight,
   updateRegisterWeight,
-  deleteRegisterWeight,
+  deleteRegisterWeight
 };

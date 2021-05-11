@@ -1,109 +1,112 @@
-const { model, Schema } = require("mongoose");
+const { model, Schema } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const MilkSchema = Schema({
   liters: {
     type: Number,
-    required: true,
+    required: true
   },
   registration_date: {
     type: String,
-    required: true,
-  },
+    required: true
+  }
 });
 
 const CalvingSchema = Schema({
   date: {
     type: String,
-    required: true,
+    required: true
   },
 
   complications: {
-    type: String,
-  },
+    type: String
+  }
 });
 
 const WeightSchema = Schema({
   weight: {
     type: Number,
-    required: true,
+    required: true
   },
 
   date: {
     type: String,
-    required: true,
+    required: true
   },
 
   observations: {
-    type: String,
-  },
+    type: String
+  }
 });
 
 const AnimalSchema = Schema({
-  administrator: { type: Schema.ObjectId, ref: "User" },
-  type: { type: Schema.ObjectId, ref: "Type" },
+  administrator: { type: Schema.ObjectId, ref: 'User' },
+  type: { type: Schema.ObjectId, ref: 'Type' },
 
   plate_number: {
     type: String,
-    required: true,
+    required: true
   },
   plate_color: {
     type: String,
-    required: true,
+    required: true
   },
 
   status: {
     type: String,
-    required: true,
+    required: true
   },
 
   date_admission: {
     type: String,
-    required: true,
+    required: true
   },
 
   name: {
     type: String,
-    required: true,
+    required: true
   },
   place_origin: {
     type: String,
-    required: true,
+    required: true
   },
 
   race: {
-    type: String,
+    type: String
   },
 
   age: {
-    type: String,
+    type: String
   },
 
   daughter_of: {
     type: Schema.ObjectId,
-    ref: "Animal",
+    ref: 'Animal'
   },
 
   starting_weight: {
-    type: Number,
+    type: Number
   },
 
   photo_link: {
-    type: String,
+    type: String
   },
 
   photo_register: {
-    type: String,
+    type: String
   },
 
   next_due_date: {
-    type: String,
+    type: String
   },
 
   milk: [MilkSchema],
 
   calving: [CalvingSchema],
 
-  weight: [WeightSchema],
+  weight: [WeightSchema]
 });
 
-module.exports = model("Animal", AnimalSchema);
+AnimalSchema.plugin(mongoosePaginate);
+
+module.exports = model('Animal', AnimalSchema);
