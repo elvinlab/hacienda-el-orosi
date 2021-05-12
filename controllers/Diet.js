@@ -8,6 +8,17 @@ const save = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
     const { diet_name, description } = req.body;
 
+    const findDietByName = await Diet.findOne({
+      diet_name,
+    });
+
+    if (findDietByName !== diet_name) {
+      return res.status(400).json({
+        status: "Error",
+        msg: "El nombre de esta dieta ya se encuentra registrado.",
+      });
+    }
+
     let diet = new Diet();
 
     diet.diet_name = diet_name;

@@ -9,6 +9,7 @@ const {
   save,
   update,
   getProducts,
+  getProduct,
   remove,
 } = require("../controllers/Product.js");
 
@@ -33,6 +34,7 @@ router.put(
 );
 
 router.get("/listar-productos/:page", md_auth.authenticated, getProducts);
+router.get("/ver-producto/:name", md_auth.authenticated, getProduct);
 router.delete("/remover-producto/:id", md_auth.authenticated, remove);
 
 module.exports = router;
