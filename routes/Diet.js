@@ -30,13 +30,12 @@ router.post(
 );
 
 router.post(
-    "/agregar-alimento",
+    "/agregar-alimento/:id",
   [
-    check("diet_id", "Dieta requerida ").not().isEmpty(),
     check("quantity_supplied", "Cantidad suministrada requerida ")
       .not()
       .isEmpty(),
-    check("product_id", "Producto requerido ").not().isEmpty(),
+    check("product_name", "Producto requerido ").not().isEmpty(),
 
     validate_fields,
   ],
@@ -56,5 +55,6 @@ router.get("/listar-dietas", md_auth.authenticated, getDiets);
 router.get("/dieta/animal/:id", md_auth.authenticated, getDietByAnimal);
 router.get("/listar-alimentos/:id/:page?", md_auth.authenticated, getAlimentsByDiet);
 router.delete("/remover-dieta/:id", md_auth.authenticated, removeDiet);
+router.delete("/remover-alimento/:id", md_auth.authenticated, deleteAliment);
 
 module.exports = router;

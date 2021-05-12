@@ -41,14 +41,20 @@ const save = async (req, res = response) => {
 
 const addAliment = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { diet_id, product_id, quantity_supplied } = req.body;
+    const diet_id = req.params.id;
+    const { product_name, quantity_supplied } = req.body;
 
     try {
+
+      const findProductByName = await Product.find({
+        name: product_name,
+      });
+
       let aliment = new Aliment();
 
       aliment.diet = diet_id;
       aliment.quantity_supplied = quantity_supplied;
-      aliment.product = product_id;
+      aliment.product = findProductByName[0]._id;
 
       await aliment.save();
 
@@ -192,16 +198,7 @@ const deleteAliment = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
     let alimentId = req.params.id;
 
-    let findAliment = await Diet.findOne({ aliment: ObjectId(alimentId) });
-
-    if (findAliment) {
-      return res.status(400).json({
-        status: false,
-        msg: "Este alimento se encuentra en uso.",
-      });
-    }
-
-    Diet.findOneAndDelete({ _id: alimentId }, (err, aliment) => {
+    Aliment.findOneAndDelete({ _id: alimentId }, (err, aliment) => {
       if (err) {
         return res.status(500).send({
           status: false,
