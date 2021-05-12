@@ -19,7 +19,7 @@ const register = async (req, res = response) => {
       if (findUserByDocumentId || findUserByEmail) {
         return res.status(400).json({
           status: false,
-          msg: "El administrador ya existe",
+          msg: "El administrador ya existe.",
         });
       }
 
@@ -38,51 +38,19 @@ const register = async (req, res = response) => {
 
       res.status(201).send({
         status: true,
-        msg: "Administrador registrado con exito",
-        user: {
-          document_id: user.document_id,
-          email: user.email,
-          name: user.given_name,
-          surname: user.surname,
-          role: user.role,
-        },
+        msg: "Administrador registrado con éxito.",
+        administrator: user,
       });
     } catch (error) {
       return res.status(400).json({
         status: false,
-        msg: "Puede que estos valores ya se encuentren registrados",
+        msg: "Valores previamente registrados, volver a intentar.",
       });
     }
   } else {
     return res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
-    });
-  }
-};
-
-const updateRole = async (req, res = response) => {
-  if (req.user.role === "Dueño") {
-    const { role } = req.body;
-    const userId = req.params.id;
-
-    await User.findByIdAndUpdate({ _id: userId }, { role: role }, (err) => {
-      if (err) {
-        return res.status(400).json({
-          status: false,
-          msg: "Por favor hable con el administrador",
-        });
-      } else {
-        return res.status(200).send({
-          status: true,
-          msg: "Cargo actualizado para este administrador",
-        });
-      }
-    });
-  } else {
-    return res.status(500).json({
-      status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -91,11 +59,20 @@ const removeAdmin = async (req, res = response) => {
   if (req.user.role === "Dueño") {
     let userId = req.params.id;
 
+    let findUserByDocumentId = await User.findById({ _id: userId });
+
+    if (findUserByDocumentId.role === "Dueño") {
+      return res.status(400).send({
+        status: false,
+        msg: "No se puede eliminar al dueño de la Hacienda.",
+      });
+    }
+
     User.findOneAndDelete({ _id: userId }, (err, user) => {
       if (err) {
         return res.status(500).send({
           status: false,
-          msg: "Error al solicitar la peticion",
+          msg: "Error al solicitar la petición.",
         });
       }
       if (!user) {
@@ -106,13 +83,14 @@ const removeAdmin = async (req, res = response) => {
       }
       return res.status(200).json({
         status: true,
-        msg: "Removido de forma exitosa",
+        msg: "Removido de forma con éxito",
+        administrator: user
       });
     });
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -126,7 +104,7 @@ const login = async (req, res = response) => {
     if (!findUser) {
       return res.status(400).json({
         status: false,
-        msg: "Administrador no encontrado",
+        msg: "Administrador no encontrado.",
       });
     }
 
@@ -135,7 +113,7 @@ const login = async (req, res = response) => {
     if (!validPassword) {
       return res.status(400).json({
         status: false,
-        msg: "Contraseña incorrecta",
+        msg: "Contraseña incorrecta.",
       });
     }
 
@@ -150,7 +128,7 @@ const login = async (req, res = response) => {
 
     return res.status(200).json({
       status: true,
-      msg: "Inicio de sesión correcto",
+      msg: "Inicio de sesión correcto.",
       token: token,
       user: {
         id: findUser._id,
@@ -164,7 +142,7 @@ const login = async (req, res = response) => {
   } catch (error) {
     return res.status(400).json({
       status: false,
-      msg: "Por favor hable con el administrador",
+      msg: "Por favor contacté con un ING en Sistemas para más información.",
     });
   }
 };
@@ -176,13 +154,13 @@ const getUser = async (req, res = response) => {
     if (err || !get_user) {
       return res.status(404).send({
         status: false,
-        msg: "No existe el usuario",
+        msg: "No existe el usuario.",
       });
     }
 
     return res.status(200).send({
       status: true,
-      msg: "Datos obtenidos",
+      msg: "Datos obtenidos.",
       user: {
         id: get_user._id,
         document_id: get_user.document_id,
@@ -222,7 +200,7 @@ const set_recovery_key = async (req, res = response) => {
     if (err) {
       return res.status(500).send({
         status: false,
-        msg: "Error en el servidor",
+        msg: "Error en el servidor.",
       });
     } else {
       if (!get_user) {
@@ -239,7 +217,7 @@ const set_recovery_key = async (req, res = response) => {
             if (err) {
               return res.status(400).json({
                 status: false,
-                msg: "Por favor hable con el administrador",
+                msg: "Por favor contacté con un ING en Sistemas para más información.",
               });
             } else {
               transporter.sendMail(mailOptions, function (error, info) {
@@ -254,7 +232,7 @@ const set_recovery_key = async (req, res = response) => {
             return res.status(200).send({
               status: true,
               msg:
-                "Por favor revisar su correo, le hemos enviado un codigo de verificacion",
+                "Por favor revisar su correo, se ha enviado un codigo de verificacion",
             });
           }
         );
@@ -271,18 +249,18 @@ const verify_recovery_key = async (req, res = response) => {
     if (err || !user) {
       return res
         .status(500)
-        .send({ status: false, msg: "Error en el servidor" });
+        .send({ status: false, msg: "Error en el servidor." });
     } else {
       if (user.recovery_key == code) {
         return res.status(200).send({
           status: true,
-          msg: "Por favor prosiga a cambiar la contraseña",
+          msg: "Por favor prosiga a cambiar la contraseña.",
           token: true,
         });
       } else {
         return res.status(400).send({
           status: false,
-          msg: "El codigo no es igual al enviado previamente",
+          msg: "El codigo no es igual al enviado previamente.",
         });
       }
     }
@@ -297,7 +275,7 @@ const change_password = async (req, res = response) => {
     if (err) {
       return res
         .status(500)
-        .send({ status: false, msg: "Error en el servidor" });
+        .send({ status: false, msg: "Error en el servidor." });
     } else {
       if (!user) {
         return res.status(500).send({
@@ -313,13 +291,13 @@ const change_password = async (req, res = response) => {
           if (err) {
             return res.status(500).send({
               status: false,
-              msg: "Error en el servidor",
+              msg: "Error en el servidor.",
             });
           }
 
           return res.status(200).send({
             status: true,
-            msg: "Contraseña actualizada con exito",
+            msg: "Contraseña actualizada con éxito.",
           });
         });
       }
@@ -333,7 +311,7 @@ const list_admins = (req, res = response) => {
       if (err) {
         return res.status(404).send({
           status: false,
-          msg: "Error al hacer la consulta",
+          msg: "Error al hacer la consulta.",
         });
       }
 
@@ -345,7 +323,7 @@ const list_admins = (req, res = response) => {
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -357,7 +335,6 @@ module.exports = {
   set_recovery_key,
   verify_recovery_key,
   change_password,
-  updateRole,
   removeAdmin,
   list_admins,
 };

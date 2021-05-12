@@ -18,20 +18,19 @@ const registerTool = async (req, res = response) => {
 
     return res.status(200).json({
       status: true,
-      msg: "Herramienta registrada con exito",
+      msg: "Herramienta registrada.",
       tool: tool,
     });
   } catch (error) {
     return res.status(500).json({
       status: false,
-      msg: "Porfavor contacte con un administrador para mas informacion",
+      msg: "Por favor contacté con un ING en Sistemas para más información.",
     });
   }
 };
 
 const registerActives = async (req, res = response) => {
   const { tools } = req.body;
-
   tools.forEach(async function (element) {
     active = new Active();
 
@@ -47,7 +46,7 @@ const registerActives = async (req, res = response) => {
         if (err) {
           return res.status(500).send({
             status: false,
-            msg: "Error en la operacion",
+            msg: "Error en la operación.",
           });
         }
       }
@@ -56,7 +55,7 @@ const registerActives = async (req, res = response) => {
 
   return res.status(200).json({
     status: true,
-    msg: "Herramientas asignadas con exito",
+    msg: "Herramientas asignadas con éxito.",
   });
 };
 
@@ -64,16 +63,17 @@ const changeStatus = async (req, res = response) => {
   const { status } = req.body;
   const toolId = req.params.id;
 
-  await Tool.findByIdAndUpdate({ _id: toolId }, { status: status }, (err) => {
+  await Tool.findByIdAndUpdate({ _id: toolId }, { status: status }, {new: true}, (err, tool) => {
     if (err) {
       res.status(400).json({
         status: false,
-        msg: "por favor hable con el administrador para mas informacion",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     } else {
       res.status(200).send({
         status: true,
-        msg: "Estado actualizado del Activo",
+        msg: "Estado actualizado de la Herramienta.",
+        tool: tool
       });
     }
   });
@@ -88,7 +88,7 @@ const getToolsByStatus = (req, res = response) => {
       if (err) {
         return res.status(404).send({
           status: false,
-          msg: "Error al hacer la consulta",
+          msg: "Error al hacer la consulta.",
         });
       }
 
@@ -124,7 +124,7 @@ const getActivesByCollaborator = (req, res = response) => {
       if (err) {
         return res.status(500).send({
           status: false,
-          msg: "Error al hacer la consulta",
+          msg: "Error al hacer la consulta.",
         });
       }
 
@@ -149,7 +149,7 @@ const deleteActivesTool = async (req, res = response) => {
         if (err) {
           return res.status(400).json({
             status: false,
-            msg: "Por favor hable con el administrador",
+            msg: "Por favor contacté con un ING en Sistemas para más información.",
           });
         }
       }
@@ -161,7 +161,7 @@ const deleteActivesTool = async (req, res = response) => {
         if (err) {
           return res.status(500).send({
             status: false,
-            msg: "Error al solicitar la peticion",
+            msg: "Error al solicitar la peticion.",
           });
         }
       }
@@ -170,7 +170,7 @@ const deleteActivesTool = async (req, res = response) => {
 
   return res.status(200).json({
     status: true,
-    msg: "Herramienta regresada exitosamente ",
+    msg: "Herramienta devuelta.",
   });
 };
 

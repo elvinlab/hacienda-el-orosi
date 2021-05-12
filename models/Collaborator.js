@@ -1,7 +1,4 @@
 const { model, Schema } = require("mongoose");
-const moment = require("moment");
-
-let dateTime = new Date();
 
 const CollaboratorSchema = Schema({
   document_id: {
@@ -9,6 +6,12 @@ const CollaboratorSchema = Schema({
     unique: true,
     required: true,
   },
+  contract_number: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
+
   administrator: { type: Schema.ObjectId, ref: "User" },
   job: { type: Schema.ObjectId, ref: "Job" },
   nationality: {
@@ -35,10 +38,12 @@ const CollaboratorSchema = Schema({
   },
   date_admission: {
     type: String,
-    default: () => moment(dateTime).format("YYYY-MM-DD"),
+    required: true,
   },
+
   dispatch_date: {
     type: String,
+    required: true,
   },
 });
 

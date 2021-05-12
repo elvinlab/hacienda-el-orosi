@@ -1,85 +1,72 @@
 const Diet = require("../models/Diet.js");
-const Aliment = require("../models/Aliment.js");
+const Product = require("../models/Product.js");
 
 const { response } = require("express");
+const Aliment = require("../models/Aliment.js");
 
 const save = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { stage, diet_name, animal, aliment } = req.body;
+    const { diet_name, description} = req.body;
 
-    try {
+
       let diet = new Diet();
 
-      diet.stage = stage;
       diet.diet_name = diet_name;
-      diet.animal = animal;
-      diet.aliment = aliment;
+      diet.description = description;
 
       await diet.save();
 
       return res.status(200).json({
         status: true,
-        msg: "Dieta registrada con éxito",
+        msg: "Dieta registrada con éxito.",
+        diet: diet,
       });
-    } catch (error) {
-      return res.status(500).json({
-        status: false,
-        msg: "Por favor contacte con el administrador para más imformación",
-      });
-    }
+
+    
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No puedes registrar la dieta",
+      msg: "No se puede registrar la dieta.",
     });
   }
 };
 
 const addAliment = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { name_aliment, quantity_supplied, aliment_kg, price_aliment } = req.body;
+    const { diet_id, product_id, quantity_supplied } = req.body;
 
     try {
-      let findAlimentByName = await Aliment.findOne({
-        name_aliment,
-      });
-
-      if (findAlimentByName) {
-        return res.status(400).json({
-          status: false,
-          msg: "El alimento ya existe",
-        });
-      }
-
       let aliment = new Aliment();
 
-      aliment.name_aliment = name_aliment;
+      aliment.diet_id = diet_id;
       aliment.quantity_supplied = quantity_supplied;
-      aliment.aliment_kg = aliment_kg;
-      aliment.price_aliment = price_aliment;
+      aliment.product_id = product_id;
+
 
       await aliment.save();
+
       return res.status(200).json({
         status: true,
-        msg: "Alimento agregado exitosamente",
+        msg: "Alimento agregado con éxito.",
+        aliment: aliment,
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor hable con el administrador encargado",
+        msg: "Por favor contacté con un ING en Sistemas para más información.",
       });
     }
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
 
 const updateDiet = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { dietAliments } = req.body;
+    const { diet_name, description, animal} = req.body;
     const dietId = req.params.id;
 
     const findDietByName = await Diet.findOne({
@@ -89,36 +76,31 @@ const updateDiet = async (req, res = response) => {
     if (findDietByName && findDietByName._id != dietId) {
       return res.status(400).json({
         status: "Error",
-        msg: "Existe una dieta con este nombre.",
+        msg: "El nombre de esta dieta ya se encuentra registrado.",
       });
     }
 
-    dietAliments.forEach(async function (element) {
       await Diet.findByIdAndUpdate(
         { _id: dietId },
-        {
-          diet:
-            (element.diet_name, element.stage, element.animal, element.aliment),
-        },
+        {diet_name, description, animal},
         (err) => {
           if (err) {
             res.status(400).json({
               status: false,
-              msg: "Por favor hable con el administrador",
+              msg: "Por favor contacté con un ING en Sistemas para más información.",
             });
           } else {
             res.status(200).send({
               status: true,
-              msg: "Dieta actualizada con exito",
+              msg: "Dieta actualizada con éxito",
             });
           }
         }
       );
-    });
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -128,30 +110,30 @@ const updateAliment = async (req, res = response) => {
     const { name_aliment, quantity_supplied, aliment_kg, price_aliment } = req.body;
     const alimentId = req.params.id;
 
-    const findAlimentByName = await Aliment.findOne({
+    const findAlimentByName = await Product.findOne({
       name_aliment,
     });
 
     if (findAlimentByName && findAlimentByName._id != alimentId) {
       return res.status(400).json({
         status: "Error",
-        msg: "Existe un alimento con este nombre.",
+        msg: "El nombre del alimento ya se encuentra registrado.",
       });
     }
 
-    await Aliment.findByIdAndUpdate(
+    await Product.findByIdAndUpdate(
       { _id: alimentId },
       { name_aliment, quantity_supplied, aliment_kg, price_aliment },
       (err) => {
         if (err) {
           res.status(400).json({
             status: false,
-            msg: "Por favor hable con el administrador",
+            msg: "Por favor contacté con un ING en Sistemas para más información.",
           });
         } else {
           res.status(200).send({
             status: true,
-            msg: "Alimento actualizado con exito",
+            msg: "Alimento actualizado con éxito.",
           });
         }
       }
@@ -159,7 +141,7 @@ const updateAliment = async (req, res = response) => {
   } else {
     res.status(500).json({
       status: false,
-      msg: "No tienes permisos en la plataforma",
+      msg: "No posees los privilegios necesarios en la plataforma.",
     });
   }
 };
@@ -181,24 +163,24 @@ const removeDiet = async (req, res = response) => {
       if (err) {
         return res.status(500).send({
           status: false,
-          msg: "Error al procesar la peticion",
+          msg: "Error al procesar la peticion.",
         });
       }
       if (!diet) {
         return res.status(404).send({
           status: false,
-          msg: "No se ha eliminado la dieta",
+          msg: "No se logro eliminar la dieta.",
         });
       }
       return res.status(200).json({
         status: true,
-        msg: "Dieta removida de forma exitosa",
+        msg: "Dieta removida con éxito.",
       });
     });
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No puedes remover la dieta",
+      msg: "No se puede remover la dieta.",
     });
   }
 };
@@ -220,30 +202,30 @@ const deleteAliment = async (req, res = response) => {
       if (err) {
         return res.status(500).send({
           status: false,
-          msg: "Error al procesar la peticion",
+          msg: "Error al procesar la peticion.",
         });
       }
       if (!aliment) {
         return res.status(404).send({
           status: false,
-          msg: "No se ha eliminado el alimento",
+          msg: "No se logro eliminar el alimento.",
         });
       }
       return res.status(200).json({
         status: true,
-        msg: "Alimento eliminado de forma exitosa",
+        msg: "Alimento eliminado de forma exitosa.",
       });
     });
   } else {
     return res.status(400).send({
       status: false,
-      msg: "No puedes eliminar el alimento",
+      msg: "No se puede eliminar este alimento",
     });
   }
 };
 
 const getDiets = async (req, res = response) => {
- const diets = await Diet.find().populate("animal aliment");
+ const diets = await Diet.find();
       
 
       return res.status(200).json({
@@ -276,12 +258,41 @@ const getDietByAnimal = (res = response) => {
 };
 
 const getAliments = async (req, res = response) => {
-  const aliments = await Aliment.find();
+  let page = undefined;
 
-  return res.status(200).json({
-    status: true,
-    aliments: aliments,
-  });
+  if (
+    !req.params.page ||
+    req.params.page == 0 ||
+    req.params.page == "0" ||
+    req.params.page == null ||
+    req.params.page == undefined
+  ) {
+    page = 1;
+  } else {
+    page = parseInt(req.params.page);
+  }
+  const options = {
+    sort: { date_issued: -1 },
+    limit: 10,
+    page: page,
+    populate: "diet product",
+  };
+  Aliment.paginate({}, options, (err,aliments) => {
+    if (err) {
+      return res.status(500).send({
+        status: false,
+        msg: "Error al hacer la consulta",
+      });
+    }
+    return res.status(200).json({
+      status: true,
+      aliments: {
+        aliments: aliments.docs,
+        count: aliments.count,
+      }
+    });
+  })
+
 };
 
 module.exports = {

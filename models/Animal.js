@@ -1,124 +1,112 @@
-const { model, Schema } = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate-v2");
-const moment = require("moment");
-
-let dateTime = new Date();
+const { model, Schema } = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const MilkSchema = Schema({
   liters: {
     type: Number,
-    required: true,
+    required: true
   },
   registration_date: {
     type: String,
-    required: true,
-  },
+    required: true
+  }
 });
 
 const CalvingSchema = Schema({
-  calving_number: {
-    type: Number,
-    required: true,
-  },
-
   date: {
     type: String,
-    required: true,
+    required: true
   },
 
   complications: {
-    type: String,
-  },
+    type: String
+  }
 });
 
 const WeightSchema = Schema({
   weight: {
     type: Number,
-    required: true,
+    required: true
   },
 
   date: {
     type: String,
-    required: true,
+    required: true
   },
 
   observations: {
-    type: String,
-  },
+    type: String
+  }
 });
 
 const AnimalSchema = Schema({
-  administrator: { type: Schema.ObjectId, ref: "User" },
+  administrator: { type: Schema.ObjectId, ref: 'User' },
+  type: { type: Schema.ObjectId, ref: 'Type' },
 
   plate_number: {
     type: String,
-    required: true,
+    required: true
   },
-
-  type_animal: {
+  plate_color: {
     type: String,
-    required: true,
+    required: true
   },
 
   status: {
     type: String,
-    required: true,
+    required: true
   },
 
   date_admission: {
     type: String,
-    required: true,
-  },
-
-  gender: {
-    type: String,
-    required: true,
-  },
-
-  race: {
-    type: String,
-  },
-
-  age: {
-    type: String,
-  },
-
-  daughter_of: {
-    type: Schema.ObjectId,
-    ref: "Animal",
-  },
-
-  starting_weight: {
-    type: Number,
-  },
-
-  place_origin: {
-    type: String,
+    required: true
   },
 
   name: {
     type: String,
+    required: true
+  },
+  place_origin: {
+    type: String,
+    required: true
   },
 
-  photo: {
-    type: String,
+  race: {
+    type: String
+  },
+
+  age: {
+    type: String
+  },
+
+  daughter_of: {
+    type: Schema.ObjectId,
+    ref: 'Animal'
+  },
+
+  starting_weight: {
+    type: Number
+  },
+
+  photo_link: {
+    type: String
   },
 
   photo_register: {
-    type: String,
+    type: String
   },
 
   next_due_date: {
-    type: String,
+    type: String
   },
 
   milk: [MilkSchema],
 
   calving: [CalvingSchema],
 
-  weight: [WeightSchema],
+  weight: [WeightSchema]
 });
 
 AnimalSchema.plugin(mongoosePaginate);
 
-module.exports = model("Animal", AnimalSchema);
+module.exports = model('Animal', AnimalSchema);

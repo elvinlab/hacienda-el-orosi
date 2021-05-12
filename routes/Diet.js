@@ -20,11 +20,9 @@ const {
 router.post(
   "/guardar-dieta",
   [
-    check("stage", "Etapa requerida de la dieta ").not().isEmpty(),
     check("diet_name", "Nombre de la dieta requerida ").not().isEmpty(),
-    check("animal", "Animal requerido ").not().isEmpty(),
-    check("aliment", "Alimento  de la dieta requerido ").not().isEmpty(),
-
+    check("description", "La descripcion es requerida").not().isEmpty(),
+   
     validate_fields,
   ],
   md_auth.authenticated,
@@ -34,12 +32,12 @@ router.post(
 router.post(
     "/agregar-alimento",
   [
-    check("name_aliment", "Nombre del alimento requerido ").not().isEmpty(),
+    check("diet_id", "Dieta requerida ").not().isEmpty(),
     check("quantity_supplied", "Cantidad suministrada requerida ")
       .not()
       .isEmpty(),
-    check("aliment_kg", "Peso del alimento requerido ").not().isEmpty(),
-    check("price_aliment", "Precio del alimento requerido ").not().isEmpty(),
+    check("product_id", "Producto requerido ").not().isEmpty(),
+
 
     validate_fields,
   ],
@@ -49,14 +47,15 @@ router.post(
 
 router.put(
   "/modificar-dieta/:id",
-  [check("dietAliments", "Datos requeridos de la dieta ").not().isEmpty()],
+  check("diet_name", "Nombre de la dieta requerida ").not().isEmpty(),
+  check("description", "La descripcion es requerida").not().isEmpty(),
   md_auth.authenticated,
   updateDiet
 );
 
 router.get("/listar-dietas", md_auth.authenticated, getDiets);
 router.get("/dieta/animal/:id", md_auth.authenticated, getDietByAnimal);
-router.get("/listar-alimentos", md_auth.authenticated, getAliments);
+router.get("/listar-alimentos/:page?", md_auth.authenticated, getAliments);
 router.delete("/remover-dieta/:id", md_auth.authenticated, removeDiet);
 
 module.exports = router;

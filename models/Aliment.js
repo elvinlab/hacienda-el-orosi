@@ -1,23 +1,20 @@
 const { model, Schema } = require("mongoose");
 
 const AlimentSchema = Schema({
-  name_aliment: {
-    type: String,
+  diet: {
+    type: Schema.ObjectId,
+    ref: "Diet",
     required: true,
-    unique: true,
+  },
+
+  product: {
+    type: Schema.ObjectId,
+    ref: "Product",
+    required: true,
   },
 
   quantity_supplied: {
-    type: Number,
-    required: true,
-  },
 
-  aliment_kg: {
-    type: Number,
-    required: true,
-  },
-
-  price_aliment: {
     type: Number,
     required: true,
   },
