@@ -45,10 +45,21 @@ router.post(
 
 router.put(
   "/modificar-dieta/:id",
+  [
   check("diet_name", "Nombre de la dieta requerida ").not().isEmpty(),
   check("description", "La descripcion es requerida").not().isEmpty(),
+  ],
   md_auth.authenticated,
   updateDiet
+);
+
+router.put(
+  "/modificar-alimento/:id",
+  [
+  check("quantity_supplied", "Cantidad suministrada requerida").not().isEmpty(),
+  ],
+  md_auth.authenticated,
+  updateAliment
 );
 
 router.get("/listar-dietas", md_auth.authenticated, getDiets);

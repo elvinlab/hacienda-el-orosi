@@ -45,7 +45,6 @@ const addAliment = async (req, res = response) => {
     const { product_name, quantity_supplied } = req.body;
 
     try {
-
       const findProductByName = await Product.find({
         name: product_name,
       });
@@ -121,36 +120,25 @@ const updateDiet = async (req, res = response) => {
 
 const updateAliment = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { name_aliment, quantity_supplied, price_aliment } = req.body;
+    const { quantity_supplied } = req.body;
     const alimentId = req.params.id;
 
-    const findAlimentByName = await Product.findOne({
-      name_aliment,
-    });
-
-    if (findAlimentByName && findAlimentByName._id != alimentId) {
-      return res.status(400).json({
-        status: "Error",
-        msg: "El nombre del alimento ya se encuentra registrado.",
-      });
-    }
-
-    await Product.findByIdAndUpdate(
+    await Aliment.findByIdAndUpdate(
       { _id: alimentId },
-      { name_aliment, quantity_supplied, price_aliment },
-      (err) => {
-        if (err) {
-          res.status(400).json({
+      { quantity_supplied },
+      (err, aliment) => {
+        if (err || !aliment) {
+          return res.status(400).json({
             status: false,
             msg:
               "Por favor contacté con un ING en Sistemas para más información.",
           });
-        } else {
-          res.status(200).send({
-            status: true,
-            msg: "Alimento actualizado con éxito.",
-          });
         }
+        return res.status(200).send({
+          status: true,
+          msg: "Alimento actualizado con éxito.",
+          aliment,
+        });
       }
     );
   } else {
@@ -270,22 +258,19 @@ const getAlimentsByDiet = async (req, res = response) => {
     });
   }
 
-  await Aliment.find(
-    { diet: findDietById._id },
-    (err, aliments) => {
-      if (err) {
-        return res.status(500).send({
-          status: false,
-          msg: "Error al hacer la consulta",
-        });
-      }
-
-      return res.status(200).json({
-        status: true,
-        aliments,
+  await Aliment.find({ diet: findDietById._id }, (err, aliments) => {
+    if (err) {
+      return res.status(500).send({
+        status: false,
+        msg: "Error al hacer la consulta",
       });
     }
-  ).populate("product");
+
+    return res.status(200).json({
+      status: true,
+      aliments,
+    });
+  }).populate("product");
 };
 
 module.exports = {
