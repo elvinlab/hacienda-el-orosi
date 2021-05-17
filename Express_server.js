@@ -23,7 +23,8 @@ app.use("/api/recursos-humanos", require("./routes/Contract.js"));
 app.use("/api/gestion-animal", require("./routes/Animal.js"));
 app.use("/api/gestion-animal", require("./routes/Diet.js"));
 app.use("/api/gestion-animal", require("./routes/Product.js"));
-app.use("/api/gestion-animal", require("./routes/Medicament.js"));
+app.use("/api/gestion-salud", require("./routes/Medicament.js"));
+app.use("/api/gestion-salud", require("./routes/Health.js"));
 app.use("/api/gestion-venta", require("./routes/Sale.js"));
 app.use("/api/herramientas", require("./routes/Tool.js"));
 
