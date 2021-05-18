@@ -139,6 +139,25 @@ const getProducts = async (req, res = response) => {
   });
   };
 
+  const getProduct = async (req, res = response) => {
+    let productName = req.params.name;
+  
+    await Product.findOne({ name: productName }).exec((err, product) => {
+      if (err || !product) {
+        return res.status(404).send({
+          status: false,
+          msg: "El producto no existe.",
+        });
+      }
+  
+      return res.status(200).send({
+        status: true,
+        msg: "Producto encontrado",
+        product: product,
+      });
+    });
+  };
+
 const remove = async (req, res = response) => {
     if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
 
@@ -154,7 +173,7 @@ const remove = async (req, res = response) => {
             if (err || !product) {
                 return res.status(400).send({
                     status: false,
-                    msg: "Error no se ha podido eliminar el producto.",
+                    msg: "Error, no se pudo eliminar el producto.",
                 });
             }
             return res.status(200).send({
@@ -175,5 +194,6 @@ module.exports = {
     save,
     update,
     getProducts,
+    getProduct,
     remove
 };

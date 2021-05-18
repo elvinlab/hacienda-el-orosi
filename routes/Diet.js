@@ -12,7 +12,7 @@ const {
   deleteAliment,
   getDiets,
   getDietByAnimal,
-  getAliments,
+  getAlimentsByDiet,
   updateDiet,
   updateAliment,
 } = require("../controllers/Diet.js");
@@ -30,13 +30,13 @@ router.post(
 );
 
 router.post(
-    "/agregar-alimento",
+    "/agregar-alimento/:id",
   [
-    check("diet_id", "Dieta requerida ").not().isEmpty(),
     check("quantity_supplied", "Cantidad suministrada requerida ")
       .not()
       .isEmpty(),
-    check("product_id", "Producto requerido ").not().isEmpty(),
+    check("product_name", "Producto requerido ").not().isEmpty(),
+
 
     validate_fields,
   ],
@@ -46,15 +46,27 @@ router.post(
 
 router.put(
   "/modificar-dieta/:id",
+  [
   check("diet_name", "Nombre de la dieta requerida ").not().isEmpty(),
   check("description", "La descripcion es requerida").not().isEmpty(),
+  ],
   md_auth.authenticated,
   updateDiet
 );
 
+router.put(
+  "/modificar-alimento/:id",
+  [
+  check("quantity_supplied", "Cantidad suministrada requerida").not().isEmpty(),
+  ],
+  md_auth.authenticated,
+  updateAliment
+);
+
 router.get("/listar-dietas", md_auth.authenticated, getDiets);
 router.get("/dieta/animal/:id", md_auth.authenticated, getDietByAnimal);
-router.get("/listar-alimentos/:page?", md_auth.authenticated, getAliments);
+router.get("/listar-alimentos/:id/:page?", md_auth.authenticated, getAlimentsByDiet);
 router.delete("/remover-dieta/:id", md_auth.authenticated, removeDiet);
+router.delete("/remover-alimento/:id", md_auth.authenticated, deleteAliment);
 
 module.exports = router;
