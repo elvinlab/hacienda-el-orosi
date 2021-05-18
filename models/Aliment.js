@@ -14,6 +14,7 @@ const AlimentSchema = Schema({
   },
 
   quantity_supplied: {
+
     type: Number,
     required: true,
   },

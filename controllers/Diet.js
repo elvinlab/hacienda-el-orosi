@@ -55,6 +55,7 @@ const addAliment = async (req, res = response) => {
       aliment.quantity_supplied = quantity_supplied;
       aliment.product = findProductByName[0]._id;
 
+
       await aliment.save();
 
       return res.status(200).json({
@@ -120,7 +121,9 @@ const updateDiet = async (req, res = response) => {
 
 const updateAliment = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+    
     const { quantity_supplied } = req.body;
+
     const alimentId = req.params.id;
 
     await Aliment.findByIdAndUpdate(
@@ -129,6 +132,7 @@ const updateAliment = async (req, res = response) => {
       (err, aliment) => {
         if (err || !aliment) {
           return res.status(400).json({
+
             status: false,
             msg:
               "Por favor contacté con un ING en Sistemas para más información.",

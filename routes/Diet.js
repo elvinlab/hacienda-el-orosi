@@ -37,6 +37,7 @@ router.post(
       .isEmpty(),
     check("product_name", "Producto requerido ").not().isEmpty(),
 
+
     validate_fields,
   ],
   md_auth.authenticated,

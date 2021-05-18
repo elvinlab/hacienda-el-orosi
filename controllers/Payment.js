@@ -1,30 +1,30 @@
-const Payment = require("../models/Payment.js");
-const Presence = require("../models/Presence.js");
-const moment = require("moment");
+const Payment = require('../models/Payment.js');
+const Presence = require('../models/Presence.js');
+const moment = require('moment');
 
-const { response } = require("express");
-const { ObjectId } = require("mongodb");
+const { response } = require('express');
+const { ObjectId } = require('mongodb');
 
 const registerSalaryCollaborator = (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Recursos Humanos') {
     const { paymentReg } = req.body;
     const collaboratorId = req.params.id;
 
     if (paymentReg.final_salary === 0) {
       return res.status(400).json({
         status: false,
-        msg: "No se puede registrar un pago con un salario final igual a cero.",
+        msg: 'No se puede registrar un pago con un salario final igual a cero.'
       });
     }
     try {
       Presence.updateMany(
-        { status: "Pendiente", collaborator: ObjectId(collaboratorId) },
-        { status: "paid" },
+        { status: 'Pendiente', collaborator: ObjectId(collaboratorId) },
+        { status: 'Pagado' },
         function (err) {
           if (err) {
             return res.status(500).json({
               status: false,
-              error: `Contacte a un ingeniero: ${err}`,
+              error: `Contacte a un ingeniero: ${err}`
             });
           }
         }
@@ -34,9 +34,7 @@ const registerSalaryCollaborator = (req, res = response) => {
 
       payment.administrator = req.user.id;
       payment.collaborator = collaboratorId;
-      payment.invoice_number = Math.floor(
-        Math.random() * (999999 - 100000) + 100000
-      );
+      payment.invoice_number = Math.floor(Math.random() * (999999 - 100000) + 100000);
       payment.collaborator_job_name = paymentReg.collaborator_job_name;
       payment.total_days_worked = paymentReg.total_days_worked;
       payment.total_hours_worked = paymentReg.total_hours_worked;
@@ -49,30 +47,30 @@ const registerSalaryCollaborator = (req, res = response) => {
       payment.save();
       return res.status(200).json({
         status: true,
-        msg: "Pago realizado con éxito.",
+        msg: 'Pago realizado con éxito.'
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacté con un ING en Sistemas para más información",
+        msg: 'Por favor contacté con un ING en Sistemas para más información'
       });
     }
   } else {
     return res.status(400).json({
       status: false,
-      msg: "No posees los privilegios necesarios en la plataforma.",
+      msg: 'No posees los privilegios necesarios en la plataforma.'
     });
   }
 };
 
 const paymentsByCollaborator = (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Recursos Humanos') {
     let page = undefined;
     const collaboratorId = req.params.id;
     if (
       !req.params.page ||
       req.params.page == 0 ||
-      req.params.page == "0" ||
+      req.params.page == '0' ||
       req.params.page == null ||
       req.params.page == undefined
     ) {
@@ -81,102 +79,97 @@ const paymentsByCollaborator = (req, res = response) => {
       page = parseInt(req.params.page);
     }
     const options = {
-      sort: { pay_day: "ascending" },
+      sort: { pay_day: 'ascending' },
       limit: 5,
-      page: page,
+      populate: 'collaborator',
+      page: page
     };
 
-    Payment.paginate(
-      { collaborator: ObjectId(collaboratorId) },
-      options,
-      (err, payments) => {
-        if (err) {
-          return res.status(500).send({
-            status: false,
-            msg: "Error al hacer la consulta",
-          });
-        }
-
-        if (!payments) {
-          return res.status(404).send({
-            status: false,
-            msg: "No se encuentran pagos registrados.",
-          });
-        }
-
-        return res.status(200).json({
-          status: true,
-          payments: {
-            payments: payments.docs,
-            count: payments.totalDocs,
-            totalPages: payments.totalPages,
-          },
-        });
-      }
-    );
-  } else {
-    res.status(500).json({
-      status: false,
-      msg: "No posees los privilegios necesarios en la plataforma.",
-    });
-  }
-};
-
-const getPayments = (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
-    let page = undefined;
-
-    if (
-      !req.params.page ||
-      req.params.page == 0 ||
-      req.params.page == "0" ||
-      req.params.page == null ||
-      req.params.page == undefined
-    ) {
-      page = 1;
-    } else {
-      page = parseInt(req.params.page);
-    }
-    const options = {
-      sort: { pay_day: "ascending" },
-      limit: 5,
-      page: page,
-    };
-
-    Payment.paginate({}, options, (err, payments) => {
+    Payment.paginate({ collaborator: ObjectId(collaboratorId) }, options, (err, payments) => {
       if (err) {
         return res.status(500).send({
           status: false,
-          msg: "Error al hacer la consulta.",
+          msg: 'Error al hacer la consulta'
         });
       }
 
       if (!payments) {
         return res.status(404).send({
           status: false,
-          msg: "No se encuentran pagos registrados.",
+          msg: 'No se encuentran pagos registrados.'
         });
       }
 
       return res.status(200).json({
         status: true,
-        payments: {
-          payments: payments,
-          count: payments.totalDocs,
-          totalPages: payments.totalPages,
-        },
+
+        payments: payments.docs,
+        count: payments.totalDocs,
+        totalPages: payments.totalPages
       });
     });
   } else {
     res.status(500).json({
       status: false,
-      msg: "No posees los privilegios necesarios en la plataforma.",
+      msg: 'No posees los privilegios necesarios en la plataforma.'
+    });
+  }
+};
+
+const getPayments = (req, res = response) => {
+  if (req.user.role === 'Dueño' || req.user.role === 'Recursos Humanos') {
+    let page = undefined;
+
+    if (
+      !req.params.page ||
+      req.params.page == 0 ||
+      req.params.page == '0' ||
+      req.params.page == null ||
+      req.params.page == undefined
+    ) {
+      page = 1;
+    } else {
+      page = parseInt(req.params.page);
+    }
+    const options = {
+      sort: { pay_day: -1 },
+      limit: 5,
+      populate: 'collaborator',
+      page: page
+    };
+
+    Payment.paginate({}, options, (err, payments) => {
+      if (err) {
+        return res.status(500).send({
+          status: false,
+          msg: 'Error al hacer la consulta.'
+        });
+      }
+
+      if (!payments) {
+        return res.status(404).send({
+          status: false,
+          msg: 'No se encuentran pagos registrados.'
+        });
+      }
+
+      return res.status(200).json({
+        status: true,
+        payments: payments.docs,
+        count: payments.totalDocs,
+        totalPages: payments.totalPages
+      });
+    });
+  } else {
+    res.status(500).json({
+      status: false,
+      msg: 'No posees los privilegios necesarios en la plataforma.'
     });
   }
 };
 
 const registerPresence = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Recursos Humanos') {
     const { total_overtime } = req.body;
     const collaboratorId = req.params.id;
 
@@ -184,14 +177,14 @@ const registerPresence = async (req, res = response) => {
       let dateTime = new Date();
 
       let findPresenceByActualDateAndCollaborator = await Presence.findOne({
-        date: moment(dateTime).format("YYYY-MM-DD"),
-        collaborator: ObjectId(collaboratorId),
+        date: moment(dateTime).format('YYYY-MM-DD'),
+        collaborator: ObjectId(collaboratorId)
       });
 
       if (findPresenceByActualDateAndCollaborator) {
         return res.status(400).json({
           status: false,
-          msg: "Este día ya se le registro al colaborador.",
+          msg: 'Este día ya se le registro al colaborador.'
         });
       }
 
@@ -205,59 +198,45 @@ const registerPresence = async (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        msg: "Día laboral registrado con éxito.",
+        msg: 'Día laboral registrado con éxito.'
       });
     } catch (error) {
       return res.status(500).json({
         status: false,
-        msg: "Por favor contacté con un ING en Sistemas para más información.",
+        msg: 'Por favor contacté con un ING en Sistemas para más información.'
       });
     }
   } else {
     res.status(400).json({
       status: false,
-      msg: "No posees los privilegios necesarios en la plataforma.",
+      msg: 'No posees los privilegios necesarios en la plataforma.'
     });
   }
 };
 
 const getDayPendingByCollaborator = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Recursos Humanos") {
+  if (req.user.role === 'Dueño' || req.user.role === 'Recursos Humanos') {
     const collaboratorId = req.params.id;
 
     let findPresenceByStatusAndByCollaborator = await Presence.find({
-      status: "Pendiente",
-      collaborator: ObjectId(collaboratorId),
+      status: 'Pendiente',
+      collaborator: ObjectId(collaboratorId)
     }).sort({ date: -1 });
 
-    Presence.aggregate(
-      [
-        {
-          $match: {
-            status: { $eq: "Pendiente" },
-            collaborator: { $eq: ObjectId(collaboratorId) },
-          },
-        },
-        {
-          $group: { _id: null, amount: { $sum: "$total_overtime" } },
-        },
-      ],
-      function (err, result) {
-        if (err) {
-          res.send(err);
-        } else {
-          return res.status(200).json({
-            status: true,
-            total_overtime: result ? result[0].amount : 0,
-            pending_days: findPresenceByStatusAndByCollaborator,
-          });
-        }
-      }
-    );
+    let total_overtime = 0;
+    findPresenceByStatusAndByCollaborator.forEach(function (e) {
+      total_overtime += e.total_overtime;
+    });
+
+    return res.status(200).json({
+      status: true,
+      total_overtime: total_overtime,
+      pending_days: findPresenceByStatusAndByCollaborator
+    });
   } else {
     res.status(400).json({
       status: false,
-      msg: "No posees los privilegios necesarios en la plataforma.",
+      msg: 'No posees los privilegios necesarios en la plataforma.'
     });
   }
 };
@@ -267,5 +246,5 @@ module.exports = {
   paymentsByCollaborator,
   getPayments,
   registerPresence,
-  getDayPendingByCollaborator,
+  getDayPendingByCollaborator
 };
