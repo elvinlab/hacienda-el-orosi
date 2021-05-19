@@ -22,20 +22,11 @@ const {
   uploadImgReg
 } = require('../controllers/Animal.js');
 
-const {
-  addRegisterMilk,
-  deleteRegisterMilk
-} = require('../controllers/Milk.js');
+const { addRegisterMilk, deleteRegisterMilk } = require('../controllers/Milk.js');
 
-const {
-  addRegisterCalving,
-  deleteRegisterCalving
-} = require('../controllers/Calving.js');
+const { addRegisterCalving, deleteRegisterCalving } = require('../controllers/Calving.js');
 
-const {
-  addRegisterWeight,
-  deleteRegisterWeight
-} = require('../controllers/Weight.js');
+const { addRegisterWeight, deleteRegisterWeight } = require('../controllers/Weight.js');
 
 const storage = multer.memoryStorage({
   destination: function (req, file, callback) {
@@ -108,9 +99,9 @@ router.put(
   changeNextDueDate
 );
 
-router.get('/tipo/:type/:page?', md_auth.authenticated, getAnimalByType);
-router.get('/estado/:status/:page?', md_auth.authenticated, getAnimalByStatus);
-router.get('/tipo/:type/estado/:status/:page?', md_auth.authenticated, getAnimalByStatusAndType);
+router.get('/tipo/:type', md_auth.authenticated, getAnimalByType);
+router.get('/estado/:status', md_auth.authenticated, getAnimalByStatus);
+router.get('/tipo/:type/estado/:status', md_auth.authenticated, getAnimalByStatusAndType);
 
 //Rutas de MIlk
 router.post(

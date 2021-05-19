@@ -1,5 +1,4 @@
 const { model, Schema } = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate-v2");
 const moment = require("moment");
 
 let dateTime = new Date();
@@ -31,6 +30,5 @@ const HealthSchema = Schema({
     type: String,
   },
 });
-HealthSchema.plugin(mongoosePaginate);
 
 module.exports = model("Health", HealthSchema);
