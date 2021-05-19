@@ -79,7 +79,7 @@ const removeType = async (req, res = response) => {
     if (findAllType.length === 1) {
       return res.status(404).send({
         status: false,
-        msg: 'No se puede estar sin tipos de animales.'
+        msg: 'No se puede estar sin ningun tipo de ganado.'
       });
     }
 
@@ -330,32 +330,12 @@ const getAnimal = async (req, res = response) => {
 
 const getAnimalByType = async (req, res = response) => {
   let type = req.params.type;
-  let page = undefined;
-
-  if (
-    !req.params.page ||
-    req.params.page == 0 ||
-    req.params.page == '0' ||
-    req.params.page == null ||
-    req.params.page == undefined
-  ) {
-    page = 1;
-  } else {
-    page = parseInt(req.params.page);
-  }
-  const options = {
-    date_admission: -1,
-    limit: 5,
-    page: page,
-    populate: 'daughter_of type'
-  };
 
   if (type === 'undefined' || !type) {
     const getOneType = await Type.findOne();
     type = getOneType._id;
   }
-
-  await Animal.paginate({ type: ObjectId(type) }, options, (err, animals) => {
+  await Animal.find({ type: ObjectId(type) }, (err, animals) => {
     if (err) {
       return res.status(500).send({
         status: false,
@@ -365,35 +345,15 @@ const getAnimalByType = async (req, res = response) => {
 
     return res.status(200).json({
       status: true,
-      animals: animals.docs,
-      count: animals.totalDocs
+      animals: animals
     });
-  });
+  }).populate('daughter_of type');
 };
 
 const getAnimalByStatus = async (req, res = response) => {
   let status = req.params.status;
-  let page = undefined;
 
-  if (
-    !req.params.page ||
-    req.params.page == 0 ||
-    req.params.page == '0' ||
-    req.params.page == null ||
-    req.params.page == undefined
-  ) {
-    page = 1;
-  } else {
-    page = parseInt(req.params.page);
-  }
-  const options = {
-    date_admission: -1,
-    limit: 5,
-    page: page,
-    populate: 'daughter_of type'
-  };
-
-  await Animal.paginate({ status: status }, options, (err, animals) => {
+  await Animal.find({ status: status }, (err, animals) => {
     if (err) {
       return res.status(500).send({
         status: false,
@@ -403,37 +363,17 @@ const getAnimalByStatus = async (req, res = response) => {
 
     return res.status(200).json({
       status: true,
-      animals: animals.docs,
-      count: animals.totalDocs,
+      animals: animals,
       animalState: status
     });
-  });
+  }).populate('daughter_of type');
 };
 
 const getAnimalByStatusAndType = async (req, res = response) => {
   let status = req.params.status;
   let type = req.params.type;
-  let page = undefined;
 
-  if (
-    !req.params.page ||
-    req.params.page == 0 ||
-    req.params.page == '0' ||
-    req.params.page == null ||
-    req.params.page == undefined
-  ) {
-    page = 1;
-  } else {
-    page = parseInt(req.params.page);
-  }
-  const options = {
-    date_admission: -1,
-    limit: 5,
-    page: page,
-    populate: 'daughter_of type'
-  };
-
-  await Animal.paginate({ status: status, type: ObjectId(type) }, options, (err, animals) => {
+  await Animal.find({ status: status, type: ObjectId(type) }, (err, animals) => {
     if (err) {
       return res.status(500).send({
         status: false,
@@ -443,11 +383,10 @@ const getAnimalByStatusAndType = async (req, res = response) => {
 
     return res.status(200).json({
       status: true,
-      animals: animals.docs,
-      count: animals.totalDocs,
+      animals: animals,
       animalState: status
     });
-  });
+  }).populate('daughter_of type');
 };
 
 const uploadImgProfile = (req, res) => {

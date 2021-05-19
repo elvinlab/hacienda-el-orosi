@@ -65,27 +65,9 @@ const registerSalaryCollaborator = (req, res = response) => {
 
 const paymentsByCollaborator = (req, res = response) => {
   if (req.user.role === 'Dueño' || req.user.role === 'Recursos Humanos') {
-    let page = undefined;
     const collaboratorId = req.params.id;
-    if (
-      !req.params.page ||
-      req.params.page == 0 ||
-      req.params.page == '0' ||
-      req.params.page == null ||
-      req.params.page == undefined
-    ) {
-      page = 1;
-    } else {
-      page = parseInt(req.params.page);
-    }
-    const options = {
-      sort: { pay_day: 'ascending' },
-      limit: 5,
-      populate: 'collaborator',
-      page: page
-    };
 
-    Payment.paginate({ collaborator: ObjectId(collaboratorId) }, options, (err, payments) => {
+    Payment.find({ collaborator: ObjectId(collaboratorId) }, (err, payments) => {
       if (err) {
         return res.status(500).send({
           status: false,
@@ -102,10 +84,7 @@ const paymentsByCollaborator = (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-
-        payments: payments.docs,
-        count: payments.totalDocs,
-        totalPages: payments.totalPages
+        payments: payments
       });
     });
   } else {
@@ -118,27 +97,7 @@ const paymentsByCollaborator = (req, res = response) => {
 
 const getPayments = (req, res = response) => {
   if (req.user.role === 'Dueño' || req.user.role === 'Recursos Humanos') {
-    let page = undefined;
-
-    if (
-      !req.params.page ||
-      req.params.page == 0 ||
-      req.params.page == '0' ||
-      req.params.page == null ||
-      req.params.page == undefined
-    ) {
-      page = 1;
-    } else {
-      page = parseInt(req.params.page);
-    }
-    const options = {
-      sort: { pay_day: -1 },
-      limit: 5,
-      populate: 'collaborator',
-      page: page
-    };
-
-    Payment.paginate({}, options, (err, payments) => {
+    Payment.find((err, payments) => {
       if (err) {
         return res.status(500).send({
           status: false,
@@ -155,9 +114,7 @@ const getPayments = (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        payments: payments.docs,
-        count: payments.totalDocs,
-        totalPages: payments.totalPages
+        payments: payments
       });
     });
   } else {

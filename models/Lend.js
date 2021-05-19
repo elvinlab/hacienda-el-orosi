@@ -1,5 +1,4 @@
 const { model, Schema } = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate-v2");
 const moment = require("moment");
 
 let dateTime = new Date();
@@ -38,7 +37,5 @@ const LendSchema = Schema({
     required: true,
   },
 });
-
-LendSchema.plugin(mongoosePaginate);
 
 module.exports = model("Lend", LendSchema);
