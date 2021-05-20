@@ -6,8 +6,9 @@ const md_auth = require("../middlewares/Authenticated");
 const router = Router();
 
 const {
-    register,
-    getMedicalRecords,
+  register,
+  getMedicalRecords,
+  getHealthByAnimal,
 } = require("../controllers/Health.js");
 
 router.post(
@@ -15,13 +16,22 @@ router.post(
   [
     check("medicamentID", "Medicamento requerido").not().isEmpty(),
     check("dose", "Dosis suministrada requerida").not().isEmpty(),
-    
+
     validate_fields,
   ],
   md_auth.authenticated,
   register
 );
 
-router.get("/listar-registros-medico/:page", md_auth.authenticated, getMedicalRecords);
+router.get(
+  "/listar-registros-medico/:page",
+  md_auth.authenticated,
+  getMedicalRecords
+);
+router.get(
+  "/listar-salud-animal/:id",
+  md_auth.authenticated,
+  getHealthByAnimal
+);
 
 module.exports = router;

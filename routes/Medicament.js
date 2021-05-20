@@ -8,6 +8,8 @@ const router = Router();
 const {
   save,
   getMedicaments,
+  getMedicament,
+  remove,
 } = require("../controllers/Medicament.js");
 
 router.post(
@@ -25,5 +27,8 @@ router.post(
 );
 
 router.get("/listar-medicamentos/:page", md_auth.authenticated, getMedicaments);
+router.get("/ver-medicamento/:name", md_auth.authenticated, getMedicament);
+
+router.delete("/remover-medicamento/:id", md_auth.authenticated, remove);
 
 module.exports = router;

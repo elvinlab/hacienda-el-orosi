@@ -13,7 +13,7 @@ const register = async (req, res = response) => {
 
       health.animal = animalID;
       health.medicament = medicamentID;
-      health.dose = dose;
+      health.dose = dose;//Hacer que se reste a la cantidad de mililitros en medicamento
       health.human_consumed_date = human_consumed_date;
 
       await health.save();
@@ -55,6 +55,7 @@ const getMedicalRecords = async (req, res = response) => {
     sort: { administrator_date: -1 },
     limit: 10,
     page: page,
+    populate: "Animal Medicament",
   };
   Health.paginate({}, options, (err, health) => {
     if (err) {
@@ -74,7 +75,31 @@ const getMedicalRecords = async (req, res = response) => {
   });
 };
 
+const getHealthByAnimal = (req, res = response) => {
+    const animalID = req.params.id;
+  
+    Health.find({ animal: ObjectId(animalID) })
+      .populate("Animal Medicament")
+      .sort({ name: 1 })
+      .exec((err, health) => {
+        if (err) {
+          return res.status(500).send({
+            status: false,
+            msg: "Error al hacer la consulta",
+          });
+        }
+  
+        return res.status(200).json({
+          status: true,
+          health: {
+            health: health,
+          },
+        });
+      });
+  };
+
 module.exports = {
   register,
   getMedicalRecords,
+  getHealthByAnimal,
 };
