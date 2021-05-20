@@ -18,7 +18,7 @@ const saveAnimalType = async (req, res = response) => {
     const { name, gender } = req.body;
 
     try {
-      let findTypeByName = await Type.findOne({ String(name)  });
+      let findTypeByName = await Type.findOne({ name });
 
       if (findTypeByName) {
         return res.status(400).json({
