@@ -97,7 +97,6 @@ const getToolsByStatus = (req, res = response) => {
         tools: {
           toolsState: status,
           tools: tools,
-          count: tools.length,
         },
       });
     });
@@ -107,10 +106,7 @@ const getActives = async (req, res = response) => {
   const actives = await Active.find().populate("collaborator tool");
   return res.status(200).json({
     status: true,
-    actives: {
-      actives: actives,
-      count: actives.length,
-    },
+    actives,
   });
 };
 
@@ -130,10 +126,7 @@ const getActivesByCollaborator = (req, res = response) => {
 
       return res.status(200).json({
         status: true,
-        actives: {
-          actives: actives,
-          count: actives.length,
-        },
+        actives,
       });
     });
 };
@@ -143,8 +136,8 @@ const deleteActivesTool = async (req, res = response) => {
 
   tools.forEach(async function (element) {
     await Tool.findByIdAndUpdate(
-      { _id: element.tool_id },
-      { status: "En bodega" },
+      { _id: element.tool._id },
+      { status: "BODEGA" },
       (err) => {
         if (err) {
           return res.status(400).json({
@@ -156,7 +149,7 @@ const deleteActivesTool = async (req, res = response) => {
     );
 
     await Active.findOneAndDelete(
-      { tool: ObjectId(element.tool_id) },
+      { tool: ObjectId(element.tool._id) },
       (err) => {
         if (err) {
           return res.status(500).send({
