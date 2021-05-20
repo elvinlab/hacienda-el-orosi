@@ -5,7 +5,13 @@ const { validate_fields } = require('../middlewares/Validate-fields');
 const md_auth = require('../middlewares/Authenticated');
 const router = Router();
 
-const { save, getMedicaments } = require('../controllers/Medicament.js');
+const {
+  save,
+  getMedicaments,
+  getMedicament,
+  remove,
+} = require("../controllers/Medicament.js");
+
 
 router.post(
   '/guardar-medicamento',
@@ -21,6 +27,9 @@ router.post(
   save
 );
 
-router.get('/listar-medicamentos', md_auth.authenticated, getMedicaments);
+router.get("/listar-medicamentos/:page", md_auth.authenticated, getMedicaments);
+router.get("/ver-medicamento/:name", md_auth.authenticated, getMedicament);
+
+router.delete("/remover-medicamento/:id", md_auth.authenticated, remove);
 
 module.exports = router;
