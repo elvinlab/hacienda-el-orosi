@@ -86,7 +86,7 @@ const paymentsByCollaborator = (req, res = response) => {
         status: true,
         payments: payments
       });
-    });
+    }).populate('collaborator');
   } else {
     res.status(500).json({
       status: false,
@@ -116,7 +116,7 @@ const getPayments = (req, res = response) => {
         status: true,
         payments: payments
       });
-    });
+    }).populate('collaborator');
   } else {
     res.status(500).json({
       status: false,

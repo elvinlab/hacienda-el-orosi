@@ -41,7 +41,7 @@ const registerActives = async (req, res = response) => {
 
     await Tool.findOneAndUpdate(
       { _id: element.tool_id },
-      { status: "Activo" },
+      { status: "ACTIVO" },
       (err) => {
         if (err) {
           return res.status(500).send({

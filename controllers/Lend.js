@@ -153,10 +153,7 @@ const getLendsByStatus = (req, res = response) => {
 
     return res.status(200).json({
       status: true,
-      lends: {
-        lendsState: status,
-        lends: lends
-      }
+      lends
     });
   }).populate('collaborator');
 };
