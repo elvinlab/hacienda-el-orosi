@@ -1,24 +1,27 @@
 const { model, Schema } = require("mongoose");
+
 const moment = require("moment");
 
 let dateTime = new Date();
 
-const ProductSchema = Schema({
+const MedicamentSchema = Schema({
   name: {
     type: String,
     required: true,
     unique: true,
   },
 
-  kilograms: {
+  quantity: {
     type: Number,
+    required: true,
   },
 
-  liters: {
+  milliliters: {
     type: Number,
+    required: true,
   },
 
-  price: {
+  unit_price: {
     type: Number,
     required: true,
   },
@@ -35,4 +38,4 @@ const ProductSchema = Schema({
 
 });
 
-module.exports = model("Product", ProductSchema);
+module.exports = model("Medicament", MedicamentSchema);

@@ -6,23 +6,31 @@ const Aliment = require("../models/Aliment.js");
 
 const save = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { diet_name, description} = req.body;
+    const { diet_name, description } = req.body;
 
+    const findDietByName = await Diet.findOne({
+      diet_name,
+    });
 
-      let diet = new Diet();
-
-      diet.diet_name = diet_name;
-      diet.description = description;
-
-      await diet.save();
-
-      return res.status(200).json({
-        status: true,
-        msg: "Dieta registrada con éxito.",
-        diet: diet,
+    if (findDietByName !== diet_name) {
+      return res.status(400).json({
+        status: "Error",
+        msg: "El nombre de esta dieta ya se encuentra registrado.",
       });
+    }
 
-    
+    let diet = new Diet();
+
+    diet.diet_name = diet_name;
+    diet.description = description;
+
+    await diet.save();
+
+    return res.status(200).json({
+      status: true,
+      msg: "Dieta registrada con éxito.",
+      diet,
+    });
   } else {
     return res.status(400).send({
       status: false,
@@ -33,14 +41,19 @@ const save = async (req, res = response) => {
 
 const addAliment = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { diet_id, product_id, quantity_supplied } = req.body;
+    const diet_id = req.params.id;
+    const { product_name, quantity_supplied } = req.body;
 
     try {
+      const findProductByName = await Product.find({
+        name: product_name,
+      });
+
       let aliment = new Aliment();
 
-      aliment.diet_id = diet_id;
+      aliment.diet = diet_id;
       aliment.quantity_supplied = quantity_supplied;
-      aliment.product_id = product_id;
+      aliment.product = findProductByName[0]._id;
 
 
       await aliment.save();
@@ -48,7 +61,7 @@ const addAliment = async (req, res = response) => {
       return res.status(200).json({
         status: true,
         msg: "Alimento agregado con éxito.",
-        aliment: aliment,
+        aliment,
       });
     } catch (error) {
       return res.status(500).json({
@@ -66,7 +79,7 @@ const addAliment = async (req, res = response) => {
 
 const updateDiet = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { diet_name, description, animal} = req.body;
+    const { diet_name, description, animal } = req.body;
     const dietId = req.params.id;
 
     const findDietByName = await Diet.findOne({
@@ -80,60 +93,20 @@ const updateDiet = async (req, res = response) => {
       });
     }
 
-      await Diet.findByIdAndUpdate(
-        { _id: dietId },
-        {diet_name, description, animal},
-        (err) => {
-          if (err) {
-            res.status(400).json({
-              status: false,
-              msg: "Por favor contacté con un ING en Sistemas para más información.",
-            });
-          } else {
-            res.status(200).send({
-              status: true,
-              msg: "Dieta actualizada con éxito",
-            });
-          }
-        }
-      );
-  } else {
-    res.status(500).json({
-      status: false,
-      msg: "No posees los privilegios necesarios en la plataforma.",
-    });
-  }
-};
-
-const updateAliment = async (req, res = response) => {
-  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    const { name_aliment, quantity_supplied, aliment_kg, price_aliment } = req.body;
-    const alimentId = req.params.id;
-
-    const findAlimentByName = await Product.findOne({
-      name_aliment,
-    });
-
-    if (findAlimentByName && findAlimentByName._id != alimentId) {
-      return res.status(400).json({
-        status: "Error",
-        msg: "El nombre del alimento ya se encuentra registrado.",
-      });
-    }
-
-    await Product.findByIdAndUpdate(
-      { _id: alimentId },
-      { name_aliment, quantity_supplied, aliment_kg, price_aliment },
+    await Diet.findByIdAndUpdate(
+      { _id: dietId },
+      { diet_name, description, animal },
       (err) => {
         if (err) {
           res.status(400).json({
             status: false,
-            msg: "Por favor contacté con un ING en Sistemas para más información.",
+            msg:
+              "Por favor contacté con un ING en Sistemas para más información.",
           });
         } else {
           res.status(200).send({
             status: true,
-            msg: "Alimento actualizado con éxito.",
+            msg: "Dieta actualizada con éxito",
           });
         }
       }
@@ -146,9 +119,43 @@ const updateAliment = async (req, res = response) => {
   }
 };
 
+const updateAliment = async (req, res = response) => {
+  if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
+    
+    const { quantity_supplied } = req.body;
+
+    const alimentId = req.params.id;
+
+    await Aliment.findByIdAndUpdate(
+      { _id: alimentId },
+      { quantity_supplied },
+      (err, aliment) => {
+        if (err || !aliment) {
+          return res.status(400).json({
+
+            status: false,
+            msg:
+              "Por favor contacté con un ING en Sistemas para más información.",
+          });
+        }
+        return res.status(200).send({
+          status: true,
+          msg: "Alimento actualizado con éxito.",
+          aliment,
+        });
+      }
+    );
+  } else {
+    res.status(500).json({
+      status: false,
+      msg: "No posees los privilegios necesarios en la plataforma.",
+    });
+  }
+};
+
 const removeDiet = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-    let dietId = req.params.id;
+    const dietId = req.params.id;
 
     /*let findDiet = await Animal.findOne({ diet: ObjectId(dietId) });
 
@@ -160,16 +167,10 @@ const removeDiet = async (req, res = response) => {
     }*/
 
     Diet.findOneAndDelete({ _id: dietId }, (err, diet) => {
-      if (err) {
+      if (err || !diet) {
         return res.status(500).send({
           status: false,
-          msg: "Error al procesar la peticion.",
-        });
-      }
-      if (!diet) {
-        return res.status(404).send({
-          status: false,
-          msg: "No se logro eliminar la dieta.",
+          msg: "Error, no se pudo eliminar la dieta.",
         });
       }
       return res.status(200).json({
@@ -189,16 +190,7 @@ const deleteAliment = async (req, res = response) => {
   if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
     let alimentId = req.params.id;
 
-    let findAliment = await Diet.findOne({ aliment: ObjectId(alimentId) });
-
-    if (findAliment) {
-      return res.status(400).json({
-        status: false,
-        msg: "Este alimento se encuentra en uso.",
-      });
-    }
-
-    Diet.findOneAndDelete({ _id: alimentId }, (err, aliment) => {
+    Aliment.findOneAndDelete({ _id: alimentId }, (err, aliment) => {
       if (err) {
         return res.status(500).send({
           status: false,
@@ -225,13 +217,12 @@ const deleteAliment = async (req, res = response) => {
 };
 
 const getDiets = async (req, res = response) => {
- const diets = await Diet.find();
-      
+  const diets = await Diet.find();
 
-      return res.status(200).json({
-        status: true,
-        diets: diets,
-      });
+  return res.status(200).json({
+    status: true,
+    diets: diets,
+  });
 };
 
 const getDietByAnimal = (res = response) => {
@@ -257,42 +248,33 @@ const getDietByAnimal = (res = response) => {
     });
 };
 
-const getAliments = async (req, res = response) => {
-  let page = undefined;
+const getAlimentsByDiet = async (req, res = response) => {
+  const dietId = req.params.id;
 
-  if (
-    !req.params.page ||
-    req.params.page == 0 ||
-    req.params.page == "0" ||
-    req.params.page == null ||
-    req.params.page == undefined
-  ) {
-    page = 1;
-  } else {
-    page = parseInt(req.params.page);
+  let findDietById = await Diet.findOne({
+    _id: dietId,
+  });
+
+  if (!findDietById) {
+    return res.status(400).json({
+      status: false,
+      msg: "Esta dieta no se encuentra registrada.",
+    });
   }
-  const options = {
-    sort: { date_issued: -1 },
-    limit: 10,
-    page: page,
-    populate: "diet product",
-  };
-  Aliment.paginate({}, options, (err,aliments) => {
+
+  await Aliment.find({ diet: findDietById._id }, (err, aliments) => {
     if (err) {
       return res.status(500).send({
         status: false,
         msg: "Error al hacer la consulta",
       });
     }
+
     return res.status(200).json({
       status: true,
-      aliments: {
-        aliments: aliments.docs,
-        count: aliments.count,
-      }
+      aliments,
     });
-  })
-
+  }).populate("product");
 };
 
 module.exports = {
@@ -302,7 +284,7 @@ module.exports = {
   deleteAliment,
   getDiets,
   getDietByAnimal,
-  getAliments,
+  getAlimentsByDiet,
   updateDiet,
   updateAliment,
 };
