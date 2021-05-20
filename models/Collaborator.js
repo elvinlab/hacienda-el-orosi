@@ -34,7 +34,7 @@ const CollaboratorSchema = Schema({
   },
   status: {
     type: String,
-    default: "Activo",
+    default: "ACTIVO",
   },
   date_admission: {
     type: String,
