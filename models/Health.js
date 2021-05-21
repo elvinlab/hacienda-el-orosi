@@ -23,11 +23,12 @@ const HealthSchema = Schema({
   },
   administrator_date: {
     type: String,
-    default: () => moment(dateTime).format("YYYY-MM-DD"),
-  }, //Change to a date that the user can select
+    required: true,
+  }, 
   
   human_consumed_date: {
     type: String,
+    required: true,
   },
 });
 
