@@ -12,7 +12,7 @@ const save = async (req, res = response) => {
       diet_name,
     });
 
-    if (findDietByName !== diet_name) {
+    if (findDietByName === diet_name) {
       return res.status(400).json({
         status: "Error",
         msg: "El nombre de esta dieta ya se encuentra registrado.",
