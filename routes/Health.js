@@ -17,6 +17,8 @@ router.post(
   [
     check("medicamentID", "Medicamento requerido").not().isEmpty(),
     check("dose", "Dosis suministrada requerida").not().isEmpty(),
+    check("administrator_date", "Fecha de administracion requerida").not().isEmpty(),
+    check("human_consumed_date", "Fecha de consumo humano requerido requerida").not().isEmpty(),
 
     validate_fields,
   ],
@@ -25,7 +27,7 @@ router.post(
 );
 
 router.get(
-  "/listar-registros-medico/:page",
+  "/listar-registros-medico",
   md_auth.authenticated,
   getMedicalRecords
 );
