@@ -16,19 +16,21 @@ const make = async (req, res = response) => {
         });
       }
 
-      let lend = new Lend();
+      let lendOBJ = new Lend();
 
-      lend.collaborator = collaborator_id;
-      lend.initial_amount = initial_amount;
-      lend.amount = initial_amount;
-      lend.fee = fee_amount;
+      lendOBJ.collaborator = collaborator_id;
+      lendOBJ.initial_amount = initial_amount;
+      lendOBJ.amount = initial_amount;
+      lendOBJ.fee = fee_amount;
 
-      await lend.save();
+      await lendOBJ.save();
+
+      const newLend = await Lend.findById({ _id: lendOBJ._id }).populate('collaborator');
 
       return res.status(200).json({
         status: true,
         msg: 'Préstamo realizado con éxito.',
-        lend: lend
+        lend: newLend
       });
     } catch (error) {
       return res.status(500).json({
@@ -183,7 +185,7 @@ const getLendsByCollaborator = async (req, res = response) => {
       status: true,
       lends: lends
     });
-  });
+  }).populate('collaborator');
 };
 
 const deleteLend = async (req, res = response) => {
