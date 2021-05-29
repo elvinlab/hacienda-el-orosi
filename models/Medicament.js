@@ -1,41 +1,46 @@
-const { model, Schema } = require("mongoose");
+const { model, Schema } = require('mongoose');
 
-const moment = require("moment");
+const moment = require('moment');
 
 let dateTime = new Date();
 
 const MedicamentSchema = Schema({
+  active_num: {
+    type: Number,
+    unique: true,
+    required: true
+  },
+
   name: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
 
   quantity: {
     type: Number,
-    required: true,
+    required: true
   },
 
   milliliters: {
     type: Number,
-    required: true,
+    required: true
   },
 
   unit_price: {
     type: Number,
-    required: true,
+    required: true
   },
 
   createdAt: {
     type: String,
-    default: () => moment(dateTime).format("YYYY-MM-DD"),
+    default: () => moment(dateTime).format('YYYY-MM-DD')
   },
 
   updatedAt: {
     type: String,
-    default: () => moment(dateTime).format("YYYY-MM-DD"),
-  },
-
+    default: () => moment(dateTime).format('YYYY-MM-DD')
+  }
 });
 
-module.exports = model("Medicament", MedicamentSchema);
+module.exports = model('Medicament', MedicamentSchema);
