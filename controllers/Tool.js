@@ -133,7 +133,6 @@ const getActivesByCollaborator = (req, res = response) => {
 
 const deleteActivesTool = async (req, res = response) => {
   const { tools } = req.body;
-
   tools.forEach(async function (element) {
     await Tool.findByIdAndUpdate(
       { _id: element.tool._id },

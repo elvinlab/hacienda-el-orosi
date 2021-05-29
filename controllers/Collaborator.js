@@ -21,7 +21,7 @@ const register = async (req, res = response) => {
     if (moment(date_admission) >= moment(dispatch_date)) {
       return res.status(400).json({
         status: false,
-        msg: 'La fecha inicial no puede superar o igual a la fecha final.'
+        msg: 'La fecha inicial no puede superar o ser igual a la fecha final.'
       });
     }
 
@@ -104,7 +104,7 @@ const update = async (req, res = response) => {
     if (moment(date_admission) >= moment(dispatch_date)) {
       return res.status(400).json({
         status: false,
-        msg: 'La fecha inicial no puede superar o igual a la fecha final.'
+        msg: 'La fecha inicial no puede superar o ser igual a la fecha final.'
       });
     }
 
