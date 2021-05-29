@@ -28,7 +28,7 @@ router.post(
 );
 
 router.get("/listar-medicamentos", md_auth.authenticated, getMedicaments);
-router.get("/ver-medicamento/:name", md_auth.authenticated, getMedicament);
+router.get("/ver-medicamento/:active_num", md_auth.authenticated, getMedicament);
 
 router.delete("/remover-medicamento/:id", md_auth.authenticated, remove);
 

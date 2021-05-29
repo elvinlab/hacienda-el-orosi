@@ -1,5 +1,5 @@
-const Medicament = require("../models/Medicament.js");
-const Health = require("../models/Health.js");
+const Medicament = require('../models/Medicament.js');
+const Health = require('../models/Health.js');
 
 const { ObjectId } = require('mongodb');
 const { response } = require('express');
@@ -10,7 +10,7 @@ const save = async (req, res = response) => {
 
     try {
       let medicament = new Medicament();
-
+      medicament.active_num = Math.floor(Math.random() * (999999 - 100000) + 100000);
       medicament.name = name;
       medicament.quantity = quantity;
       medicament.milliliters = milliliters;
@@ -53,60 +53,58 @@ const getMedicaments = async (req, res = response) => {
   });
 };
 
-  const getMedicament = async (req, res = response) => {
-    let medicamentName = req.params.name;
-  
-    await Medicament.findOne({ name: medicamentName }).exec((err, medicament) => {
+const getMedicament = async (req, res = response) => {
+  let active_num = req.params.active_num;
+
+  await Medicament.findOne({ active_num: active_num }).exec((err, medicament) => {
+    if (err || !medicament) {
+      return res.status(404).send({
+        status: false,
+        msg: 'El medicamento no existe.'
+      });
+    }
+
+    return res.status(200).send({
+      status: true,
+      msg: 'Medicamento encontrado',
+      medicament: medicament
+    });
+  });
+};
+
+const remove = async (req, res = response) => {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
+    const medicamentID = req.params.id;
+
+    if (await Health.findOne({ medicament: ObjectId(medicamentID) })) {
+      return res.status(400).send({
+        status: false,
+        msg: 'No se puede eliminar, este medicamento esta siendo utilizado.'
+      });
+    }
+    Medicament.findOneAndDelete({ _id: medicamentID }, (err, medicament) => {
       if (err || !medicament) {
-        return res.status(404).send({
+        return res.status(400).send({
           status: false,
-          msg: "El medicamento no existe.",
+          msg: 'Error, no se pudo eliminar el medicamento.'
         });
       }
-  
       return res.status(200).send({
         status: true,
-        msg: "Medicamento encontrado",
-        medicament: medicament,
+        msg: 'Medicamento eliminado con éxito.'
       });
     });
-  };
-
-  const remove = async (req, res = response) => {
-    if (req.user.role === "Dueño" || req.user.role === "Encargado del ganado") {
-
-        const medicamentID = req.params.id;
-
-        if (await Health.findOne({ medicament: ObjectId(medicamentID) })) {
-            return res.status(400).send({
-                status: false,
-                msg: "No se puede eliminar, este medicamento esta siendo utilizado.",
-            });
-        } 
-        Medicament.findOneAndDelete({ _id: medicamentID }, (err, medicament) => {
-            if (err || !medicament) {
-                return res.status(400).send({
-                    status: false,
-                    msg: "Error, no se pudo eliminar el medicamento.",
-                });
-            }
-            return res.status(200).send({
-                status: true,
-                msg: "Medicamento eliminado con éxito.",
-            });
-          });
-    
-    } else {
-        return res.status(400).send({
-            status: false,
-            msg: "No posees los privilegios necesarios en la plataforma.",
-        });
-    }
-}
+  } else {
+    return res.status(400).send({
+      status: false,
+      msg: 'No posees los privilegios necesarios en la plataforma.'
+    });
+  }
+};
 
 module.exports = {
-    save,
-    getMedicaments,
-    getMedicament,
-    remove,
+  save,
+  getMedicaments,
+  getMedicament,
+  remove
 };
