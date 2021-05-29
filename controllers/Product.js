@@ -132,7 +132,9 @@ const remove = async (req, res = response) => {
   if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const productID = req.params.id;
 
-    if (await Diet.findOne({ product: ObjectId(productID) })) {
+    const searchDiet = await Diet.findOne({ product: ObjectId(productID) });
+
+    if (searchDiet) {
       return res.status(400).send({
         status: false,
         msg: 'No se puede eliminar, este producto esta siendo utilizado.'
