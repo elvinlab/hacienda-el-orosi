@@ -76,12 +76,16 @@ const remove = async (req, res = response) => {
   if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const medicamentID = req.params.id;
 
-    if (await Health.findOne({ medicament: ObjectId(medicamentID) })) {
+    let searchQuantity = await Medicament.findOne({ _id: ObjectId(medicamentID)});
+    let findMedicament = await Health.findOne({ medicament: ObjectId(medicamentID) });
+    
+    if (findMedicament || searchQuantity.quantity != 0 ) {
       return res.status(400).send({
         status: false,
-        msg: 'No se puede eliminar, este medicamento esta siendo utilizado.'
+        msg: 'No se puede eliminar, este medicamento esta siendo utilizado o todavia hay en bodega.'
       });
     }
+
     Medicament.findOneAndDelete({ _id: medicamentID }, (err, medicament) => {
       if (err || !medicament) {
         return res.status(400).send({

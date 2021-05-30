@@ -312,7 +312,7 @@ const change_password = async (req, res = response) => {
         const salt = bcrypt.genSaltSync();
         hash = bcrypt.hashSync(password, salt);
 
-        User.findByIdAndUpdate({ _id: user._id }, { password: hash }, (err) => {
+        User.findByIdAndUpdate({ _id: user._id }, { password: hash, recovery_key: null }, (err) => {
           if (err) {
             return res.status(500).send({
               status: false,
