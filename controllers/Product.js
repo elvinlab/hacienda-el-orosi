@@ -8,10 +8,18 @@ const save = async (req, res = response) => {
   if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const { name, kilograms, liters, price } = req.body;
 
+    if (!liters && !kilograms) {
+      return res.status(400).json({
+        status: false,
+        msg: 'Por favor digitar la cantidad'
+      });
+    }
+
     try {
       let product = new Product();
 
-      product.name = name;
+      product.name = name.toUpperCase();
+      product.active_num = Math.floor(Math.random() * (999999 - 100000) + 100000);
       product.kilograms = kilograms;
       product.liters = liters;
       product.price = price;
@@ -110,9 +118,9 @@ const getProducts = async (req, res = response) => {
 };
 
 const getProduct = async (req, res = response) => {
-  let productName = req.params.name;
+  let active_num = req.params.active_num;
 
-  await Product.findOne({ name: productName }).exec((err, product) => {
+  await Product.findOne({ active_num: active_num }).exec((err, product) => {
     if (err || !product) {
       return res.status(404).send({
         status: false,
@@ -132,7 +140,9 @@ const remove = async (req, res = response) => {
   if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
     const productID = req.params.id;
 
-    if (await Diet.findOne({ product: ObjectId(productID) })) {
+    const searchDiet = await Diet.findOne({ product: ObjectId(productID) });
+
+    if (searchDiet) {
       return res.status(400).send({
         status: false,
         msg: 'No se puede eliminar, este producto esta siendo utilizado.'

@@ -1,38 +1,42 @@
-const { model, Schema } = require("mongoose");
-const moment = require("moment");
+const { model, Schema } = require('mongoose');
+const moment = require('moment');
 
 let dateTime = new Date();
 
 const ProductSchema = Schema({
+  active_num: {
+    type: Number,
+    unique: true,
+    required: true
+  },
   name: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
 
   kilograms: {
-    type: Number,
+    type: Number
   },
 
   liters: {
-    type: Number,
+    type: Number
   },
 
   price: {
     type: Number,
-    required: true,
+    required: true
   },
 
   createdAt: {
     type: String,
-    default: () => moment(dateTime).format("YYYY-MM-DD"),
+    default: () => moment(dateTime).format('YYYY-MM-DD')
   },
 
   updatedAt: {
     type: String,
-    default: () => moment(dateTime).format("YYYY-MM-DD"),
-  },
-
+    default: () => moment(dateTime).format('YYYY-MM-DD')
+  }
 });
 
-module.exports = model("Product", ProductSchema);
+module.exports = model('Product', ProductSchema);

@@ -9,6 +9,7 @@ const {
   register,
   getMedicalRecords,
   getHealthByAnimal,
+  remove,
 } = require("../controllers/Health.js");
 
 
@@ -36,5 +37,7 @@ router.get(
   md_auth.authenticated,
   getHealthByAnimal
 );
+
+router.delete("/remover-registro-medico/:id", md_auth.authenticated, remove);
 
 module.exports = router;

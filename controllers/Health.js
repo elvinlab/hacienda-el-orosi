@@ -1,4 +1,5 @@
 const Health = require('../models/Health.js');
+const Medicament = require('../models/Medicament.js');
 
 const { ObjectId } = require('mongodb');
 const { response } = require('express');
@@ -16,24 +17,35 @@ const register = async (req, res = response) => {
         msg: 'La fecha de administracion no puede superar o ser igual a la fecha de consumo humano.'
       });
     }
+    let restQuantity = await Medicament.findById({ _id: medicamentID });
+    if (dose > restQuantity.quantity * restQuantity.milliliters) {
+      return res.status(400).json({
+        status: false,
+        msg: 'La dosis es mayor que la cantidad de mililitros en stock.'
+      });
+    }
 
     try {
       let health = new Health();
 
       health.animal = animalID;
       health.medicament = medicamentID;
-      health.dose = dose; //Hacer que se reste a la cantidad de mililitros en medicamento
+      health.dose = dose;
       health.administrator_date = moment(administrator_date).format('YYYY-MM-DD');
       health.human_consumed_date = moment(human_consumed_date).format('YYYY-MM-DD');
 
       await health.save();
+
+      let newQuantity =
+        (restQuantity.quantity * restQuantity.milliliters - dose) / restQuantity.milliliters;
+      await Medicament.findByIdAndUpdate({ _id: medicamentID }, { quantity: newQuantity });
 
       let newHealth = await Health.findById({ _id: health._id }).populate('animal medicament');
 
       return res.status(200).json({
         status: true,
         msg: 'Registro de salud registrado con éxito',
-        health: newHealth,
+        health: newHealth
       });
     } catch (error) {
       return res.status(500).json({
@@ -87,8 +99,48 @@ const getHealthByAnimal = (req, res = response) => {
     });
 };
 
+const remove = async (req, res = response) => {
+  if (req.user.role === 'Dueño' || req.user.role === 'Encargado del ganado') {
+    const healthID = req.params.id;
+    const dateTime = new Date();
+    let validate = false;
+
+    const searchDate = await Health.findById({ _id: healthID });
+
+    if (searchDate.administrator_date != moment(dateTime).format('YYYY-MM-DD')) {
+      validate = true;
+    }
+
+    if (validate) {
+      return res.status(400).json({
+        status: false,
+        msg: 'No se puede actualizar, la fecha es diferente en el registro.'
+      });
+    }
+
+    Health.findOneAndDelete({ _id: healthID }, (err, health) => {
+      if (err || !health) {
+        return res.status(400).send({
+          status: false,
+          msg: 'Error, no se pudo eliminar el registro de salud.'
+        });
+      }
+      return res.status(200).send({
+        status: true,
+        msg: 'Registro de salud eliminado con éxito.'
+      });
+    });
+  } else {
+    return res.status(400).send({
+      status: false,
+      msg: 'No posees los privilegios necesarios en la plataforma.'
+    });
+  }
+};
+
 module.exports = {
   register,
   getMedicalRecords,
-  getHealthByAnimal
+  getHealthByAnimal,
+  remove
 };
