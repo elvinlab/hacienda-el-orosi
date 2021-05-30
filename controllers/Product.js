@@ -11,7 +11,7 @@ const save = async (req, res = response) => {
     try {
       let product = new Product();
 
-      product.name = name;
+      product.name = name.toUpperCase();
       product.kilograms = kilograms;
       product.liters = liters;
       product.price = price;
