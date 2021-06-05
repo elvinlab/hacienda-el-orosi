@@ -20,7 +20,7 @@ const save = async (req, res = response) => {
 
       let job = new Job();
 
-      job.name = name;
+      job.name = name.toUpperCase();;
       job.description = description;
       job.work_hours = work_hours;
       job.price_extra_hours = price_extra_hours;

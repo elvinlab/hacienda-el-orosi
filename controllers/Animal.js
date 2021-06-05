@@ -29,7 +29,7 @@ const saveAnimalType = async (req, res = response) => {
 
       const type = new Type();
       type.administrator = administratorID;
-      type.name = name;
+      type.name = name.toUpperCase();
       type.gender = gender;
 
       await type.save();
@@ -152,7 +152,7 @@ const register = async (req, res = response) => {
     animal.daughter_of = daughter_of;
     animal.starting_weight = starting_weight;
     animal.place_origin = place_origin;
-    animal.name = name;
+    animal.name = name.toUpperCase();
     animal.next_due_date = next_due_date && moment(next_due_date).format('YYYY-MM-DD');
 
     await animal.save();

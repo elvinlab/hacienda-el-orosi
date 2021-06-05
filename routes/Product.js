@@ -28,7 +28,7 @@ router.put(
 );
 
 router.get('/listar-productos', md_auth.authenticated, getProducts);
-router.get('/ver-producto/:name', md_auth.authenticated, getProduct);
+router.get('/ver-producto/:active_num', md_auth.authenticated, getProduct);
 router.delete('/remover-producto/:id', md_auth.authenticated, remove);
 
 module.exports = router;

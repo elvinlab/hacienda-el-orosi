@@ -10,7 +10,7 @@ const addRegisterMilk = async (req, res = response) => {
     try {
       let cow = await Animal.findById({ _id: cowID }).populate('daughter_of type');
 
-      if (!cow || cow.type.name != 'Vaca lechera' || cow.status == 'Vendido') {
+      if (!cow || cow.type.name != 'VACA LECHERA' || cow.status == 'VENDIDO') {
         return res.status(400).json({
           status: false,
           msg: 'Vaca no registrada o no se encuentra en la hacienda.'
