@@ -75,6 +75,24 @@ const changeStatus = async (req, res = response) => {
   });
 };
 
+const changeName = async (req, res = response) => {
+    const { name } = req.body;
+    const toolId = req.params.id;
+    await Tool.findByIdAndUpdate({ _id: toolId }, { name: name.toUpperCase() }, (err, tool) => {
+      if (err || !tool) {
+        return res.status(400).json({
+          status: false,
+          msg: 'Por favor contacté con un ING en Sistemas para más información.'
+        });
+      }
+      return res.status(200).send({
+        status: true,
+        msg: 'Nombre actualizado con éxito.',
+        tool: tool
+      });
+    });
+};
+
 const getToolsByStatus = (req, res = response) => {
   const status = req.params.status;
 
@@ -162,5 +180,6 @@ module.exports = {
   getToolsByStatus,
   getActives,
   getActivesByCollaborator,
+  changeName,
   deleteActivesTool
 };
