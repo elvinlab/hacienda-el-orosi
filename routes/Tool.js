@@ -9,6 +9,7 @@ const {
   registerTool,
   registerActives,
   changeStatus,
+  changeName,
   getToolsByStatus,
   getActives,
   getActivesByCollaborator,
@@ -44,6 +45,13 @@ router.delete(
   [check('tools', 'Se necesitan datos para eliminar en masa').not().isEmpty(), validate_fields],
   md_auth.authenticated,
   deleteActivesTool
+);
+
+router.put(
+  '/modificar-herramienta/:id',
+  [check('name', 'Nombre de la herramienta requerido').not().isEmpty()],
+  md_auth.authenticated,
+  changeName
 );
 
 module.exports = router;
