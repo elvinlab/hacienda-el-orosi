@@ -88,7 +88,7 @@ const registerFee = async (req, res = response) => {
       let newStatus = findLend.status;
 
       if (newAmount <= 0) {
-        newStatus = 'Cancelado';
+        newStatus = 'CANCELADO';
         newAmount = 0;
       }
 
