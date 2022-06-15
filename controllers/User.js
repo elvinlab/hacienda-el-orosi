@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
-const { ObjectId } = require('mongodb');
 
 const { response } = require('express');
 const { createToken } = require('../helpers/Jwt');
