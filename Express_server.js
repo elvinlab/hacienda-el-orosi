@@ -15,7 +15,12 @@ app.use(cors());
 
 app.use(express.json());
 
-res.sendFile(path.resolve(__dirname + '/public/index.html'))
+//Static file declaration
+app.use(express.static(path.join(__dirname, '/public')));
+//build mode
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/public/index.html'));
+});
 
 app.use('/api', require('./routes/User.js'));
 app.use('/api/recursos-humanos', require('./routes/Collaborator.js'));
