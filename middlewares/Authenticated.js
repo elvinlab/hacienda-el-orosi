@@ -9,25 +9,25 @@ exports.authenticated = function (req, res, next) {
         });
     }
 
-let token = req.headers.authorization.replace(/['"]+/g, "");
+    let token = req.headers.authorization.replace(/['"]+/g, "");
 
-try {
-    var payload = jwt.decode(token, process.env.SECRET_JWT_SEED);
+    try {
+        var payload = jwt.decode(token, process.env.SECRET_JWT_SEED);
 
-    if (payload.exp <= moment().unix()) {
-    return res.status(404).send({
-        status: false,
-        msg: "El token ha expirado",
-    });
+        if (payload.exp <= moment().unix()) {
+            return res.status(404).send({
+                status: false,
+                msg: "El token ha expirado",
+            });
+        }
+    } catch (ex) {
+        return res.status(404).send({
+            status: false,
+            msg: "El token no es válido",
+        });
     }
-} catch (ex) {
-    return res.status(404).send({
-    status: false,
-    msg: "El token no es válido",
-    });
-}
 
-req.user = payload;
+    req.user = payload;
 
-next();
+    next();
 };
